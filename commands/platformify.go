@@ -1,3 +1,4 @@
+
 package commands
 
 import (
@@ -16,7 +17,7 @@ var PlatformifyCmd = &cobra.Command{
 for it to be deployed to Platform.sh.
 
 This will create the needed YAML files for both your application and your
-servcices, choosing from a variety of stacks or simple runtimes.`,
+services, choosing from a variety of stacks or simple runtimes.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Hey from Platformify!")
 	},
