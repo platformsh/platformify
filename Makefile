@@ -16,7 +16,7 @@ clean: ## Remove the binary file from the root folder
 
 .PHONY: build
 build: clean ## Compile the app into the root folder
-	go build -o $(PROJECT_NAME)
+	go build ./cmd/platformify/ -o $(PROJECT_NAME)
 
 .PHONY: snapshot
 snapshot: ## Build snapshot

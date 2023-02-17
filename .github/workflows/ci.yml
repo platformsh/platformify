@@ -20,12 +20,12 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: go get .
+        run: go get ./cmd/platformify
 
       - name: Run tests
         run: make test
 
-  linter:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,11 +39,9 @@ jobs:
 
       - name: Run linter
         uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.51.1
 
-  release:
-    needs: [ test, linter ]
+  build:
+    needs: [ test, lint ]
     runs-on: ubuntu-latest
 
     steps:
@@ -65,11 +63,10 @@ jobs:
           version: latest
           args: build --snapshot --clean
           workdir: .
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload assets
         uses: actions/upload-artifact@v3
         with:
           name: platformify
           path: ./dist/*
+          retention-days: 14
