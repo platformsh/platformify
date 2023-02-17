@@ -7,7 +7,8 @@ before:
     - go mod tidy
 
 builds:
-  - binary: platformify
+  - main: ./cmd/platformify
+    binary: platformify
     env:
       - CGO_ENABLED=0
     goos:
