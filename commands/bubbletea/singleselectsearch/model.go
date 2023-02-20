@@ -23,11 +23,11 @@ type model struct {
 	choice *item
 }
 
-func (m model) Init() tea.Cmd {
+func (m *model) Init() tea.Cmd {
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if msg.String() == "ctrl+c" {
@@ -53,9 +53,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) View() string {
+func (m *model) View() string {
 	if m.choice != nil {
-		return lipgloss.NewStyle().Margin(0, 0, 1, 0).Render(fmt.Sprintf("Choose a programming language: %s", m.choice.Title()))
+		return lipgloss.NewStyle().Margin(0, 0, 1, 0).
+			Render(fmt.Sprintf("Choose a programming language: %s", m.choice.Title()))
 	}
 	return docStyle.Render(m.list.View())
 }

@@ -29,7 +29,7 @@ type itemDelegate struct{}
 func (d itemDelegate) Height() int                               { return 1 }
 func (d itemDelegate) Spacing() int                              { return 0 }
 func (d itemDelegate) Update(msg tea.Msg, m *list.Model) tea.Cmd { return nil }
-func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
+func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) { //nolint:gocritic
 	i, ok := listItem.(item)
 	if !ok {
 		return
@@ -52,11 +52,11 @@ type model struct {
 	choice string
 }
 
-func (m model) Init() tea.Cmd {
+func (m *model) Init() tea.Cmd {
 	return nil
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.list.SetWidth(msg.Width)
@@ -80,7 +80,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m model) View() string {
+func (m *model) View() string {
 	if m.choice != "" {
 		return quitTextStyle.Render(fmt.Sprintf("Choose a programming language: %s", m.choice))
 	}
