@@ -1,4 +1,3 @@
-
 package commands
 
 import (
@@ -6,8 +5,6 @@ import (
 
 	"github.com/spf13/cobra"
 )
-
-var cfgFile string
 
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
 var PlatformifyCmd = &cobra.Command{
