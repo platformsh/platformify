@@ -88,7 +88,7 @@ linters:
     # - goerr113
     # Gofmt checks whether code was gofmt-ed. By default this tool runs with -s option to check for code simplification
     - gofmt
-    # Goimports does everything that gofmt does. Additionally it checks unused imports
+    # Goimports does everything that gofmt does. Additionally, it checks unused imports
     - goimports
     # Golint differs from gofmt. Gofmt reformats Go source code, whereas golint prints out style mistakes
     - revive
@@ -123,7 +123,8 @@ linters:
     # Finds slice declarations that could potentially be preallocated
     - prealloc
     # checks whether Err of rows is checked successfully
-    - rowserrcheck
+    # rowserrcheck is disabled because of generics. See https://github.com/golangci/golangci-lint/issues/2649.
+    # - rowserrcheck
     # Scopelint checks for unpinned variables in go programs
     # - scopelint
     # Staticcheck is a go vet on steroids, applying a ton of static analysis checks
