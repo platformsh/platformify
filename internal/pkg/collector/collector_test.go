@@ -42,7 +42,7 @@ func TestCollector_Add(t *testing.T) {
 				dependencies: []Dependency{
 					Runtime("python"),
 					Stack("django4"),
-					Service("db", "mariadb"),
+					Service("db", "mariadb", "1024"),
 				},
 			},
 		},
@@ -61,13 +61,13 @@ func TestCollector_Add(t *testing.T) {
 				dependencies: []Dependency{
 					Runtime("java"),
 					Stack("django4"),
-					Service("db", "mariadb"),
+					Service("db", "mariadb", "1024"),
 				},
 			},
 			args: args{
 				dependencies: []Dependency{
-					Service("cache", "redis"),
-					Service("proxy-db", "postgresql"),
+					Service("cache", "redis", "1024"),
+					Service("proxy-db", "postgresql", "1024"),
 				},
 			},
 		},
@@ -121,8 +121,8 @@ func TestCollector_Collect(t *testing.T) {
 				dependencies: []Dependency{
 					Runtime("python:3.2"),
 					Stack("django4"),
-					Service("db", "postgresql:14"),
-					Service("cache", "redis"),
+					Service("db", "postgresql:14", "1024"),
+					Service("cache", "redis", "1024"),
 				},
 			},
 			want: &Collection{
@@ -130,12 +130,14 @@ func TestCollector_Collect(t *testing.T) {
 				Stack:   "django4",
 				Services: []ServiceInfo{
 					{
-						Name:  "db",
-						Image: "postgresql:14",
+						Name: "db",
+						Type: "postgresql:14",
+						Disk: "1024",
 					},
 					{
-						Name:  "cache",
-						Image: "redis",
+						Name: "cache",
+						Type: "redis",
+						Disk: "1024",
 					},
 				},
 			},
@@ -147,9 +149,9 @@ func TestCollector_Collect(t *testing.T) {
 					Stack("django4"),
 					Stack("laravel"),
 					Runtime("php"),
-					Service("db", "postgresql:14"),
-					Service("cache", "redis"),
-					Service("proxy-db", "mariadb"),
+					Service("db", "postgresql:14", "1024"),
+					Service("cache", "redis", "1024"),
+					Service("proxy-db", "mariadb", "1024"),
 				},
 			},
 			want: &Collection{
@@ -157,16 +159,19 @@ func TestCollector_Collect(t *testing.T) {
 				Stack:   "laravel",
 				Services: []ServiceInfo{
 					{
-						Name:  "db",
-						Image: "postgresql:14",
+						Name: "db",
+						Type: "postgresql:14",
+						Disk: "1024",
 					},
 					{
-						Name:  "cache",
-						Image: "redis",
+						Name: "cache",
+						Type: "redis",
+						Disk: "1024",
 					},
 					{
-						Name:  "proxy-db",
-						Image: "mariadb",
+						Name: "proxy-db",
+						Type: "mariadb",
+						Disk: "1024",
 					},
 				},
 			},

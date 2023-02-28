@@ -7,8 +7,12 @@ USAGE:
 	c.Add(collector.Runtime("python"))
 	c.Add(collector.Stack("django"))
 	c.Add(
-		collector.Service("db", "mysql"),
-		collector.Service("cache", "redis"),
+		collector.Environment("POETRY_VERSION", "1.2.2"),
+		collector.Environment("POETRY_VIRTUALENVS_IN_PROJECT", "true"),
+	)
+	c.Add(
+		collector.Service("db", "mysql", "1024"),
+		collector.Service("cache", "redis", "1024"),
 	)
 	collection := c.Collect()
 */

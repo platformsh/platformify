@@ -46,10 +46,80 @@ func TestStack(t *testing.T) {
 	}
 }
 
+func TestEnvironment(t *testing.T) {
+	type environment struct {
+		key   string
+		value string
+		want  bool
+	}
+	tests := []struct {
+		environments []environment
+	}{
+		{
+			environments: []environment{},
+		},
+		{
+			environments: []environment{
+				{
+					key:   "NAME",
+					value: "value",
+					want:  true,
+				},
+			},
+		},
+		{
+			environments: []environment{
+				{
+					key:   "NAME_ONE",
+					value: "value_one",
+					want:  true,
+				},
+				{
+					key:   "NAME_TWO",
+					value: "value_two",
+					want:  true,
+				},
+			},
+		},
+		{
+			environments: []environment{
+				{
+					key:   "NAME_ONE",
+					value: "value_one",
+					want:  false,
+				},
+				{
+					key:   "NAME_ONE",
+					value: "value_two",
+					want:  true,
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		collection := &Collection{}
+		for _, e := range tt.environments {
+			dependencySetter := Environment(e.key, e.value)
+			dependencySetter(collection)
+		}
+
+		for _, env := range tt.environments {
+			value, ok := collection.Environment[env.key]
+			assert.True(t, ok)
+			if env.want {
+				assert.Equal(t, env.value, value)
+			} else {
+				assert.NotEqual(t, env.value, value)
+			}
+		}
+	}
+}
+
 func TestService(t *testing.T) {
 	type service struct {
-		name  string
-		image string
+		name        string
+		serviceType string
+		disk        string
 	}
 	tests := []struct {
 		services []service
@@ -60,36 +130,42 @@ func TestService(t *testing.T) {
 		{
 			services: []service{
 				{
-					name:  "db",
-					image: "mariadb",
+					name:        "db",
+					serviceType: "mariadb",
+					disk:        "1024",
 				},
 			},
 		},
 		{
 			services: []service{
 				{
-					name:  "db",
-					image: "mariadb",
+					name:        "db",
+					serviceType: "mariadb",
+					disk:        "1024",
 				},
 				{
-					name:  "cache",
-					image: "redis",
+					name:        "cache",
+					serviceType: "redis",
+					disk:        "1024",
 				},
 			},
 		},
 		{
 			services: []service{
 				{
-					name:  "db1",
-					image: "postgresql",
+					name:        "db1",
+					serviceType: "postgresql",
+					disk:        "1024",
 				},
 				{
-					name:  "db2",
-					image: "mariadb",
+					name:        "db2",
+					serviceType: "mariadb",
+					disk:        "1024",
 				},
 				{
-					name:  "cache",
-					image: "redis",
+					name:        "cache",
+					serviceType: "redis",
+					disk:        "1024",
 				},
 			},
 		},
@@ -97,14 +173,15 @@ func TestService(t *testing.T) {
 	for _, tt := range tests {
 		collection := &Collection{}
 		for _, s := range tt.services {
-			dependencySetter := Service(s.name, s.image)
+			dependencySetter := Service(s.name, s.serviceType, s.disk)
 			dependencySetter(collection)
 		}
 
 		if assert.Equal(t, len(tt.services), len(collection.Services)) {
 			for i := range collection.Services {
 				assert.Equal(t, tt.services[i].name, collection.Services[i].Name)
-				assert.Equal(t, tt.services[i].image, collection.Services[i].Image)
+				assert.Equal(t, tt.services[i].serviceType, collection.Services[i].Type)
+				assert.Equal(t, tt.services[i].disk, collection.Services[i].Disk)
 			}
 		}
 	}
