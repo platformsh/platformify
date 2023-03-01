@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"text/template"
 )
 
 //go:embed templates/generic/**/*
