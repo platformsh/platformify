@@ -12,7 +12,7 @@ import (
 	"text/template"
 )
 
-//go:embed ../templates/laravel/**/*
+//go:embed templates/laravel/**/*
 var laravelTemplates embed.FS
 
 type LaravelPlatformifier struct {
