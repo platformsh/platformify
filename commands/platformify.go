@@ -39,7 +39,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 				return fmt.Errorf("could not read from file %s: %w", args[0], err)
 			}
 		}
-		p := &platformify.Platformifier{}
+		p := &platformify.GenericPlatformifier{}
 		if err := json.Unmarshal(data, p); err != nil {
 			return fmt.Errorf("could not unmarshal json: %w", err)
 		}
