@@ -39,11 +39,17 @@ services, choosing from a variety of stacks or simple runtimes.`,
 				return fmt.Errorf("could not read from file %s: %w", args[0], err)
 			}
 		}
-		p := &platformify.GenericPlatformifier{}
-		if err := json.Unmarshal(data, p); err != nil {
+		input := platformify.UserInput{}
+		if err := json.Unmarshal(data, input); err != nil {
 			return fmt.Errorf("could not unmarshal json: %w", err)
 		}
-		if err := p.Platformify(cmd.Context()); err != nil {
+		var pfier platformify.Platformifier
+		pfier, err := platformify.NewPlatformifier(input)
+		if err != nil {
+			return fmt.Errorf("creating platformifier failed: %s", err)
+		}
+
+		if err := pfier.Platformify(cmd.Context()); err != nil {
 			return fmt.Errorf("could not platformify project: %w", err)
 		}
 
