@@ -38,3 +38,5 @@ About
 
 # IDE directories
 .idea
+
+dist/
