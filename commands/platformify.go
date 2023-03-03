@@ -8,7 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/platformsh/platformify"
+	"github.com/platformsh/platformify/platformifiers"
 )
 
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
@@ -39,12 +39,12 @@ services, choosing from a variety of stacks or simple runtimes.`,
 				return fmt.Errorf("could not read from file %s: %w", args[0], err)
 			}
 		}
-		input := platformify.UserInput{}
+		input := &platformifiers.UserInput{}
 		if err := json.Unmarshal(data, input); err != nil {
 			return fmt.Errorf("could not unmarshal json: %w", err)
 		}
-		var pfier platformify.Platformifier
-		pfier, err := platformify.NewPlatformifier(input)
+		var pfier platformifiers.Platformifier
+		pfier, err := platformifiers.NewPlatformifier(input)
 		if err != nil {
 			return fmt.Errorf("creating platformifier failed: %s", err)
 		}
