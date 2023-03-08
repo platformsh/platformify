@@ -1,4 +1,4 @@
-package question
+package answer
 
 type Answers struct {
 	Stack             string            `json:"stack"`

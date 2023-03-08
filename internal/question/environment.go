@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type Environment Question
+type Environment struct{}
 
 func (q *Environment) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	var addVariable = true
 	question := &survey.Confirm{
 		Message: "Do you want to add a variable?",
@@ -48,7 +58,7 @@ func (q *Environment) Ask(ctx context.Context) error {
 			return err
 		}
 
-		q.Answers.Environment[variable.Key] = variable.Value
+		answers.Environment[variable.Key] = variable.Value
 
 		question := &survey.Confirm{
 			Message: "Do you want to add one more variable?",

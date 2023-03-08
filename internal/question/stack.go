@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type Stack Question
+type Stack struct{}
 
 func (q *Stack) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	stacks := []string{
 		"Django",
 		"Laravel",
@@ -39,8 +49,8 @@ func (q *Stack) Ask(ctx context.Context) error {
 			pshType = "nodejs"
 		}
 
-		q.Answers.Stack = stack
-		q.Answers.Type = pshType
+		answers.Stack = stack
+		answers.Type = pshType
 	}
 
 	return nil

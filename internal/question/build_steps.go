@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type BuildSteps Question
+type BuildSteps struct{}
 
 func (q *BuildSteps) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	var addStep = true
 	question := &survey.Confirm{
 		Message: "Do you want to add a build step?",
@@ -33,7 +43,7 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			return err
 		}
 
-		q.Answers.BuildSteps = append(q.Answers.BuildSteps, step)
+		answers.BuildSteps = append(answers.BuildSteps, step)
 
 		question := &survey.Confirm{
 			Message: "Do you want to add one more build step?",

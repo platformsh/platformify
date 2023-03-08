@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type Listen Question
+type Listen struct{}
 
 func (q *Listen) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	interfaces := []string{
 		"HTTP",
 		"Unix-socket",
@@ -26,7 +36,7 @@ func (q *Listen) Ask(ctx context.Context) error {
 		return err
 	}
 
-	q.Answers.Listen = listen
+	answers.Listen = listen
 
 	return nil
 }

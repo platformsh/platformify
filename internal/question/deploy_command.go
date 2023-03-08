@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type DeployCommand Question
+type DeployCommand struct{}
 
 func (q *DeployCommand) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	question := &survey.Input{Message: "Deploy command?"}
 
 	var deployCommand string
@@ -17,7 +27,7 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		return err
 	}
 
-	q.Answers.DeployCommand = deployCommand
+	answers.DeployCommand = deployCommand
 
 	return nil
 }

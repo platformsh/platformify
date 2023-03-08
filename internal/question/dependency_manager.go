@@ -4,13 +4,23 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type DependencyManager Question
+type DependencyManager struct{}
 
 func (q *DependencyManager) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	var depManagers []string
-	switch q.Answers.Stack {
+	switch answers.Stack {
 	case "Django":
 		depManagers = []string{
 			"pip",
@@ -47,7 +57,7 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 	}
 
 	if dependencyManager != "other" {
-		q.Answers.DependencyManager = dependencyManager
+		answers.DependencyManager = dependencyManager
 	}
 
 	return nil

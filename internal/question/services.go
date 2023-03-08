@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type Services Question
+type Services struct{}
 
 func (q *Services) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	var addService = true
 	question := &survey.Confirm{
 		Message: "Would you like to add a service?",
@@ -74,7 +84,7 @@ func (q *Services) Ask(ctx context.Context) error {
 			return err
 		}
 
-		q.Answers.Services = append(q.Answers.Services, Service{
+		answers.Services = append(answers.Services, answer.Service{
 			Name: service.Name,
 			Type: service.Type,
 			Disk: service.Disk,

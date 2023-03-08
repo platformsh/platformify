@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/platformsh/platformify/internal/answer"
 	"github.com/platformsh/platformify/internal/question"
 	"github.com/platformsh/platformify/internal/questionnaire"
 )
@@ -21,20 +22,20 @@ for it to be deployed to Platform.sh.
 This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ctx := context.TODO()
-		answers := question.NewAnswers()
+		answers := answer.NewAnswers()
+		ctx := answer.ToContext(context.TODO(), answers)
 		q := questionnaire.New(
-			&question.Stack{Answers: answers},
-			&question.Type{Answers: answers},
-			&question.Name{Answers: answers},
-			&question.Root{Answers: answers},
-			&question.Environment{Answers: answers},
-			&question.BuildSteps{Answers: answers},
-			&question.WebCommand{Answers: answers},
-			&question.Listen{Answers: answers},
-			&question.DeployCommand{Answers: answers},
-			&question.DependencyManager{Answers: answers},
-			&question.Services{Answers: answers},
+			&question.Stack{},
+			&question.Type{},
+			&question.Name{},
+			&question.Root{},
+			&question.Environment{},
+			&question.BuildSteps{},
+			&question.WebCommand{},
+			&question.Listen{},
+			&question.DeployCommand{},
+			&question.DependencyManager{},
+			&question.Services{},
 		)
 		err := q.AskQuestions(ctx)
 		if err != nil {

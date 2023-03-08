@@ -4,12 +4,22 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type Type Question
+type Type struct{}
 
 func (q *Type) Ask(ctx context.Context) error {
-	if q.Answers.Stack != "" {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
+	if answers.Stack != "" {
 		// Skip the step
 		return nil
 	}
@@ -38,7 +48,7 @@ func (q *Type) Ask(ctx context.Context) error {
 		return err
 	}
 
-	q.Answers.Type = pshType
+	answers.Type = pshType
 
 	return nil
 }

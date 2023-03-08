@@ -4,11 +4,21 @@ import (
 	"context"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
-type WebCommand Question
+type WebCommand struct{}
 
 func (q *WebCommand) Ask(ctx context.Context) error {
+	answers, ok := answer.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	defer func() {
+		ctx = answer.ToContext(ctx, answers)
+	}()
+
 	question := &survey.Input{Message: "Web command?"}
 
 	var webCommand string
@@ -17,7 +27,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		return err
 	}
 
-	q.Answers.WebCommand = webCommand
+	answers.WebCommand = webCommand
 
 	return nil
 }
