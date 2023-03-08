@@ -1,12 +1,14 @@
 package commands
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/platformsh/platformify/internal/pkg/collector"
+	"github.com/platformsh/platformify/internal/question"
+	"github.com/platformsh/platformify/internal/questionnaire"
 )
 
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
@@ -19,23 +21,27 @@ for it to be deployed to Platform.sh.
 This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hey from Platformify!")
-
-		// EXAMPLE: this example is made to show how to use Collector to collect user answers.
-		c := collector.New()
-		c.Add(collector.Runtime("python"))
-		c.Add(collector.Stack("django"))
-		c.Add(
-			collector.Environment("POETRY_VERSION", "1.2.2"),
-			collector.Environment("POETRY_VIRTUALENVS_IN_PROJECT", "true"),
+		ctx := context.TODO()
+		answers := question.NewAnswers()
+		q := questionnaire.New(
+			&question.Stack{Answers: answers},
+			&question.Type{Answers: answers},
+			&question.Name{Answers: answers},
+			&question.Root{Answers: answers},
+			&question.Environment{Answers: answers},
+			&question.BuildSteps{Answers: answers},
+			&question.WebCommand{Answers: answers},
+			&question.Listen{Answers: answers},
+			&question.DeployCommand{Answers: answers},
+			&question.DependencyManager{Answers: answers},
+			&question.Services{Answers: answers},
 		)
-		c.Add(
-			collector.Service("db", "mysql", "1024"),
-			collector.Service("cache", "redis", "1024"),
-		)
-		collection := c.Collect()
-
-		result, err := json.MarshalIndent(collection, "", "  ")
+		err := q.AskQuestions(ctx)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		result, err := json.MarshalIndent(answers, "", "  ")
 		if err != nil {
 			fmt.Println(err.Error())
 			return
