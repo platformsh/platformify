@@ -20,10 +20,10 @@ func (q *Stack) Ask(ctx context.Context) error {
 	}()
 
 	stacks := []string{
-		"Django",
-		"Laravel",
-		"Next.js",
-		"Other",
+		"django",
+		"laravel",
+		"next.js",
+		"other",
 	}
 
 	question := &survey.Select{
@@ -33,24 +33,26 @@ func (q *Stack) Ask(ctx context.Context) error {
 	}
 
 	var stack string
-	err := survey.AskOne(question, &stack)
+	err := survey.AskOne(question, &stack, survey.WithPageSize(len(question.Options)))
 	if err != nil {
 		return err
 	}
 
-	if stack != "Other" {
-		var pshType string
+	if stack == "other" {
+		answers.Stack = "generic"
+	} else {
+		var name string
 		switch stack {
-		case "Django":
-			pshType = "python"
-		case "Laravel":
-			pshType = "php"
-		case "Next.js":
-			pshType = "nodejs"
+		case "django":
+			name = "python"
+		case "laravel":
+			name = "php"
+		case "next.js":
+			name = "nodejs"
 		}
 
 		answers.Stack = stack
-		answers.Type = pshType
+		answers.Type.Name = name
 	}
 
 	return nil

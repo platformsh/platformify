@@ -21,19 +21,19 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 
 	var depManagers []string
 	switch answers.Stack {
-	case "Django":
+	case "django":
 		depManagers = []string{
 			"pip",
 			"poetry",
 			"pipenv",
 			"other",
 		}
-	case "Laravel":
+	case "laravel":
 		depManagers = []string{
 			"composer",
 			"other",
 		}
-	case "Next.js":
+	case "next.js":
 		depManagers = []string{
 			"yarn",
 			"npm",
