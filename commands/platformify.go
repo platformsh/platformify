@@ -21,7 +21,7 @@ for it to be deployed to Platform.sh.
 
 This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		answers := answer.NewAnswers()
 		ctx := answer.ToContext(context.TODO(), answers)
 		q := questionnaire.New(
@@ -39,14 +39,15 @@ services, choosing from a variety of stacks or simple runtimes.`,
 		)
 		err := q.AskQuestions(ctx)
 		if err != nil {
-			fmt.Println(err.Error())
-			return
+			return err
 		}
+
 		result, err := json.MarshalIndent(answers, "", "  ")
 		if err != nil {
-			fmt.Println(err.Error())
-			return
+			return err
 		}
 		fmt.Println(string(result))
+
+		return nil
 	},
 }
