@@ -20,6 +20,7 @@ func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
 		return fmt.Errorf("cannot platformify non-laravel stack: %s", p.Stack)
 	}
 
+	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)
@@ -28,14 +29,14 @@ func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
 		if d.IsDir() {
 			return nil
 		}
-		tpl, er := template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(templatesFs, filePath)
-		if er != nil {
-			return fmt.Errorf("could not parse template: %w", er)
+		tpl, parseErr := template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(templatesFs, filePath)
+		if parseErr != nil {
+			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
 
 		filePath = path.Join(cwd, filePath[len("templates/laravel"):])
-		if er := writeTemplate(ctx, filePath, tpl, p.UserInput); er != nil {
-			return fmt.Errorf("could not write template: %w", er)
+		if writeErr := writeTemplate(ctx, filePath, tpl, p.UserInput); writeErr != nil {
+			return fmt.Errorf("could not write template: %w", writeErr)
 		}
 		return nil
 	})
