@@ -12,7 +12,7 @@ type Answers struct {
 	Environment       map[string]string `json:"environment"`
 	BuildSteps        []string          `json:"build_steps"`
 	WebCommand        string            `json:"web_command"`
-	Listen            string            `json:"listen"`
+	ListenInterface   string            `json:"listen_interface"`
 	DeployCommand     string            `json:"deploy_command"`
 	DependencyManager string            `json:"dependency_manager"`
 	Services          []PSHService      `json:"services"`

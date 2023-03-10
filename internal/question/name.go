@@ -15,14 +15,11 @@ func (q *Name) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
-	question := &survey.Input{Message: "What is the application name?"}
+	question := &survey.Input{Message: "Application name:"}
 
 	var name string
-	err := survey.AskOne(question, &name)
+	err := survey.AskOne(question, &name, survey.WithValidator(survey.Required))
 	if err != nil {
 		return err
 	}

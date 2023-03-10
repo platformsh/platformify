@@ -15,11 +15,8 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
-	question := &survey.Input{Message: "Web command?"}
+	question := &survey.Input{Message: "Web command:"}
 
 	var webCommand string
 	err := survey.AskOne(question, &webCommand)

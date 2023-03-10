@@ -15,9 +15,6 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
 	var depManagers []string
 	switch answers.Stack {
@@ -47,17 +44,16 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 	question := &survey.Select{
 		Message: "Choose your dependency manager:",
 		Options: depManagers,
-		Default: nil,
 	}
 
-	var dependencyManager string
-	err := survey.AskOne(question, &dependencyManager)
+	var manager string
+	err := survey.AskOne(question, &manager)
 	if err != nil {
 		return err
 	}
 
-	if dependencyManager != "other" {
-		answers.DependencyManager = dependencyManager
+	if manager != "other" {
+		answers.DependencyManager = manager
 	}
 
 	return nil

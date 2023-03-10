@@ -15,24 +15,6 @@ func (q *Services) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
-
-	var addService = true
-	question := &survey.Confirm{
-		Message: "Would you like to add a service?",
-		Default: true,
-	}
-
-	err := survey.AskOne(question, &addService)
-	if err != nil {
-		return err
-	}
-
-	if !addService {
-		return nil
-	}
 
 	serviceTypes := []string{
 		"chrome-headless",
@@ -63,12 +45,27 @@ func (q *Services) Ask(ctx context.Context) error {
 		"5120",
 	}
 
-	for addService {
+	for {
+		var addService = true
 		var question survey.Prompt
+		question = &survey.Confirm{
+			Message: "Would you like to add a service?",
+			Default: true,
+		}
+
+		err := survey.AskOne(question, &addService)
+		if err != nil {
+			return err
+		}
+
+		if !addService {
+			break
+		}
+
 		question = &survey.Input{Message: "Service name:"}
 
 		var serviceName string
-		err := survey.AskOne(question, &serviceName)
+		err = survey.AskOne(question, &serviceName)
 		if err != nil {
 			return err
 		}
@@ -76,7 +73,6 @@ func (q *Services) Ask(ctx context.Context) error {
 		question = &survey.Select{
 			Message: "Choose service type:",
 			Options: serviceTypes,
-			Default: nil,
 		}
 
 		var serviceTypeName string
@@ -85,6 +81,7 @@ func (q *Services) Ask(ctx context.Context) error {
 			return err
 		}
 
+		question = nil
 		switch serviceTypeName {
 		case "chrome-headless":
 			question = &survey.Select{
@@ -95,7 +92,7 @@ func (q *Services) Ask(ctx context.Context) error {
 				Default: "95",
 			}
 		case "elasticsearch": // no versions
-		case "influxdb": // TODO: one value
+		case "influxdb": // only one version
 			question = &survey.Select{
 				Message: "Choose InfluxDB version:",
 				Options: []string{
@@ -103,7 +100,7 @@ func (q *Services) Ask(ctx context.Context) error {
 				},
 				Default: "2.3",
 			}
-		case "kafka": // TODO: one value
+		case "kafka": // only one version
 			question = &survey.Select{
 				Message: "Choose Kafka version:",
 				Options: []string{
@@ -255,15 +252,6 @@ func (q *Services) Ask(ctx context.Context) error {
 			Disk: serviceDisk,
 		})
 
-		question = &survey.Confirm{
-			Message: "Would you like to add one more service?",
-			Default: true,
-		}
-
-		err = survey.AskOne(question, &addService)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil

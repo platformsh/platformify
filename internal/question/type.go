@@ -15,40 +15,36 @@ func (q *Type) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
-	if answers.Type.Name != "" {
-		// Skip the step
-		return nil
+	if answers.Type.Name == "" {
+		types := []string{
+			"dotnet",
+			"elixir",
+			"golang",
+			"java",
+			"lisp",
+			"nodejs",
+			"php",
+			"python",
+			"ruby",
+		}
+
+		question := &survey.Select{
+			Message: "Choose your PSH type:",
+			Options: types,
+		}
+
+		var name string
+		err := survey.AskOne(question, &name, survey.WithPageSize(len(question.Options)))
+		if err != nil {
+			return err
+		}
+
+		answers.Type.Name = name
 	}
 
-	types := []string{
-		"dotnet",
-		"elixir",
-		"golang",
-		"java",
-		"lisp",
-		"nodejs",
-		"php",
-		"python",
-		"ruby",
-	}
-
-	question := &survey.Select{
-		Message: "Choose your PSH type:",
-		Options: types,
-		Default: nil,
-	}
-
-	var name string
-	err := survey.AskOne(question, &name, survey.WithPageSize(len(question.Options)))
-	if err != nil {
-		return err
-	}
-
-	switch name {
+	var question *survey.Select
+	switch answers.Type.Name {
 	case "dotnet":
 		question = &survey.Select{
 			Message: "Choose C#/.Net Core version:",
@@ -126,12 +122,11 @@ func (q *Type) Ask(ctx context.Context) error {
 	}
 
 	var version string
-	err = survey.AskOne(question, &version, survey.WithPageSize(len(question.Options)))
+	err := survey.AskOne(question, &version, survey.WithPageSize(len(question.Options)))
 	if err != nil {
 		return err
 	}
 
-	answers.Type.Name = name
 	answers.Type.Version = version
 
 	return nil

@@ -15,9 +15,6 @@ func (q *Stack) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
 	stacks := []string{
 		"django",
@@ -29,7 +26,6 @@ func (q *Stack) Ask(ctx context.Context) error {
 	question := &survey.Select{
 		Message: "Choose your stack:",
 		Options: stacks,
-		Default: nil,
 	}
 
 	var stack string

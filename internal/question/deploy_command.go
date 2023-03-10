@@ -15,19 +15,16 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
-	question := &survey.Input{Message: "Deploy command?"}
+	question := &survey.Input{Message: "Deploy command:"}
 
-	var deployCommand string
-	err := survey.AskOne(question, &deployCommand)
+	var command string
+	err := survey.AskOne(question, &command)
 	if err != nil {
 		return err
 	}
 
-	answers.DeployCommand = deployCommand
+	answers.DeployCommand = command
 
 	return nil
 }

@@ -8,16 +8,13 @@ import (
 	"github.com/platformsh/platformify/internal/answer"
 )
 
-type Listen struct{}
+type ListenInterface struct{}
 
-func (q *Listen) Ask(ctx context.Context) error {
+func (q *ListenInterface) Ask(ctx context.Context) error {
 	answers, ok := answer.FromContext(ctx)
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
 	interfaces := []string{
 		"HTTP",
@@ -27,7 +24,6 @@ func (q *Listen) Ask(ctx context.Context) error {
 	question := &survey.Select{
 		Message: "Choose interface to listen to:",
 		Options: interfaces,
-		Default: nil,
 	}
 
 	var listen string
@@ -36,7 +32,7 @@ func (q *Listen) Ask(ctx context.Context) error {
 		return err
 	}
 
-	answers.Listen = listen
+	answers.ListenInterface = listen
 
 	return nil
 }

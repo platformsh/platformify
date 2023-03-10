@@ -15,14 +15,11 @@ func (q *ApplicationRoot) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
-	question := &survey.Input{Message: "What is the application root?"}
+	question := &survey.Input{Message: "Application root:"}
 
 	var applicationRoot string
-	err := survey.AskOne(question, &applicationRoot)
+	err := survey.AskOne(question, &applicationRoot, survey.WithValidator(survey.Required))
 	if err != nil {
 		return err
 	}

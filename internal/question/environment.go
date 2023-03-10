@@ -2,6 +2,7 @@ package question
 
 import (
 	"context"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -15,36 +16,33 @@ func (q *Environment) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	defer func() {
-		ctx = answer.ToContext(ctx, answers)
-	}()
 
-	var addVariable = true
-	question := &survey.Confirm{
-		Message: "Do you want to add a variable?",
-		Default: true,
-	}
+	for {
+		question := &survey.Confirm{
+			Message: "Do you want to add a variable?",
+			Default: true,
+		}
 
-	err := survey.AskOne(question, &addVariable)
-	if err != nil {
-		return err
-	}
+		var addVariable = true
+		err := survey.AskOne(question, &addVariable)
+		if err != nil {
+			return err
+		}
 
-	if !addVariable {
-		return nil
-	}
+		if !addVariable {
+			break
+		}
 
-	for addVariable {
-		var qs = []*survey.Question{
+		questions := []*survey.Question{
 			{
-				Name:     "key",
-				Prompt:   &survey.Input{Message: "Env var name"},
-				Validate: survey.Required,
+				Name:      "key",
+				Prompt:    &survey.Input{Message: "Env var name"},
+				Validate:  survey.Required,
+				Transform: survey.TransformString(strings.ToUpper),
 			},
 			{
-				Name:     "value",
-				Prompt:   &survey.Input{Message: "Env var value"},
-				Validate: survey.Required,
+				Name:   "value",
+				Prompt: &survey.Input{Message: "Env var value"},
 			},
 		}
 
@@ -53,22 +51,12 @@ func (q *Environment) Ask(ctx context.Context) error {
 			Value string
 		}{}
 
-		err = survey.Ask(qs, &variable)
+		err = survey.Ask(questions, &variable)
 		if err != nil {
 			return err
 		}
 
 		answers.Environment[variable.Key] = variable.Value
-
-		question := &survey.Confirm{
-			Message: "Do you want to add one more variable?",
-			Default: true,
-		}
-
-		err := survey.AskOne(question, &addVariable)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil
