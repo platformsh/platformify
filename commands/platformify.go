@@ -1,13 +1,14 @@
 package commands
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/spf13/cobra"
 
+	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/question"
+	"github.com/platformsh/platformify/internal/questionnaire"
 	"github.com/platformsh/platformify/platformifiers"
 )
 
@@ -20,31 +21,28 @@ for it to be deployed to Platform.sh.
 
 This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
-	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		var data []byte
-		if len(args) == 0 || args[0] == "-" {
-			fin := cmd.InOrStdin()
-			var err error
-			if data, err = io.ReadAll(fin); err != nil {
-				return fmt.Errorf("could not read from stdin: %w", err)
-			}
-		} else {
-			fin, err := os.Open(args[0])
-			if err != nil {
-				return fmt.Errorf("could not open file %s: %w", args[0], err)
-			}
-			defer fin.Close()
-			if data, err = io.ReadAll(fin); err != nil {
-				return fmt.Errorf("could not read from file %s: %w", args[0], err)
-			}
+		answers := answer.NewAnswers()
+		ctx := answer.ToContext(context.TODO(), answers)
+		q := questionnaire.New(
+			&question.Stack{},
+			&question.Type{},
+			&question.Name{},
+			&question.ApplicationRoot{},
+			&question.Environment{},
+			&question.BuildSteps{},
+			&question.WebCommand{},
+			&question.ListenInterface{},
+			&question.DeployCommand{},
+			&question.DependencyManager{},
+			&question.Services{},
+		)
+		err := q.AskQuestions(ctx)
+		if err != nil {
+			return err
 		}
-		input := &platformifiers.UserInput{}
-		if err := json.Unmarshal(data, input); err != nil {
-			return fmt.Errorf("could not unmarshal json: %w", err)
-		}
-		var pfier platformifiers.Platformifier
-		pfier, err := platformifiers.NewPlatformifier(input)
+
+		pfier, err := platformifiers.NewPlatformifier(answers)
 		if err != nil {
 			return fmt.Errorf("creating platformifier failed: %s", err)
 		}
