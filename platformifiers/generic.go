@@ -18,10 +18,6 @@ type GenericPlatformifier struct {
 
 // Platformify will generate the .platform.app.yaml and .platform/ directory
 func (p *GenericPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != "generic" {
-		return fmt.Errorf("cannot platformify non-generic stack: %s", p.Stack)
-	}
-
 	cwd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)

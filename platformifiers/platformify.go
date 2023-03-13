@@ -8,6 +8,8 @@ import (
 	"path"
 	"strings"
 	"text/template"
+
+	"github.com/platformsh/platformify/internal/answer"
 )
 
 //go:embed templates/**/*
@@ -42,16 +44,39 @@ type Platformifier interface {
 }
 
 // NewPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
-func NewPlatformifier(input *UserInput) (Platformifier, error) {
+func NewPlatformifier(answers *answer.Answers) (Platformifier, error) {
+	services := make([]Service, 0)
+	for _, service := range answers.Services {
+		services = append(services, Service{
+			Name: service.Name,
+			Type: service.Type.String(),
+			Disk: service.Disk,
+		})
+	}
+	input := &UserInput{
+		Stack:           answers.Stack,
+		Root:            "",
+		ApplicationRoot: answers.ApplicationRoot,
+		Name:            answers.Name,
+		Type:            answers.Type.String(),
+		Environment:     answers.Environment,
+		BuildSteps:      answers.BuildSteps,
+		WebCommand:      answers.WebCommand,
+		ListenInterface: answers.ListenInterface,
+		DeployCommand:   answers.DeployCommand,
+		Locations: map[string]map[string]interface{}{
+			"/": {
+				"passthrough": true,
+			},
+		},
+		Services: services,
+	}
 	var pfier Platformifier
-
 	switch input.Stack {
-	case "generic":
-		pfier = &GenericPlatformifier{UserInput: input}
 	case "laravel":
 		pfier = &LaravelPlatformifier{UserInput: input}
 	default:
-		return nil, fmt.Errorf("cannot platformify stack: %s", input.Stack)
+		pfier = &GenericPlatformifier{UserInput: input}
 	}
 
 	return pfier, nil
