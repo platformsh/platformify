@@ -1,0 +1,26 @@
+# Control your apps and how they’re built and deployed on Platform.sh
+# See https://docs.platform.sh/create-apps.html for more information.
+
+#  A unique name for the app. Must be lowercase alphanumeric characters.
+name: "{{ .Name }}"
+
+#  The base image to use with a specific app language. Format: runtime:version.
+type: "{{ .Type }}"
+
+{{ template "size" }}
+{{ template "relationships" }}
+{{ template "disk" }}
+{{ template "mounts" }}
+{{ template "web" }}
+{{ template "workers" }}
+{{ template "timezone" }}
+{{ template "access" }}
+{{ template "variables" }}
+{{ template "firewall" }}
+{{ template "build" }}
+{{ template "dependencies" }}
+{{ template "hooks" }}
+{{ template "crons" }}
+{{ template "source" }}
+{{ template "runtime" }}
+{{ template "additional_hosts" }}
