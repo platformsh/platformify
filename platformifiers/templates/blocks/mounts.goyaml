@@ -1,0 +1,16 @@
+# Mounts are directories which are writable even after the app is built.
+# mounts:
+#   'DIRECTORY':
+#      service: NETWORK_SERVICE
+#      source: SOURCE_LOCATION
+#      source_path: SOURCE_PATH_LOCATION
+# See https://docs.platform.sh/create-apps/app-reference.html#mounts
+{{ if .Mounts -}}
+mounts:
+  {{ range $name, $mount := .Mounts }}
+  "{{- $name }}":
+    {{ if $mount.service -}}service: {{ $mount.service }}{{ end }}
+    source: {{ $mount.source }}
+    source_path: {{ $mount.source_path }}
+  {{ end }}
+{{ end }}

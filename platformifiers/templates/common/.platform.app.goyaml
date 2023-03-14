@@ -22,7 +22,9 @@ type: "{{ .Type }}"
 disk: 2048
 
 {{ template "mounts" }}
+
 {{ template "web" }}
+
 {{ template "workers" }}
 {{ template "timezone" }}
 {{ template "access" }}
