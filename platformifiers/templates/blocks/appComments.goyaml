@@ -1,0 +1,7 @@
+{{ if .AppComments -}}
+{{ .AppComments }}
+{{ end }}
+{{ else }}
+# Control your apps and how they’re built and deployed on Platform.sh
+# See https://docs.platform.sh/create-apps.html for more information.
+{{ end }}

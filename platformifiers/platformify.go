@@ -15,6 +15,9 @@ import (
 //go:embed templates/**/*
 var templatesFs embed.FS
 
+// AppComments are comments to add to the top of platform.app.yaml.
+type AppComments string
+
 // Service contains the configuration for a service needed by the application.
 type Service struct {
 	Name string `json:"name"`

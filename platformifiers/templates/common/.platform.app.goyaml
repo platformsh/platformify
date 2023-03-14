@@ -1,5 +1,4 @@
-# Control your apps and how they’re built and deployed on Platform.sh
-# See https://docs.platform.sh/create-apps.html for more information.
+{{ template appComments }}
 
 #  A unique name for the app. Must be lowercase alphanumeric characters.
 name: "{{ .Name }}"
