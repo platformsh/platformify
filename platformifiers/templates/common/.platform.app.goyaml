@@ -6,9 +6,21 @@ name: "{{ .Name }}"
 #  The base image to use with a specific app language. Format: runtime:version.
 type: "{{ .Type }}"
 
-{{ template "size" }}
+# Size determines how much resources to devote to the app. By default,
+# resource sizes (CPU and memory) are chosen automatically for an app
+# based on the plan size and the number of other containers in the cluster.
+# The total resources allocated across all apps and services can’t exceed
+# what’s in your plan. Most of the time, this automatic sizing is enough.
+#
+# See https://docs.platform.sh/create-apps/app-reference.html#sizes
+#size:
+
 {{ template "relationships" }}
-{{ template "disk" }}
+
+# The size of the persistent disk of the application (in MB).
+# See https://docs.platform.sh/create-apps/app-reference.html#available-disk-space
+disk: 2048
+
 {{ template "mounts" }}
 {{ template "web" }}
 {{ template "workers" }}
