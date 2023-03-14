@@ -2,7 +2,6 @@ package commands
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -10,6 +9,7 @@ import (
 	"github.com/platformsh/platformify/internal/answer"
 	"github.com/platformsh/platformify/internal/question"
 	"github.com/platformsh/platformify/internal/questionnaire"
+	"github.com/platformsh/platformify/platformifiers"
 )
 
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
@@ -42,11 +42,14 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			return err
 		}
 
-		result, err := json.MarshalIndent(answers, "", "  ")
+		pfier, err := platformifiers.NewPlatformifier(answers)
 		if err != nil {
-			return err
+			return fmt.Errorf("creating platformifier failed: %s", err)
 		}
-		fmt.Println(string(result))
+
+		if err := pfier.Platformify(cmd.Context()); err != nil {
+			return fmt.Errorf("could not platformify project: %w", err)
+		}
 
 		return nil
 	},

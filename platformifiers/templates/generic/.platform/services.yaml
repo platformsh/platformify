@@ -1,0 +1,13 @@
+
+{{- if .Services -}}
+{{- range $value := .Services -}}
+{{ $value.Name }}:
+  type: {{ $value.Type }}
+  disk: {{ $value.Disk }}
+{{ end -}}
+{{ else }}
+# relationships
+# db:
+#     type: postgresql:14
+#     disk: 1024
+{{ end -}}
