@@ -16,7 +16,7 @@ func (q *Name) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	question := &survey.Input{Message: "Application name:"}
+	question := &survey.Input{Message: "Application name:", Default: "app"}
 
 	var name string
 	err := survey.AskOne(question, &name, survey.WithValidator(survey.Required))
