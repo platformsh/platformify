@@ -5,7 +5,7 @@
 # See https://docs.platform.sh/user_guide/reference/routes-yaml.html
 "https://{{ "{default}" }}/":
   type: upstream
-  upstream: "app:http"
+  upstream: "{{ .Name }}:http"
 
 "https://www.{{ "{default}" }}":
   type: redirect
