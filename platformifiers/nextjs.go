@@ -11,20 +11,23 @@ import (
 	"github.com/Masterminds/sprig/v3"
 )
 
-const genericTemplatesPath = "templates/generic"
+const nextjsTemplatesPath = "templates/nextjs"
 
-// GenericPlatformifier contains the configuration for the application to Platformify
-type GenericPlatformifier struct {
+type NextJSPlatformifier struct {
 	*UserInput
 }
 
-// Platformify will generate the .platform.app.yaml and .platform/ directory
-func (p *GenericPlatformifier) Platformify(ctx context.Context) error {
+func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
+	if p.Stack != "next.js" {
+		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.Stack)
+	}
+
+	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)
 	}
-	err = fs.WalkDir(templatesFs, genericTemplatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
+	err = fs.WalkDir(templatesFs, nextjsTemplatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
 		}
@@ -33,7 +36,7 @@ func (p *GenericPlatformifier) Platformify(ctx context.Context) error {
 			return fmt.Errorf("could not parse template: %w", er)
 		}
 
-		filePath = path.Join(cwd, filePath[len(genericTemplatesPath):])
+		filePath = path.Join(cwd, filePath[len(nextjsTemplatesPath):])
 		if er := writeTemplate(ctx, filePath, tpl, p.UserInput); er != nil {
 			return fmt.Errorf("could not write template: %w", er)
 		}

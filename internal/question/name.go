@@ -5,13 +5,13 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 )
 
 type Name struct{}
 
 func (q *Name) Ask(ctx context.Context) error {
-	answers, ok := answer.FromContext(ctx)
+	answers, ok := models.FromContext(ctx)
 	if !ok {
 		return nil
 	}

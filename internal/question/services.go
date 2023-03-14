@@ -5,13 +5,13 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 )
 
 type Services struct{}
 
 func (q *Services) Ask(ctx context.Context) error {
-	answers, ok := answer.FromContext(ctx)
+	answers, ok := models.FromContext(ctx)
 	if !ok {
 		return nil
 	}
@@ -243,9 +243,9 @@ func (q *Services) Ask(ctx context.Context) error {
 			return err
 		}
 
-		answers.Services = append(answers.Services, answer.PSHService{
+		answers.Services = append(answers.Services, models.Service{
 			Name: serviceName,
-			Type: answer.PSHType{
+			Type: models.ServiceType{
 				Name:    serviceTypeName,
 				Version: serviceTypeVersion,
 			},

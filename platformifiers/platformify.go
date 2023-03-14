@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 )
 
 //go:embed templates/**/*
@@ -44,7 +44,7 @@ type Platformifier interface {
 }
 
 // NewPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
-func NewPlatformifier(answers *answer.Answers) (Platformifier, error) {
+func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 	services := make([]Service, 0)
 	for _, service := range answers.Services {
 		services = append(services, Service{
@@ -54,7 +54,7 @@ func NewPlatformifier(answers *answer.Answers) (Platformifier, error) {
 		})
 	}
 	input := &UserInput{
-		Stack:           answers.Stack,
+		Stack:           answers.Stack.String(),
 		Root:            "",
 		ApplicationRoot: answers.ApplicationRoot,
 		Name:            answers.Name,
@@ -75,6 +75,8 @@ func NewPlatformifier(answers *answer.Answers) (Platformifier, error) {
 	switch input.Stack {
 	case "laravel":
 		pfier = &LaravelPlatformifier{UserInput: input}
+	case "next.js":
+		pfier = &NextJSPlatformifier{UserInput: input}
 	default:
 		pfier = &GenericPlatformifier{UserInput: input}
 	}

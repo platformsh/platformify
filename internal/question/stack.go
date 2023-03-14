@@ -5,50 +5,45 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 )
 
 type Stack struct{}
 
 func (q *Stack) Ask(ctx context.Context) error {
-	answers, ok := answer.FromContext(ctx)
+	answers, ok := models.FromContext(ctx)
 	if !ok {
 		return nil
 	}
 
-	stacks := []string{
-		"django",
-		"laravel",
-		"next.js",
-		"other",
-	}
-
 	question := &survey.Select{
 		Message: "Choose your stack:",
-		Options: stacks,
+		Options: models.Stacks.AllTitles(),
 	}
 
-	var stack string
-	err := survey.AskOne(question, &stack, survey.WithPageSize(len(question.Options)))
+	var title string
+	err := survey.AskOne(question, &title, survey.WithPageSize(len(question.Options)))
+	if err != nil {
+		return err
+	}
+	stack, err := models.Stacks.StackByTitle(title)
 	if err != nil {
 		return err
 	}
 
-	if stack == "other" {
-		answers.Stack = "generic"
-	} else {
-		var name string
+	answers.Stack = stack
+	if stack != models.GenericStack {
+		var runtime models.Runtime
 		switch stack {
-		case "django":
-			name = "python"
-		case "laravel":
-			name = "php"
-		case "next.js":
-			name = "nodejs"
+		case models.Django:
+			runtime = models.Python
+		case models.Laravel:
+			runtime = models.PHP
+		case models.NextJS:
+			runtime = models.NodeJS
 		}
 
-		answers.Stack = stack
-		answers.Type.Name = name
+		answers.Type.Runtime = runtime
 	}
 
 	return nil

@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/question"
 	"github.com/platformsh/platformify/internal/questionnaire"
 	"github.com/platformsh/platformify/platformifiers"
@@ -22,8 +22,8 @@ for it to be deployed to Platform.sh.
 This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		answers := answer.NewAnswers()
-		ctx := answer.ToContext(context.TODO(), answers)
+		answers := models.NewAnswers()
+		ctx := models.ToContext(context.TODO(), answers)
 		q := questionnaire.New(
 			&question.Stack{},
 			&question.Type{},
