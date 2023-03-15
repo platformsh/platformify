@@ -73,9 +73,9 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 	}
 	var pfier Platformifier
 	switch input.Stack {
-	case "laravel":
+	case models.Laravel:
 		pfier = &LaravelPlatformifier{UserInput: input}
-	case "next.js":
+	case models.NextJS:
 		pfier = &NextJSPlatformifier{UserInput: input}
 	default:
 		pfier = &GenericPlatformifier{UserInput: input}

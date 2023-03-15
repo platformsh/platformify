@@ -23,7 +23,7 @@ This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		answers := models.NewAnswers()
-		ctx := models.ToContext(context.TODO(), answers)
+		ctx := models.ToContext(cmd.Context(), answers)
 		q := questionnaire.New(
 			&question.Stack{},
 			&question.Type{},

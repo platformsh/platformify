@@ -8,7 +8,7 @@ const (
 	GenericStack Stack = "generic"
 	Django       Stack = "django"
 	Laravel      Stack = "laravel"
-	NextJS       Stack = "next.js"
+	NextJS       Stack = "next-js"
 )
 
 var (
