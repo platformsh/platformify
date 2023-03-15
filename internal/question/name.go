@@ -15,6 +15,10 @@ func (q *Name) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if answers.Name != "" {
+		// Skip the step
+		return nil
+	}
 
 	question := &survey.Input{Message: "Application name:", Default: "app"}
 

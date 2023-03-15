@@ -43,18 +43,18 @@ func (s Stack) Title() string {
 
 type StackList []Stack
 
-func (s *StackList) AllTitles() []string {
-	titles := make([]string, 0, len(*s))
-	for _, stack := range *s {
+func (s StackList) AllTitles() []string {
+	titles := make([]string, 0, len(s))
+	for _, stack := range s {
 		titles = append(titles, stack.Title())
 	}
 	return titles
 }
 
-func (s *StackList) StackByTitle(title string) (Stack, error) {
-	for i := range *s {
-		if Stacks[i].Title() == title {
-			return Stacks[i], nil
+func (s StackList) StackByTitle(title string) (Stack, error) {
+	for _, stack := range s {
+		if stack.Title() == title {
+			return stack, nil
 		}
 	}
 	return "", fmt.Errorf("stack by title is not found")

@@ -63,25 +63,16 @@ func (r Runtime) Title() string {
 
 type RuntimeList []Runtime
 
-func (r *RuntimeList) AllTitles() []string {
-	titles := make([]string, 0, len(*r))
-	for _, runtime := range *r {
+func (r RuntimeList) AllTitles() []string {
+	titles := make([]string, 0, len(r))
+	for _, runtime := range r {
 		titles = append(titles, runtime.Title())
 	}
 	return titles
 }
 
-func (r *RuntimeList) RuntimeByName(name Runtime) (Runtime, error) {
-	for _, runtime := range *r {
-		if runtime == name {
-			return runtime, nil
-		}
-	}
-	return "", fmt.Errorf("runtime by name is not found")
-}
-
-func (r *RuntimeList) RuntimeByTitle(title string) (Runtime, error) {
-	for _, runtime := range *r {
+func (r RuntimeList) RuntimeByTitle(title string) (Runtime, error) {
+	for _, runtime := range r {
 		if runtime.Title() == title {
 			return runtime, nil
 		}

@@ -62,7 +62,7 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		Environment:     answers.Environment,
 		BuildSteps:      answers.BuildSteps,
 		WebCommand:      answers.WebCommand,
-		ListenInterface: answers.ListenInterface,
+		ListenInterface: answers.ListenInterface.String(),
 		DeployCommand:   answers.DeployCommand,
 		Locations: map[string]map[string]interface{}{
 			"/": {
@@ -72,7 +72,7 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		Services: services,
 	}
 	var pfier Platformifier
-	switch input.Stack {
+	switch answers.Stack {
 	case models.Laravel:
 		pfier = &LaravelPlatformifier{UserInput: input}
 	case models.NextJS:

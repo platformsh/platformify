@@ -15,6 +15,10 @@ func (q *Stack) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if answers.Stack.String() != "" {
+		// Skip the step
+		return nil
+	}
 
 	question := &survey.Select{
 		Message: "Choose your stack:",
@@ -32,19 +36,6 @@ func (q *Stack) Ask(ctx context.Context) error {
 	}
 
 	answers.Stack = stack
-	if stack != models.GenericStack {
-		var runtime models.Runtime
-		switch stack {
-		case models.Django:
-			runtime = models.Python
-		case models.Laravel:
-			runtime = models.PHP
-		case models.NextJS:
-			runtime = models.NodeJS
-		}
-
-		answers.Type.Runtime = runtime
-	}
 
 	return nil
 }

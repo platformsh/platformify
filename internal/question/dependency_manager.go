@@ -21,6 +21,10 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if answers.DependencyManager.String() != "" {
+		// Skip the step
+		return nil
+	}
 
 	switch answers.Type.Runtime {
 	case models.Python:

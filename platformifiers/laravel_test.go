@@ -19,6 +19,11 @@ func TestLaravelPlatformifier_Platformify(t *testing.T) {
 		wantErr bool
 	}{
 		{
+			name:    "when the stack is empty",
+			fields:  fields{ui: &UserInput{Stack: ""}},
+			wantErr: true,
+		},
+		{
 			"when the stack is wrong",
 			fields{ui: &UserInput{Stack: "wrong"}},
 			args{ctx: nil}, true,

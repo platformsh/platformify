@@ -15,24 +15,27 @@ func (q *ListenInterface) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-
-	interfaces := []string{
-		"HTTP",
-		"Unix-socket",
+	if answers.ListenInterface != "" {
+		// Skip the step
+		return nil
 	}
 
 	question := &survey.Select{
 		Message: "Choose interface to listen to:",
-		Options: interfaces,
+		Options: models.ListenInterfaces.AllTitles(),
 	}
 
-	var listen string
-	err := survey.AskOne(question, &listen)
+	var title string
+	err := survey.AskOne(question, &title)
+	if err != nil {
+		return err
+	}
+	iface, err := models.ListenInterfaces.ListenInterfaceByTitle(title)
 	if err != nil {
 		return err
 	}
 
-	answers.ListenInterface = listen
+	answers.ListenInterface = iface
 
 	return nil
 }

@@ -9,6 +9,8 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+
+	"github.com/platformsh/platformify/internal/models"
 )
 
 const nextjsTemplatesPath = "templates/nextjs"
@@ -18,7 +20,7 @@ type NextJSPlatformifier struct {
 }
 
 func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != "next.js" {
+	if p.Stack != models.NextJS.String() {
 		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.Stack)
 	}
 

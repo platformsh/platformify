@@ -15,6 +15,10 @@ func (q *Services) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if len(answers.Services) != 0 {
+		// Skip the step
+		return nil
+	}
 
 	serviceTypes := []string{
 		"chrome-headless",

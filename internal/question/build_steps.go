@@ -15,6 +15,10 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if len(answers.BuildSteps) != 0 {
+		// Skip the step
+		return nil
+	}
 
 	for {
 		var question survey.Prompt

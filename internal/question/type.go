@@ -15,8 +15,20 @@ func (q *Type) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if answers.Type.String() != "" {
+		// Skip the step
+		return nil
+	}
 
-	if answers.Type.Runtime.String() == "" {
+	var runtime models.Runtime
+	switch answers.Stack {
+	case models.Django:
+		runtime = models.Python
+	case models.Laravel:
+		runtime = models.PHP
+	case models.NextJS:
+		runtime = models.NodeJS
+	default:
 		question := &survey.Select{
 			Message: "Choose your PSH type:",
 			Options: models.Runtimes.AllTitles(),
@@ -28,18 +40,12 @@ func (q *Type) Ask(ctx context.Context) error {
 			return err
 		}
 
-		runtime, err := models.Runtimes.RuntimeByTitle(title)
+		runtime, err = models.Runtimes.RuntimeByTitle(title)
 		if err != nil {
 			return err
 		}
-
-		answers.Type.Runtime = runtime
 	}
-
-	runtime, err := models.Runtimes.RuntimeByName(answers.Type.Runtime)
-	if err != nil {
-		return err
-	}
+	answers.Type.Runtime = runtime
 
 	versions, ok := models.Types[runtime]
 	if !ok || len(versions) == 0 {
@@ -53,7 +59,7 @@ func (q *Type) Ask(ctx context.Context) error {
 	}
 
 	var version string
-	err = survey.AskOne(question, &version)
+	err := survey.AskOne(question, &version)
 	if err != nil {
 		return err
 	}

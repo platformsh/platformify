@@ -67,10 +67,10 @@ func (m DepManager) Title() string {
 
 type DepManagerList []DepManager
 
-func (m *DepManagerList) DepManagerByTitle(title string) (DepManager, error) {
-	for i := range *m {
-		if DepManagers[i].Title() == title {
-			return DepManagers[i], nil
+func (m DepManagerList) DepManagerByTitle(title string) (DepManager, error) {
+	for _, manager := range m {
+		if manager.Title() == title {
+			return manager, nil
 		}
 	}
 	return "", fmt.Errorf("dependency manager by title is not found")
@@ -78,8 +78,8 @@ func (m *DepManagerList) DepManagerByTitle(title string) (DepManager, error) {
 
 type DepManagerMap map[Runtime][]DepManager
 
-func (m *DepManagerMap) Titles(runtime Runtime) []string {
-	managers, ok := (*m)[runtime]
+func (m DepManagerMap) Titles(runtime Runtime) []string {
+	managers, ok := m[runtime]
 	if !ok {
 		return nil
 	}

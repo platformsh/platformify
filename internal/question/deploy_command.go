@@ -15,6 +15,10 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if answers.DeployCommand != "" {
+		// Skip the step
+		return nil
+	}
 
 	question := &survey.Input{Message: "Deploy command:"}
 

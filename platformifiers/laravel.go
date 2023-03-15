@@ -9,6 +9,8 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+
+	"github.com/platformsh/platformify/internal/models"
 )
 
 const laravelTemplatesPath = "templates/laravel"
@@ -18,7 +20,7 @@ type LaravelPlatformifier struct {
 }
 
 func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != "laravel" {
+	if p.Stack != models.Laravel.String() {
 		return fmt.Errorf("cannot platformify non-laravel stack: %s", p.Stack)
 	}
 

@@ -15,6 +15,10 @@ func (q *ApplicationRoot) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if answers.ApplicationRoot != "" {
+		// Skip the step
+		return nil
+	}
 
 	question := &survey.Input{Message: "Application root:"}
 

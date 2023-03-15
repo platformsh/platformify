@@ -16,6 +16,10 @@ func (q *Environment) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	if len(answers.Environment) != 0 {
+		// Skip the step
+		return nil
+	}
 
 	for {
 		question := &survey.Confirm{
