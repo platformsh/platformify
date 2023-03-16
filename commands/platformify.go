@@ -34,6 +34,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.ListenInterface{},
 			&question.DeployCommand{},
 			&question.DependencyManager{},
+			&question.Dependency{},
 			&question.Services{},
 		)
 		err := q.AskQuestions(ctx)
