@@ -15,7 +15,9 @@ type: "{{ .Type }}"
 # See https://docs.platform.sh/create-apps/app-reference.html#sizes
 #size:
 
+{{/*
 {{ template "relationships" }}
+*/}}
 
 # The size of the persistent disk of the application (in MB).
 # See https://docs.platform.sh/create-apps/app-reference.html#available-disk-space
@@ -23,6 +25,8 @@ disk: 2048
 
 {{ template "mounts" }}
 
+{{-
+/*
 {{ template "web" }}
 
 {{ template "workers" }}
@@ -37,3 +41,6 @@ disk: 2048
 {{ template "source" }}
 {{ template "runtime" }}
 {{ template "additional_hosts" }}
+
+*/ -}}
+# This is the end of the template!

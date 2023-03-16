@@ -25,6 +25,14 @@ type Service struct {
 	Disk string `json:"disk"`
 }
 
+// Mount contains the configuration for writeable directories in the app.
+type Mount struct {
+	Name       string
+	Source     string
+	SourcePath string
+	Service    string
+}
+
 // UserInput contains the configuration from user input.
 type UserInput struct {
 	Stack           string                            `json:"stack"`
@@ -41,8 +49,31 @@ type UserInput struct {
 	Services        []Service
 }
 
+type PshConfig struct {
+	appComments   string
+	appName       string
+	appType       string
+	appSize       string
+	relationships map[string]string
+	mounts        []Mount
+	// web
+	// workers
+	// timezone
+	// access
+	// variables
+	// firewall
+	// build
+	// dependencies
+	// hooks []Hook
+	// crons
+	// source
+	// runtime
+	// additional_hosts
+}
+
 // A Platformifier handles the business logic of a given runtime to platformify.
 type Platformifier interface {
+	// Platformify maps user input into config values for a platform.sh project.
 	Platformify(ctx context.Context) error
 }
 
