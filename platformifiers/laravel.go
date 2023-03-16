@@ -9,14 +9,18 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+
+	"github.com/platformsh/platformify/internal/models"
 )
+
+const laravelTemplatesPath = "templates/laravel"
 
 type LaravelPlatformifier struct {
 	*UserInput
 }
 
 func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != "laravel" {
+	if p.Stack != models.Laravel.String() {
 		return fmt.Errorf("cannot platformify non-laravel stack: %s", p.Stack)
 	}
 
@@ -25,7 +29,7 @@ func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)
 	}
-	err = fs.WalkDir(templatesFs, "templates/laravel", func(filePath string, d fs.DirEntry, walkErr error) error {
+	err = fs.WalkDir(templatesFs, laravelTemplatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
 		}
@@ -34,7 +38,7 @@ func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
 
-		filePath = path.Join(cwd, filePath[len("templates/laravel"):])
+		filePath = path.Join(cwd, filePath[len(laravelTemplatesPath):])
 		if writeErr := writeTemplate(ctx, filePath, tpl, p.UserInput); writeErr != nil {
 			return fmt.Errorf("could not write template: %w", writeErr)
 		}

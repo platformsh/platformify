@@ -1,12 +1,11 @@
 package commands
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/spf13/cobra"
 
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/question"
 	"github.com/platformsh/platformify/internal/questionnaire"
 	"github.com/platformsh/platformify/platformifiers"
@@ -22,8 +21,8 @@ for it to be deployed to Platform.sh.
 This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		answers := answer.NewAnswers()
-		ctx := answer.ToContext(context.TODO(), answers)
+		answers := models.NewAnswers()
+		ctx := models.ToContext(cmd.Context(), answers)
 		q := questionnaire.New(
 			&question.Stack{},
 			&question.Type{},
@@ -35,6 +34,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.ListenInterface{},
 			&question.DeployCommand{},
 			&question.DependencyManager{},
+			&question.Dependency{},
 			&question.Services{},
 		)
 		err := q.AskQuestions(ctx)
@@ -47,7 +47,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			return fmt.Errorf("creating platformifier failed: %s", err)
 		}
 
-		if err := pfier.Platformify(cmd.Context()); err != nil {
+		if err := pfier.Platformify(ctx); err != nil {
 			return fmt.Errorf("could not platformify project: %w", err)
 		}
 

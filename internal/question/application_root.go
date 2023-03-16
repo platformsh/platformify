@@ -5,14 +5,18 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 )
 
 type ApplicationRoot struct{}
 
 func (q *ApplicationRoot) Ask(ctx context.Context) error {
-	answers, ok := answer.FromContext(ctx)
+	answers, ok := models.FromContext(ctx)
 	if !ok {
+		return nil
+	}
+	if answers.ApplicationRoot != "" {
+		// Skip the step
 		return nil
 	}
 

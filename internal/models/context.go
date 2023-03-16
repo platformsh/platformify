@@ -1,4 +1,4 @@
-package answer
+package models
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 type key int
 
 // answerKey is the key for answers values in Contexts. It is unexported.
-// Clients use answer.ToContext and answer.FromContext instead of using this key directly.
+// Clients use models.ToContext and models.FromContext instead of using this key directly.
 var answerKey key
 
 // ToContext returns a new Context that carries answers value.

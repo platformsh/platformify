@@ -5,17 +5,13 @@ import (
 	"testing"
 )
 
-func TestLaravelPlatformifier_Platformify(t *testing.T) {
+func TestNextJSPlatformifier_Platformify(t *testing.T) {
 	type fields struct {
 		ui *UserInput
-	}
-	type args struct {
-		ctx context.Context
 	}
 	var tests = []struct {
 		name    string
 		fields  fields
-		args    args
 		wantErr bool
 	}{
 		{
@@ -24,17 +20,17 @@ func TestLaravelPlatformifier_Platformify(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			"when the stack is wrong",
-			fields{ui: &UserInput{Stack: "wrong"}},
-			args{ctx: nil}, true,
+			name:    "when the stack is wrong",
+			fields:  fields{ui: &UserInput{Stack: "wrong"}},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &LaravelPlatformifier{
+			p := &NextJSPlatformifier{
 				UserInput: tt.fields.ui,
 			}
-			if err := p.Platformify(tt.args.ctx); (err != nil) != tt.wantErr {
+			if err := p.Platformify(context.Background()); (err != nil) != tt.wantErr {
 				t.Errorf("Platformify() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
