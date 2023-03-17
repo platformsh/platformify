@@ -23,7 +23,7 @@ var templatesFs embed.FS
 // Writer translates data in a platformifier into the file(s) via template.
 type Writer interface {
 	// Override is called if a platformifier needs to use a different template block than the default.
-	Override(tmpl template.Template) (template.Template, error)
+	Override(tmpl *template.Template) (template.Template, error)
 	// Write the template to the user's project.
 	Write(pfier platformifiers.Platformifier) error
 }
@@ -32,7 +32,6 @@ type Writer interface {
 func NewWriter() (Writer, error) {
 	// @todo Decide what flavor of writer we need.
 	var writer Writer
-	writer = &App{}
 
 	for _, name := range blockNames {
 		tmpl, parseErr := Parse("./templates/blocks/", name+".goyaml")
