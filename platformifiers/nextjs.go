@@ -3,7 +3,12 @@ package platformifiers
 import (
 	"context"
 	"fmt"
+	"github.com/Masterminds/sprig/v3"
 	"github.com/platformsh/platformify/internal/models"
+	"io/fs"
+	"os"
+	"path"
+	"text/template"
 )
 
 const nextjsTemplatesPath = "templates/nextjs"

@@ -4,6 +4,9 @@ import (
 	"context"
 	"embed"
 	"fmt"
+	"os"
+	"path"
+	"text/template"
 
 	"github.com/platformsh/platformify/internal/models"
 )
@@ -63,4 +66,22 @@ func GetPlatformifier(answers *models.Answers) (*Platformifier, error) {
 	}
 
 	return pfier, nil
+}
+
+func writeTemplate(ctx context.Context, tplPath string, tpl *template.Template, input any) error {
+	if err := os.MkdirAll(path.Dir(tplPath), os.ModeDir|os.ModePerm); err != nil {
+		return err
+	}
+
+	f, err := os.Create(tplPath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if err := tpl.Execute(f, input); err != nil {
+		return err
+	}
+
+	return nil
 }
