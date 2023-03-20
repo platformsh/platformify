@@ -31,7 +31,7 @@ func (app App) Write(pfier platformifiers.Platformifier) error {
 
 	file, err := os.Create(filename)
 	if err != nil {
-		return fmt.Errorf("could not create '%s' at path '%s'", filename)
+		return fmt.Errorf("could not create '%s' at path '%s'", filename, tmplPath)
 	}
 	defer file.Close()
 

@@ -3,13 +3,6 @@ package platformifiers
 import (
 	"context"
 	"fmt"
-	"io/fs"
-	"os"
-	"path"
-	"text/template"
-
-	"github.com/Masterminds/sprig/v3"
-
 	"github.com/platformsh/platformify/internal/models"
 )
 

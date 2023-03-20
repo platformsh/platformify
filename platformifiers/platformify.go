@@ -2,10 +2,14 @@ package platformifiers
 
 import (
 	"context"
+	"embed"
 	"fmt"
 
 	"github.com/platformsh/platformify/internal/models"
 )
+
+//go:embed templates/**/*
+var templatesFs embed.FS
 
 // UserInput contains the configuration from user input.
 type UserInput struct {

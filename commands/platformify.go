@@ -47,8 +47,8 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			return fmt.Errorf("creating platformifier failed: %s", err)
 		}
 
-		if err := pfier.Platformify(); err != nil {
-			return fmt.Errorf("could not platformify project: %w", err)
+		if err := pfier.Platformify(ctx); err != nil {
+			return fmt.Errorf("could not platformify project: %s", err)
 		}
 
 		return nil
