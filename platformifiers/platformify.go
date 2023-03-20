@@ -31,7 +31,7 @@ type UserInput struct {
 // A PlatformifierInterface describes platformifiers. A Platformifier handles the business logic of a given runtime.
 type PlatformifierInterface interface {
 	// setPshConfig maps answers to config values.
-	setPshConfig(answers *models.Answers) Platformifier
+	setPshConfig(answers *models.Answers) (*Platformifier, error)
 	// GetPshConfig is the getter for the PshConfig for the platformifier.
 	GetPshConfig() PshConfig
 	// getRelationships maps service names from answers to config relationships.
@@ -46,7 +46,7 @@ func GetPlatformifier(answers *models.Answers) (PlatformifierInterface, error) {
 	case "laravel":
 		return NewLaravelPlatformifier(answers)
 	default:
-		return NewPlatformifier(answers), nil
+		return NewPlatformifier(answers)
 	}
 }
 

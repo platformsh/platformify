@@ -47,7 +47,7 @@ func TestLaravelPlatformifier(t *testing.T) {
 			if tt.isNil {
 				assert.Nil(t, pfier)
 			} else {
-				assert.IsType(t, new(LaravelPlatformifier), pfier, "created object is not a LaravelPlatformifier")
+				assert.IsType(t, new(Platformifier), pfier, "created object is not a Platformifier")
 			}
 		})
 	}
