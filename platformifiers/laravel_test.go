@@ -26,12 +26,17 @@ func TestLaravelPlatformifier(t *testing.T) {
 		{
 			"when the stack is empty",
 			fields{&models.Answers{Stack: ""}},
-			args{ctx: nil}, true, true,
+			args{}, true, true,
 		},
 		{
 			"when the stack is wrong",
 			fields{&models.Answers{Stack: "wrong"}},
-			args{ctx: nil}, true, true,
+			args{}, true, true,
+		},
+		{
+			"when a laravel platformifier is created successfully",
+			fields{&models.Answers{Stack: "laravel"}},
+			args{}, false, false,
 		},
 	}
 	for _, tt := range tests {
@@ -43,6 +48,8 @@ func TestLaravelPlatformifier(t *testing.T) {
 			// Don't return a Platformifier if there's an error.
 			if tt.isNil {
 				assert.Nil(t, pfier)
+			} else {
+				assert.IsType(t, new(LaravelPlatformifier), pfier, "created object is not a LaravelPlatformifier")
 			}
 		})
 	}

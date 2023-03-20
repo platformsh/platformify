@@ -59,7 +59,7 @@ func NewPlatformifier(answers *models.Answers) *Platformifier {
 
 // setPshConfig maps answers to config values.
 func (pfier Platformifier) setPshConfig(answers *models.Answers) Platformifier {
-	relationships := pfier.Relationships(answers)
+	relationships := pfier.getRelationships(answers)
 
 	config := PshConfig{
 		appName:       answers.Name,
@@ -76,7 +76,7 @@ func (pfier Platformifier) GetPshConfig() PshConfig {
 }
 
 // Relationships returns a map of service names to their relationship names.
-func (pfier Platformifier) Relationships(answers *models.Answers) map[string]string {
+func (pfier Platformifier) getRelationships(answers *models.Answers) map[string]string {
 	relationships := make(map[string]string)
 	for _, service := range answers.Services {
 		endpoint := strings.Split(service.Type.Name, ":")[0]
@@ -85,7 +85,7 @@ func (pfier Platformifier) Relationships(answers *models.Answers) map[string]str
 	return relationships
 }
 
-func (pfier Platformifier) Platformify() interface{} {
+func (pfier Platformifier) Platformify() error {
 	// Create template writer(s).
 	// Write the files.
 	return nil

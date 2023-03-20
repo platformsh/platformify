@@ -1,7 +1,6 @@
 package platformifiers
 
 import (
-	"context"
 	"embed"
 	"os"
 	"path"
@@ -34,16 +33,15 @@ type PlatformifierInterface interface {
 	// setPshConfig maps answers to config values.
 	setPshConfig(answers *models.Answers) Platformifier
 	// GetPshConfig is the getter for the PshConfig for the platformifier.
-	getPshConfig() PshConfig
+	GetPshConfig() PshConfig
 	// getRelationships maps service names from answers to config relationships.
-	getRelationships(models.Answers) map[string]string
-	createWriters()
+	getRelationships(*models.Answers) map[string]string
 	// Platformify exports the configuration to yaml files for the user's project.
-	Platformify(ctx context.Context) error
+	Platformify() error
 }
 
 // GetPlatformifier is a Platformifier factory creating the appropriate instance based on Answers.
-func GetPlatformifier(answers *models.Answers) (*Platformifier, error) {
+func GetPlatformifier(answers *models.Answers) (PlatformifierInterface, error) {
 	switch answers.Stack {
 	case "laravel":
 		return NewLaravelPlatformifier(answers)
