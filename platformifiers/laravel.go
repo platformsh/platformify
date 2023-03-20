@@ -2,10 +2,9 @@ package platformifiers
 
 import (
 	"fmt"
+
 	"github.com/platformsh/platformify/internal/models"
 )
-
-const laravelTemplatesPath = "templates/laravel"
 
 type LaravelPlatformifier struct {
 	Platformifier

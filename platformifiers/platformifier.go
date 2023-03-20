@@ -1,13 +1,11 @@
 package platformifiers
 
 import (
-	"context"
 	"fmt"
-	"github.com/platformsh/platformify/internal/models"
 	"strings"
-)
 
-var stack = "general"
+	"github.com/platformsh/platformify/internal/models"
+)
 
 // AppComments are comments to add to the top of .platform.app.yaml.
 type AppComments string
@@ -30,9 +28,9 @@ type Mount struct {
 type PshConfig struct {
 	appName string `yaml:"name"`
 	appType string `yaml:"type"`
-	//appSize       string            `yaml:"size"`
+	// appSize       string            `yaml:"size"`
 	relationships map[string]string `yaml:"relationships"`
-	//mounts        []Mount           `yaml:"mounts"`
+	// mounts        []Mount           `yaml:"mounts"`
 	// web
 	// workers
 	// timezone
@@ -61,7 +59,6 @@ func NewPlatformifier(answers *models.Answers) *Platformifier {
 
 // setPshConfig maps answers to config values.
 func (pfier Platformifier) setPshConfig(answers *models.Answers) Platformifier {
-
 	relationships := pfier.Relationships(answers)
 
 	config := PshConfig{
@@ -72,7 +69,6 @@ func (pfier Platformifier) setPshConfig(answers *models.Answers) Platformifier {
 	pfier.PshConfig = config
 
 	return pfier
-
 }
 
 func (pfier Platformifier) GetPshConfig() PshConfig {
@@ -89,7 +85,7 @@ func (pfier Platformifier) Relationships(answers *models.Answers) map[string]str
 	return relationships
 }
 
-func (pfier Platformifier) Platformify(ctx context.Context) interface{} {
+func (pfier Platformifier) Platformify() interface{} {
 	// Create template writer(s).
 	// Write the files.
 	return nil

@@ -1,7 +1,6 @@
 package platformifiers
 
 import (
-	"context"
 	"testing"
 )
 
@@ -30,7 +29,7 @@ func TestNextJSPlatformifier_Platformify(t *testing.T) {
 			p := &NextJSPlatformifier{
 				UserInput: tt.fields.ui,
 			}
-			if err := p.Platformify(context.Background()); (err != nil) != tt.wantErr {
+			if err := p.Platformify(); (err != nil) != tt.wantErr {
 				t.Errorf("Platformify() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

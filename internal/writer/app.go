@@ -2,9 +2,10 @@ package writer
 
 import (
 	"fmt"
-	"github.com/platformsh/platformify/platformifiers"
 	"os"
 	"text/template"
+
+	"github.com/platformsh/platformify/platformifiers"
 )
 
 const filename = ".platform.app.yaml"
@@ -15,7 +16,6 @@ var blockNames = []string{"appComments", "mounts"}
 
 // App is the main template writer which writes to .dot_platform.app.yaml.
 type App struct {
-	name string
 }
 
 func (app App) Override(tmpl *template.Template) (*template.Template, error) {
@@ -24,11 +24,6 @@ func (app App) Override(tmpl *template.Template) (*template.Template, error) {
 }
 
 func (app App) Write(pfier platformifiers.Platformifier) error {
-	//cwd, err := os.Getwd()
-	//if err != nil {
-	//	return fmt.Errorf("could not get current working directory: %w", err)
-	//}
-
 	file, err := os.Create(filename)
 	if err != nil {
 		return fmt.Errorf("could not create '%s' at path '%s'", filename, tmplPath)
@@ -36,7 +31,7 @@ func (app App) Write(pfier platformifiers.Platformifier) error {
 	defer file.Close()
 
 	// Parse the template.
-	tmpl, err := Parse(tmplPath, tmplName)
+	tmpl, err := Parse(tmplPath + tmplName)
 	if err != nil {
 		return fmt.Errorf("parse error: %s", err)
 	}
@@ -51,6 +46,5 @@ func (app App) Write(pfier platformifiers.Platformifier) error {
 	if err = tmpl.Execute(file, pfier.GetPshConfig()); err != nil {
 		return fmt.Errorf("could not write file: %s", filename)
 	}
-
 	return file.Close()
 }

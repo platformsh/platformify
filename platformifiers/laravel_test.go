@@ -2,9 +2,10 @@ package platformifiers
 
 import (
 	"context"
+	"testing"
+
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestLaravelPlatformifier(t *testing.T) {
@@ -38,6 +39,7 @@ func TestLaravelPlatformifier(t *testing.T) {
 			if err != nil && !tt.wantErr {
 				t.Errorf("NewLaravelPlatformifier error = #{err}, wantErr #{tt.wantErr}")
 			}
+			// Don't return a Platformifier if there's an error.
 			if tt.isNil {
 				assert.Nil(t, pfier)
 			}

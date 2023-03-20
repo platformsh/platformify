@@ -3,7 +3,6 @@ package platformifiers
 import (
 	"context"
 	"embed"
-	"fmt"
 	"os"
 	"path"
 	"text/template"
@@ -54,21 +53,15 @@ func GetPlatformifier(answers *models.Answers) (*Platformifier, error) {
 		})
 	}
 
-	var pfier *Platformifier
 	switch answers.Stack {
 	case "laravel":
-		pfier, err := NewLaravelPlatformifier(answers)
-		if err != nil {
-			return pfier, fmt.Errorf("could not create platformifier: %s", answers.Stack)
-		}
+		return NewLaravelPlatformifier(answers)
 	default:
-		pfier = NewPlatformifier(answers)
+		return NewPlatformifier(answers), nil
 	}
-
-	return pfier, nil
 }
 
-func writeTemplate(ctx context.Context, tplPath string, tpl *template.Template, input any) error {
+func writeTemplate(tplPath string, tpl *template.Template, input any) error {
 	if err := os.MkdirAll(path.Dir(tplPath), os.ModeDir|os.ModePerm); err != nil {
 		return err
 	}
@@ -79,9 +72,5 @@ func writeTemplate(ctx context.Context, tplPath string, tpl *template.Template, 
 	}
 	defer f.Close()
 
-	if err := tpl.Execute(f, input); err != nil {
-		return err
-	}
-
-	return nil
+	return tpl.Execute(f, input)
 }

@@ -1,14 +1,14 @@
 package platformifiers
 
 import (
-	"context"
 	"fmt"
-	"github.com/Masterminds/sprig/v3"
-	"github.com/platformsh/platformify/internal/models"
 	"io/fs"
 	"os"
 	"path"
 	"text/template"
+
+	"github.com/Masterminds/sprig/v3"
+	"github.com/platformsh/platformify/internal/models"
 )
 
 const nextjsTemplatesPath = "templates/nextjs"
@@ -17,7 +17,7 @@ type NextJSPlatformifier struct {
 	*UserInput
 }
 
-func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
+func (p *NextJSPlatformifier) Platformify() error {
 	if p.Stack != models.NextJS.String() {
 		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.Stack)
 	}
@@ -37,14 +37,14 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 		}
 
 		filePath = path.Join(cwd, filePath[len(nextjsTemplatesPath):])
-		if er := writeTemplate(ctx, filePath, tpl, p.UserInput); er != nil {
+		if er := writeTemplate(filePath, tpl, p.UserInput); er != nil {
 			return fmt.Errorf("could not write template: %w", er)
 		}
 		return nil
 	})
+
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

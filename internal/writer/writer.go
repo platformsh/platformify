@@ -4,10 +4,11 @@ package writer
 import (
 	"embed"
 	"fmt"
-	"github.com/platformsh/platformify/platformifiers"
 	"log"
 	"os"
 	"text/template"
+
+	"github.com/platformsh/platformify/platformifiers"
 )
 
 type Block struct {
@@ -34,7 +35,7 @@ func NewWriter() (Writer, error) {
 	var writer Writer
 
 	for _, name := range blockNames {
-		tmpl, parseErr := Parse("./templates/blocks/", name+".goyaml")
+		tmpl, parseErr := Parse("./templates/blocks/#{name}.goyaml")
 		if parseErr != nil {
 			log.Fatal(fmt.Errorf("could not parse %s block template: %v", name, parseErr))
 		}
@@ -44,17 +45,15 @@ func NewWriter() (Writer, error) {
 	return writer, nil
 }
 
-func Parse(tmplPath string, tmplName string) (*template.Template, error) {
+func Parse(tmplFilePath string) (*template.Template, error) {
 	cwd, wdErr := os.Getwd()
 	if wdErr != nil {
 		log.Fatal(fmt.Errorf("could not get current working directory: %w", wdErr))
 	}
-	tplFile := cwd + tmplPath + tmplName
 
-	tmpl, parseErr := template.ParseFS(templatesFs, tplFile)
+	tmpl, parseErr := template.ParseFS(templatesFs, cwd+tmplFilePath)
 	if parseErr != nil {
-		log.Fatal(fmt.Errorf("could not parse %s template: %w", filename, parseErr))
+		return nil, fmt.Errorf("could not parse %s template: %w", filename, parseErr)
 	}
-
 	return tmpl, nil
 }
