@@ -81,7 +81,7 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		DeployCommand:     answers.DeployCommand,
 		Locations: map[string]map[string]interface{}{
 			"/": {
-				"passthrough": true,
+				"passthru": true,
 			},
 		},
 		Services: services,
