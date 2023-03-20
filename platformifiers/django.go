@@ -10,6 +10,8 @@ import (
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
+
+	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
 
@@ -23,7 +25,7 @@ type DjangoPlatformifier struct {
 }
 
 func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != "django" {
+	if p.Stack != models.Django.String() {
 		return fmt.Errorf("cannot platformify non-django stack: %s", p.Stack)
 	}
 
@@ -60,7 +62,16 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 		if parseErr != nil {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
-		return writeTemplate(ctx, pshSettingsPath, tpl, p.UserInput)
+		if err := writeTemplate(ctx, pshSettingsPath, tpl, p.UserInput); err != nil {
+			return err
+		}
+
+		fmt.Printf(
+			"We have created a %s file for you. Please add the following line to your %s file:\n",
+			settingsPshPyFile,
+			settingsPyFile,
+		)
+		fmt.Println("    from .settings_psh import *")
 	}
 
 	return nil

@@ -12,8 +12,23 @@ import (
 	"github.com/platformsh/platformify/internal/models"
 )
 
-//go:embed templates/**/*
-var templatesFs embed.FS
+var (
+	//go:embed templates/**/*
+	templatesFs embed.FS
+	databases   = []string{
+		"mariadb",
+		"mongodb",
+		"mongodb-enterprise",
+		"mysql",
+		"oracle-mysql",
+		"postgresql",
+	}
+	caches = []string{
+		"redis",
+		"redis-persistent",
+		"memcached",
+	}
+)
 
 // Service contains the configuration for a service needed by the application.
 type Service struct {
@@ -78,7 +93,7 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		return &LaravelPlatformifier{UserInput: input}, nil
 	case models.NextJS:
 		return &NextJSPlatformifier{UserInput: input}, nil
-	case "django":
+	case models.Django:
 		return &DjangoPlatformifier{UserInput: input}, nil
 	default:
 		return &GenericPlatformifier{UserInput: input}, nil
@@ -93,6 +108,32 @@ func (ui *UserInput) Relationships() map[string]string {
 		relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
 	}
 	return relationships
+}
+
+// Database returns the first service that is a database.
+func (ui *UserInput) Database() string {
+	for _, service := range ui.Services {
+		for _, db := range databases {
+			if strings.Contains(service.Type, db) {
+				return service.Name
+			}
+		}
+	}
+
+	return ""
+}
+
+// Cache returns the first service that is a database.
+func (ui *UserInput) Cache() string {
+	for _, service := range ui.Services {
+		for _, cache := range caches {
+			if strings.Contains(service.Type, cache) {
+				return service.Name
+			}
+		}
+	}
+
+	return ""
 }
 
 func writeTemplate(_ context.Context, tplPath string, tpl *template.Template, input any) error {
