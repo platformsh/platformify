@@ -44,15 +44,6 @@ type PlatformifierInterface interface {
 
 // GetPlatformifier is a Platformifier factory creating the appropriate instance based on Answers.
 func GetPlatformifier(answers *models.Answers) (*Platformifier, error) {
-	services := make([]Service, 0)
-	for _, service := range answers.Services {
-		services = append(services, Service{
-			Name: service.Name,
-			Type: service.Type.String(),
-			Disk: service.Disk,
-		})
-	}
-
 	switch answers.Stack {
 	case "laravel":
 		return NewLaravelPlatformifier(answers)
