@@ -1,7 +1,6 @@
 package platformifiers
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/platformsh/platformify/internal/models"
@@ -17,10 +16,10 @@ type PlatformifierInterface interface {
 	getRelationships(models.Answers) map[string]string
 	createWriters()
 	// Platformify exports the configuration to yaml files for the user's project.
-	Platformify(ctx context.Context) error
+	Platformify() error
 }
 
-// GetPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
+// GetPlatformifier is a Platformifier factory creating the appropriate instance based on Answers.
 func GetPlatformifier(answers *models.Answers) (*Platformifier, error) {
 	services := make([]Service, 0)
 	for _, service := range answers.Services {

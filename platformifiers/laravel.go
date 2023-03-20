@@ -13,7 +13,7 @@ type LaravelPlatformifier struct {
 
 func NewLaravelPlatformifier(answers *models.Answers) (*Platformifier, error) {
 	if answers.Stack != "laravel" {
-		return nil, fmt.Errorf("cannot platformify non-laravel stack: %s", answers.Stack)
+		return nil, fmt.Errorf("cannot platformify non-laravel stack: %v", answers.Stack)
 	}
 
 	pfier := &Platformifier{}

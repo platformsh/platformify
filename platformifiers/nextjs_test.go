@@ -2,12 +2,13 @@ package platformifiers
 
 import (
 	"context"
+	"github.com/platformsh/platformify/internal/models"
 	"testing"
 )
 
 func TestNextJSPlatformifier_Platformify(t *testing.T) {
 	type fields struct {
-		ui *UserInput
+		answers *models.Answers
 	}
 	var tests = []struct {
 		name    string
@@ -16,19 +17,19 @@ func TestNextJSPlatformifier_Platformify(t *testing.T) {
 	}{
 		{
 			name:    "when the stack is empty",
-			fields:  fields{ui: &UserInput{Stack: ""}},
+			fields:  fields{&models.Answers{Stack: ""}},
 			wantErr: true,
 		},
 		{
 			name:    "when the stack is wrong",
-			fields:  fields{ui: &UserInput{Stack: "wrong"}},
+			fields:  fields{&models.Answers{Stack: "wrong"}},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &NextJSPlatformifier{
-				UserInput: tt.fields.ui,
+				UserInput: tt.fields.answers,
 			}
 			if err := p.Platformify(context.Background()); (err != nil) != tt.wantErr {
 				t.Errorf("Platformify() error = %v, wantErr %v", err, tt.wantErr)
