@@ -3,7 +3,7 @@ package platformifiers
 import (
 	"context"
 	"fmt"
-	"github.com/platformsh/platformify/internal/answer"
+	"github.com/platformsh/platformify/internal/models"
 	"strings"
 )
 
@@ -53,14 +53,14 @@ type Platformifier struct {
 	PshConfig
 }
 
-func NewPlatformifier(answers *answer.Answers) *Platformifier {
+func NewPlatformifier(answers *models.Answers) *Platformifier {
 	pfier := &Platformifier{}
 	pfier.setPshConfig(answers)
 	return pfier
 }
 
 // setPshConfig maps answers to config values.
-func (pfier Platformifier) setPshConfig(answers *answer.Answers) Platformifier {
+func (pfier Platformifier) setPshConfig(answers *models.Answers) Platformifier {
 
 	relationships := pfier.Relationships(answers)
 
@@ -80,7 +80,7 @@ func (pfier Platformifier) GetPshConfig() PshConfig {
 }
 
 // Relationships returns a map of service names to their relationship names.
-func (pfier Platformifier) Relationships(answers *answer.Answers) map[string]string {
+func (pfier Platformifier) Relationships(answers *models.Answers) map[string]string {
 	relationships := make(map[string]string)
 	for _, service := range answers.Services {
 		endpoint := strings.Split(service.Type.Name, ":")[0]
