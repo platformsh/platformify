@@ -17,8 +17,6 @@ var (
 	templatesFs embed.FS
 	databases   = []string{
 		"mariadb",
-		"mongodb",
-		"mongodb-enterprise",
 		"mysql",
 		"oracle-mysql",
 		"postgresql",

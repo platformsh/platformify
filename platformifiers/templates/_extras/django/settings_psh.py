@@ -54,21 +54,24 @@ if os.getenv("PLATFORM_APPLICATION_NAME"):
         platform_relationships = decode(os.getenv("PLATFORM_RELATIONSHIPS"))
         if PLATFORMSH_DB_RELATIONSHIP in platform_relationships:
             db_settings = platform_relationships[PLATFORMSH_DB_RELATIONSHIP][0]
-            engine = "django.db.backends.postgresql"
+            engine = None
             if (
                 "mariadb" in db_settings["type"]
                 or "mysql" in db_settings["type"]
                 or "oracle-mysql" in db_settings["type"]
             ):
                 engine = "django.db.backends.mysql"
+            elif "postgresql" in db_settings["type"]:
+                engine = "django.db.backends.postgresql"
 
-            DATABASES = {
-                "default": {
-                    "ENGINE": engine,
-                    "NAME": db_settings["path"],
-                    "USER": db_settings["username"],
-                    "PASSWORD": db_settings["password"],
-                    "HOST": db_settings["host"],
-                    "PORT": db_settings["port"],
-                },
-            }
+            if engine:
+                DATABASES = {
+                    "default": {
+                        "ENGINE": engine,
+                        "NAME": db_settings["path"],
+                        "USER": db_settings["username"],
+                        "PASSWORD": db_settings["password"],
+                        "HOST": db_settings["host"],
+                        "PORT": db_settings["port"],
+                    },
+                }

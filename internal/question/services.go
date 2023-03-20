@@ -2,6 +2,7 @@ package question
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -22,13 +23,10 @@ func (q *Services) Ask(ctx context.Context) error {
 
 	serviceTypes := []string{
 		"chrome-headless",
-		"elasticsearch",
 		"influxdb",
 		"kafka",
 		"mariadb",
 		"memcached",
-		"mongodb",
-		"mongodb-enterprise",
 		"mysql",
 		"network-storage",
 		"opensearch",
@@ -50,42 +48,30 @@ func (q *Services) Ask(ctx context.Context) error {
 	}
 
 	for {
-		var addService = true
-		var question survey.Prompt
-		question = &survey.Confirm{
-			Message: "Would you like to add a service?",
-			Default: true,
+		nameQuestion := &survey.Input{Message: "Add a service (leave blank to skip):"}
+		if len(answers.Services) > 0 {
+			nameQuestion.Message = "Add another service (leave blank to skip):"
 		}
-
-		err := survey.AskOne(question, &addService)
-		if err != nil {
-			return err
-		}
-
-		if !addService {
-			break
-		}
-
-		question = &survey.Input{Message: "Service name:"}
-
 		var serviceName string
-		err = survey.AskOne(question, &serviceName)
-		if err != nil {
+		if err := survey.AskOne(nameQuestion, &serviceName); err != nil {
 			return err
 		}
 
-		question = &survey.Select{
+		if serviceName == "" {
+			return nil
+		}
+
+		typeQuestion := &survey.Select{
 			Message: "Choose service type:",
 			Options: serviceTypes,
 		}
-
 		var serviceTypeName string
-		err = survey.AskOne(question, &serviceTypeName)
-		if err != nil {
+		if err := survey.AskOne(typeQuestion, &serviceTypeName); err != nil {
 			return err
 		}
 
-		question = nil
+		var question *survey.Select
+		persistent := true
 		switch serviceTypeName {
 		case "chrome-headless":
 			question = &survey.Select{
@@ -95,7 +81,7 @@ func (q *Services) Ask(ctx context.Context) error {
 				},
 				Default: "95",
 			}
-		case "elasticsearch": // no versions
+			persistent = false
 		case "influxdb": // only one version
 			question = &survey.Select{
 				Message: "Choose InfluxDB version:",
@@ -128,15 +114,7 @@ func (q *Services) Ask(ctx context.Context) error {
 				},
 				Default: "1.6",
 			}
-		case "mongodb": // no versions
-		case "mongodb-enterprise":
-			question = &survey.Select{
-				Message: "Choose MongoDB version:",
-				Options: []string{
-					"5.0", "4.4", "4.2",
-				},
-				Default: "5.0",
-			}
+			persistent = false
 		case "mysql":
 			question = &survey.Select{
 				Message: "Choose MariaDB/MySQL version:",
@@ -193,6 +171,7 @@ func (q *Services) Ask(ctx context.Context) error {
 				},
 				Default: "7.0",
 			}
+			persistent = false
 		case "redis-persistent":
 			question = &survey.Select{
 				Message: "Choose Persistent Redis version:",
@@ -225,26 +204,26 @@ func (q *Services) Ask(ctx context.Context) error {
 				},
 				Default: "1.12",
 			}
+		default:
+			return fmt.Errorf("unknown service type: %s", serviceTypeName)
 		}
 
 		var serviceTypeVersion string
-		if question != nil {
-			err = survey.AskOne(question, &serviceTypeVersion)
-			if err != nil {
-				return err
-			}
-		}
-
-		question = &survey.Select{
-			Message: "Choose service disk space:",
-			Options: serviceDisks,
-			Default: "1024",
+		if err := survey.AskOne(question, &serviceTypeVersion); err != nil {
+			return err
 		}
 
 		var serviceDisk string
-		err = survey.AskOne(question, &serviceDisk)
-		if err != nil {
-			return err
+		if persistent {
+			question = &survey.Select{
+				Message: "Choose service disk space:",
+				Options: serviceDisks,
+				Default: "1024",
+			}
+
+			if err := survey.AskOne(question, &serviceDisk); err != nil {
+				return err
+			}
 		}
 
 		answers.Services = append(answers.Services, models.Service{
@@ -256,6 +235,4 @@ func (q *Services) Ask(ctx context.Context) error {
 			Disk: serviceDisk,
 		})
 	}
-
-	return nil
 }
