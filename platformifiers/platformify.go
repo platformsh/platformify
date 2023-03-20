@@ -24,18 +24,19 @@ type Service struct {
 
 // UserInput contains the configuration from user input.
 type UserInput struct {
-	Stack           string                            `json:"stack"`
-	Root            string                            `json:"root"`
-	ApplicationRoot string                            `json:"application_root"`
-	Name            string                            `json:"name"`
-	Type            string                            `json:"type"`
-	Environment     map[string]string                 `json:"environment"`
-	BuildSteps      []string                          `json:"build_steps"`
-	WebCommand      string                            `json:"web_command"`
-	ListenInterface string                            `json:"listen_interface"`
-	DeployCommand   string                            `json:"deploy_command"`
-	Locations       map[string]map[string]interface{} `json:"locations"`
-	Services        []Service
+	Stack             string                            `json:"stack"`
+	Root              string                            `json:"root"`
+	ApplicationRoot   string                            `json:"application_root"`
+	Name              string                            `json:"name"`
+	Type              string                            `json:"type"`
+	Environment       map[string]string                 `json:"environment"`
+	BuildSteps        []string                          `json:"build_steps"`
+	WebCommand        string                            `json:"web_command"`
+	ListenInterface   string                            `json:"listen_interface"`
+	DeployCommand     string                            `json:"deploy_command"`
+	DependencyManager string                            `json:"dependency_manager"`
+	Locations         map[string]map[string]interface{} `json:"locations"`
+	Services          []Service
 }
 
 // A Platformifier handles the business logic of a given runtime to platformify.
@@ -54,16 +55,17 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		})
 	}
 	input := &UserInput{
-		Stack:           answers.Stack.String(),
-		Root:            "",
-		ApplicationRoot: answers.ApplicationRoot,
-		Name:            answers.Name,
-		Type:            answers.Type.String(),
-		Environment:     answers.Environment,
-		BuildSteps:      answers.BuildSteps,
-		WebCommand:      answers.WebCommand,
-		ListenInterface: answers.ListenInterface.String(),
-		DeployCommand:   answers.DeployCommand,
+		Stack:             answers.Stack.String(),
+		Root:              "",
+		ApplicationRoot:   answers.ApplicationRoot,
+		Name:              answers.Name,
+		Type:              answers.Type.String(),
+		Environment:       answers.Environment,
+		BuildSteps:        answers.BuildSteps,
+		WebCommand:        answers.WebCommand,
+		ListenInterface:   answers.ListenInterface.String(),
+		DependencyManager: answers.DependencyManager.String(),
+		DeployCommand:     answers.DeployCommand,
 		Locations: map[string]map[string]interface{}{
 			"/": {
 				"passthrough": true,
@@ -71,17 +73,16 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		},
 		Services: services,
 	}
-	var pfier Platformifier
 	switch answers.Stack {
 	case models.Laravel:
-		pfier = &LaravelPlatformifier{UserInput: input}
+		return &LaravelPlatformifier{UserInput: input}, nil
 	case models.NextJS:
-		pfier = &NextJSPlatformifier{UserInput: input}
+		return &NextJSPlatformifier{UserInput: input}, nil
+	case "django":
+		return &DjangoPlatformifier{UserInput: input}, nil
 	default:
-		pfier = &GenericPlatformifier{UserInput: input}
+		return &GenericPlatformifier{UserInput: input}, nil
 	}
-
-	return pfier, nil
 }
 
 // Relationships returns a map of service names to their relationship names.
