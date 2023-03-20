@@ -94,7 +94,7 @@ func (ui *UserInput) Relationships() map[string]string {
 	return relationships
 }
 
-func writeTemplate(ctx context.Context, tplPath string, tpl *template.Template, input any) error {
+func writeTemplate(_ context.Context, tplPath string, tpl *template.Template, input any) error {
 	if err := os.MkdirAll(path.Dir(tplPath), os.ModeDir|os.ModePerm); err != nil {
 		return err
 	}
@@ -105,9 +105,5 @@ func writeTemplate(ctx context.Context, tplPath string, tpl *template.Template, 
 	}
 	defer f.Close()
 
-	if err := tpl.Execute(f, input); err != nil {
-		return err
-	}
-
-	return nil
+	return tpl.Execute(f, input)
 }
