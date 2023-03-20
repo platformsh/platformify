@@ -1,7 +1,6 @@
 package platformifiers
 
 import (
-	"context"
 	"testing"
 
 	"github.com/platformsh/platformify/internal/models"
@@ -14,7 +13,6 @@ func TestLaravelPlatformifier(t *testing.T) {
 		answers *models.Answers
 	}
 	type args struct {
-		ctx context.Context
 	}
 	var tests = []struct {
 		name    string
