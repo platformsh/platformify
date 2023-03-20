@@ -1,6 +1,7 @@
 package platformifiers
 
 import (
+	"context"
 	"fmt"
 	"github.com/platformsh/platformify/internal/answer"
 	"strings"
@@ -88,7 +89,7 @@ func (pfier Platformifier) Relationships(answers *answer.Answers) map[string]str
 	return relationships
 }
 
-func (pfier Platformifier) Platformify() interface{} {
+func (pfier Platformifier) Platformify(ctx context.Context) interface{} {
 	// Create template writer(s).
 	// Write the files.
 	return nil
