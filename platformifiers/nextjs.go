@@ -7,8 +7,9 @@ import (
 	"path"
 	"text/template"
 
-	"github.com/Masterminds/sprig/v3"
 	"github.com/platformsh/platformify/internal/models"
+
+	"github.com/Masterminds/sprig/v3"
 )
 
 const nextjsTemplatesPath = "templates/nextjs"

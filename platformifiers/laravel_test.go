@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/platformsh/platformify/internal/models"
+
 	"github.com/stretchr/testify/assert"
 )
 
