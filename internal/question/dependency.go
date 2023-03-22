@@ -42,8 +42,7 @@ func (q *Dependency) Ask(ctx context.Context) error {
 			cmd := exec.CommandContext(ctx, command)
 			err := cmd.Run()
 			if err != nil {
-				return nil
-				// return err
+				return err
 			}
 		}
 	default:
