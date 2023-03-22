@@ -20,10 +20,12 @@ for it to be deployed to Platform.sh.
 
 This will create the needed YAML files for both your application and your
 services, choosing from a variety of stacks or simple runtimes.`,
+	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		answers := models.NewAnswers()
 		ctx := models.ToContext(cmd.Context(), answers)
 		q := questionnaire.New(
+			&question.WorkingDirectory{},
 			&question.Stack{},
 			&question.Type{},
 			&question.Name{},
