@@ -3,11 +3,10 @@ package question
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
+	"log"
 	"os/exec"
 	"path"
-	"strings"
 )
 
 type WorkingDirectory struct{}
@@ -19,15 +18,16 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 	cmd.Stderr = &errBuf
 	err := cmd.Run()
 	if err != nil {
-		if strings.Contains(errBuf.String(), "not a git repository") {
-			return fmt.Errorf("current working directory is not a git repository")
-		}
-		return errors.New(errBuf.String())
+		// TODO: print the following log message only when we are in debug mode.
+		log.Println(errBuf.String())
+		return fmt.Errorf("platformify should be run at the root of a Git repository, " +
+			"please change to a Git directory and run the command again")
 	}
 
 	gitRepoAbsPath := path.Dir(outBuf.String())
 	if gitRepoAbsPath != "." {
-		return fmt.Errorf("to run the command, go to the %s directory first", gitRepoAbsPath)
+		return fmt.Errorf("platformify should be run at the root of a Git repository, "+
+			"please change the directory to %s and run the command again", gitRepoAbsPath)
 	}
 	return nil
 }
