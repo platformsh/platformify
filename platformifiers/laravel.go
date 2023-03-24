@@ -10,11 +10,12 @@ type LaravelPlatformifier struct {
 	Platformifier
 }
 
-func NewLaravelPlatformifier(answers *models.Answers) (*Platformifier, error) {
+func NewLaravelPlatformifier(answers *models.Answers) (*LaravelPlatformifier, error) {
 	if answers.Stack != "laravel" {
-		return nil, fmt.Errorf("cannot platformify non-laravel stack: %s", answers.Stack.String())
+		return nil, fmt.Errorf("cannot platformify non-laravel stack: %s", answers.Stack)
 	}
 
-	pfier := &LaravelPlatformifier{Platformifier{}}
-	return pfier.setPshConfig(answers)
+	pfier := &LaravelPlatformifier{}
+	pfier.setPshConfig(answers)
+	return pfier, nil
 }

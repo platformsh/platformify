@@ -50,7 +50,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 		}
 
 		if err := pfier.Platformify(); err != nil {
-			return fmt.Errorf("could not platformify project: %s", err)
+			return fmt.Errorf("could not platformify project: %w", err)
 		}
 
 		return nil

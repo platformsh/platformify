@@ -10,13 +10,6 @@ import (
 // AppComments are comments to add to the top of .platform.app.yaml.
 type AppComments string
 
-// Service contains the configuration for a service needed by the application.
-type Service struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-	Disk string `json:"disk"`
-}
-
 // Mount contains the configuration for writeable directories in the app.
 type Mount struct {
 	Name       string
@@ -25,7 +18,7 @@ type Mount struct {
 	Service    string
 }
 
-type PshConfig struct {
+type PshAppConfig struct {
 	appName string `yaml:"name"`
 	appType string `yaml:"type"`
 	// appSize       string            `yaml:"size"`
@@ -46,40 +39,47 @@ type PshConfig struct {
 	// additional_hosts
 }
 
+type PshConfig struct {
+	AppConfig PshAppConfig
+	// Routes    []models.Route
+	Services []models.Service
+}
+
 // A Platformifier handles the business logic of a given runtime to platformify.
 type Platformifier struct {
 	PshConfig
 }
 
 func NewPlatformifier(answers *models.Answers) (*Platformifier, error) {
-	if answers.Stack.String() == "generic" || answers.Stack.String() == "" {
-		pfier := &Platformifier{}
-		return pfier.setPshConfig(answers)
-	}
-	return nil, fmt.Errorf("cannot platformify stack: %s", answers.Stack.String())
+	pfier := &Platformifier{}
+	pfier.setPshConfig(answers)
+	return pfier, nil
 }
 
 // setPshConfig maps answers to config values.
-func (pfier Platformifier) setPshConfig(answers *models.Answers) (*Platformifier, error) {
+func (pfier *Platformifier) setPshConfig(answers *models.Answers) *Platformifier {
 	relationships := pfier.getRelationships(answers)
 
-	config := PshConfig{
+	appConfig := PshAppConfig{
 		appName:       answers.Name,
 		appType:       answers.Type.String(),
 		relationships: relationships,
 	}
-	pfier.PshConfig = config
 
-	// @todo error handling
-	return &pfier, nil
+	pfier.PshConfig = PshConfig{
+		AppConfig: appConfig,
+		Services:  answers.Services,
+	}
+
+	return pfier
 }
 
-func (pfier Platformifier) GetPshConfig() PshConfig {
+func (pfier *Platformifier) GetPshConfig() PshConfig {
 	return pfier.PshConfig
 }
 
 // Relationships returns a map of service names to their relationship names.
-func (pfier Platformifier) getRelationships(answers *models.Answers) map[string]string {
+func (pfier *Platformifier) getRelationships(answers *models.Answers) map[string]string {
 	relationships := make(map[string]string)
 	for _, service := range answers.Services {
 		endpoint := strings.Split(service.Type.Name, ":")[0]
@@ -88,7 +88,7 @@ func (pfier Platformifier) getRelationships(answers *models.Answers) map[string]
 	return relationships
 }
 
-func (pfier Platformifier) Platformify() error {
+func (pfier *Platformifier) Platformify() error {
 	// Create template writer(s).
 	// Write the files.
 	return nil

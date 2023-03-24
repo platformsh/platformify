@@ -1,9 +1,9 @@
 # Container configuration.
 
-#  A unique name for the app. Must be lowercase alphanumeric characters.
+#   The name of this app. Must be unique within a project.
 name: "{{ .Name }}"
 
-#  The base image to use with a specific app language. Format: runtime:version.
+#   The runtime the application uses.
 type: "{{ .Type }}"
 
 ##########################

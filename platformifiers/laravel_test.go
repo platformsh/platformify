@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestLaravelPlatformifier(t *testing.T) {
+func TestNewLaravelPlatformifier(t *testing.T) {
 	type fields struct {
 		answers *models.Answers
 	}
@@ -19,22 +19,21 @@ func TestLaravelPlatformifier(t *testing.T) {
 		fields  fields
 		args    args
 		wantErr bool
-		isNil   bool
 	}{
 		{
 			"when the stack is empty",
 			fields{&models.Answers{Stack: ""}},
-			args{}, true, true,
+			args{}, true,
 		},
 		{
 			"when the stack is wrong",
 			fields{&models.Answers{Stack: "wrong"}},
-			args{}, true, true,
+			args{}, true,
 		},
 		{
 			"when a laravel platformifier is created successfully",
 			fields{&models.Answers{Stack: "laravel"}},
-			args{}, false, false,
+			args{}, false,
 		},
 	}
 	for _, tt := range tests {
@@ -44,9 +43,10 @@ func TestLaravelPlatformifier(t *testing.T) {
 				t.Errorf("NewLaravelPlatformifier error = #{err}, wantErr #{tt.wantErr}")
 			}
 			// Don't return a Platformifier if there's an error.
-			if tt.isNil {
+			if tt.wantErr {
 				assert.Nil(t, pfier)
 			} else {
+				// Otherwise, make sure it's a Platformifier.
 				assert.IsType(t, new(Platformifier), pfier, "created object is not a Platformifier")
 			}
 		})
