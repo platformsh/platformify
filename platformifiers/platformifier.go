@@ -51,9 +51,11 @@ type Platformifier struct {
 }
 
 func NewPlatformifier(answers *models.Answers) (*Platformifier, error) {
-	pfier := &Platformifier{}
-	pfier.setPshConfig(answers)
-	return pfier, nil
+	if answers.Stack.String() == "generic" || answers.Stack.String() == "" {
+		pfier := &Platformifier{}
+		return pfier.setPshConfig(answers), nil
+	}
+	return nil, fmt.Errorf("cannot platformify stack: %s", answers.Stack.String())
 }
 
 // setPshConfig maps answers to config values.
