@@ -46,8 +46,12 @@ func TestNewLaravelPlatformifier(t *testing.T) {
 			if tt.wantErr {
 				assert.Nil(t, pfier)
 			} else {
-				// Otherwise, make sure it's a Platformifier.
-				assert.IsType(t, new(Platformifier), pfier, "created object is not a Platformifier")
+				// Otherwise, make sure it's a LaravelPlatformifier.
+				assert.IsType(t, new(LaravelPlatformifier), pfier, "created object is not a LaravelPlatformifier")
+				// And ensure it implements the PlatformifierInterface.
+				var inter interface{} = pfier
+				_, pass := inter.(PlatformifierInterface)
+				assert.True(t, pass, "created LaravelPlatformifier but it does not implement PlatformifierInterface")
 			}
 		})
 	}
