@@ -44,12 +44,12 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			return err
 		}
 
-		pfier, err := platformifiers.NewPlatformifier(answers)
+		pfier, err := platformifiers.GetPlatformifier(answers)
 		if err != nil {
 			return fmt.Errorf("creating platformifier failed: %s", err)
 		}
 
-		if err := pfier.Platformify(ctx); err != nil {
+		if err := pfier.Platformify(); err != nil {
 			return fmt.Errorf("could not platformify project: %w", err)
 		}
 

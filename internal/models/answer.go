@@ -19,9 +19,9 @@ type Answers struct {
 }
 
 type Service struct {
-	Name string      `json:"name"`
-	Type ServiceType `json:"type"`
-	Disk string      `json:"disk"`
+	Name string      `json:"name" yaml:"name"`
+	Type ServiceType `json:"type" yaml:"type"`
+	Disk string      `json:"disk" yaml:"disk"`
 }
 
 type RuntimeType struct {

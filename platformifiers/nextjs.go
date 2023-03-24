@@ -1,7 +1,6 @@
 package platformifiers
 
 import (
-	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -16,14 +15,19 @@ import (
 const nextjsTemplatesPath = "templates/nextjs"
 
 type NextJSPlatformifier struct {
-	*UserInput
+	Platformifier
 }
 
-func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != models.NextJS.String() {
-		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.Stack)
+func NewNextJSPlatformifier(answers *models.Answers) (*NextJSPlatformifier, error) {
+	if answers.Stack.String() != models.NextJS.String() {
+		return nil, fmt.Errorf("cannot platformify non-next.js stack: %s", answers.Stack)
 	}
+	pfier := &NextJSPlatformifier{}
+	pfier.setPshConfig(answers)
+	return pfier, nil
+}
 
+func (p *NextJSPlatformifier) Platformify() error {
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -39,7 +43,7 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 		}
 
 		filePath = path.Join(cwd, filePath[len(nextjsTemplatesPath):])
-		if er := writeTemplate(ctx, filePath, tpl, p.UserInput); er != nil {
+		if er := writeTemplate(filePath, tpl, p.PshConfig); er != nil {
 			return fmt.Errorf("could not write template: %w", er)
 		}
 		return nil

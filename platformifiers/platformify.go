@@ -1,12 +1,9 @@
 package platformifiers
 
 import (
-	"context"
 	"embed"
-	"fmt"
 	"os"
 	"path"
-	"strings"
 	"text/template"
 
 	"github.com/platformsh/platformify/internal/models"
@@ -15,86 +12,31 @@ import (
 //go:embed templates/**/*
 var templatesFs embed.FS
 
-// Service contains the configuration for a service needed by the application.
-type Service struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-	Disk string `json:"disk"`
+// A PlatformifierInterface describes platformifiers. A Platformifier handles the business logic of a given runtime.
+type PlatformifierInterface interface {
+	// setPshConfig maps answers to config values.
+	setPshConfig(answers *models.Answers) *Platformifier
+	// GetPshConfig is the getter for the PshConfig for the platformifier.
+	GetPshConfig() PshConfig
+	// getRelationships maps service names from answers to config relationships.
+	getRelationships(answers *models.Answers) map[string]string
+	// Platformify exports the configuration to yaml files for the user's project.
+	Platformify() error
 }
 
-// UserInput contains the configuration from user input.
-type UserInput struct {
-	Stack           string                            `json:"stack"`
-	Root            string                            `json:"root"`
-	ApplicationRoot string                            `json:"application_root"`
-	Name            string                            `json:"name"`
-	Type            string                            `json:"type"`
-	Environment     map[string]string                 `json:"environment"`
-	BuildSteps      []string                          `json:"build_steps"`
-	WebCommand      string                            `json:"web_command"`
-	ListenInterface string                            `json:"listen_interface"`
-	DeployCommand   string                            `json:"deploy_command"`
-	Locations       map[string]map[string]interface{} `json:"locations"`
-	Services        []Service
-}
-
-// A Platformifier handles the business logic of a given runtime to platformify.
-type Platformifier interface {
-	Platformify(ctx context.Context) error
-}
-
-// NewPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
-func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
-	services := make([]Service, 0)
-	for _, service := range answers.Services {
-		services = append(services, Service{
-			Name: service.Name,
-			Type: service.Type.String(),
-			Disk: service.Disk,
-		})
-	}
-	input := &UserInput{
-		Stack:           answers.Stack.String(),
-		Root:            "",
-		ApplicationRoot: answers.ApplicationRoot,
-		Name:            answers.Name,
-		Type:            answers.Type.String(),
-		Environment:     answers.Environment,
-		BuildSteps:      answers.BuildSteps,
-		WebCommand:      answers.WebCommand,
-		ListenInterface: answers.ListenInterface.String(),
-		DeployCommand:   answers.DeployCommand,
-		Locations: map[string]map[string]interface{}{
-			"/": {
-				"passthrough": true,
-			},
-		},
-		Services: services,
-	}
-	var pfier Platformifier
-	switch answers.Stack {
-	case models.Laravel:
-		pfier = &LaravelPlatformifier{UserInput: input}
-	case models.NextJS:
-		pfier = &NextJSPlatformifier{UserInput: input}
+// GetPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
+func GetPlatformifier(answers *models.Answers) (PlatformifierInterface, error) {
+	switch answers.Stack.String() {
+	case models.Laravel.String():
+		return NewLaravelPlatformifier(answers)
+	case models.NextJS.String():
+		return NewNextJSPlatformifier(answers)
 	default:
-		pfier = &GenericPlatformifier{UserInput: input}
+		return NewPlatformifier(answers)
 	}
-
-	return pfier, nil
 }
 
-// Relationships returns a map of service names to their relationship names.
-func (ui *UserInput) Relationships() map[string]string {
-	relationships := make(map[string]string)
-	for _, service := range ui.Services {
-		endpoint := strings.Split(service.Type, ":")[0]
-		relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
-	}
-	return relationships
-}
-
-func writeTemplate(_ context.Context, tplPath string, tpl *template.Template, input any) error {
+func writeTemplate(tplPath string, tpl *template.Template, input any) error {
 	if err := os.MkdirAll(path.Dir(tplPath), os.ModeDir|os.ModePerm); err != nil {
 		return err
 	}

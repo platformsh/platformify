@@ -1,16 +1,18 @@
 package platformifiers
 
 import (
-	"context"
 	"testing"
+
+	"github.com/platformsh/platformify/internal/models"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func TestLaravelPlatformifier_Platformify(t *testing.T) {
+func TestNewLaravelPlatformifier(t *testing.T) {
 	type fields struct {
-		ui *UserInput
+		answers *models.Answers
 	}
 	type args struct {
-		ctx context.Context
 	}
 	var tests = []struct {
 		name    string
@@ -19,23 +21,33 @@ func TestLaravelPlatformifier_Platformify(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "when the stack is empty",
-			fields:  fields{ui: &UserInput{Stack: ""}},
-			wantErr: true,
+			"when the stack is empty",
+			fields{&models.Answers{Stack: ""}},
+			args{}, true,
 		},
 		{
 			"when the stack is wrong",
-			fields{ui: &UserInput{Stack: "wrong"}},
-			args{ctx: nil}, true,
+			fields{&models.Answers{Stack: "wrong"}},
+			args{}, true,
+		},
+		{
+			"when a laravel platformifier is created successfully",
+			fields{&models.Answers{Stack: "laravel"}},
+			args{}, false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &LaravelPlatformifier{
-				UserInput: tt.fields.ui,
+			pfier, err := NewLaravelPlatformifier(tt.fields.answers)
+			if err != nil && !tt.wantErr {
+				t.Errorf("NewLaravelPlatformifier error = #{err}, wantErr #{tt.wantErr}")
 			}
-			if err := p.Platformify(tt.args.ctx); (err != nil) != tt.wantErr {
-				t.Errorf("Platformify() error = %v, wantErr %v", err, tt.wantErr)
+			// Don't return a Platformifier if there's an error.
+			if tt.wantErr {
+				assert.Nil(t, pfier)
+			} else {
+				// Otherwise, make sure it's a Platformifier.
+				assert.IsType(t, new(Platformifier), pfier, "created object is not a Platformifier")
 			}
 		})
 	}
