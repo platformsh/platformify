@@ -1,6 +1,7 @@
 package platformifiers
 
 import (
+	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -27,7 +28,7 @@ func NewNextJSPlatformifier(answers *models.Answers) (*NextJSPlatformifier, erro
 	return pfier, nil
 }
 
-func (p *NextJSPlatformifier) Platformify() error {
+func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {

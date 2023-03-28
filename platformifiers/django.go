@@ -1,6 +1,7 @@
 package platformifiers
 
 import (
+	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -32,7 +33,7 @@ func NewDjangoPlatformifier(answers *models.Answers) (*DjangoPlatformifier, erro
 	return pfier, nil
 }
 
-func (p *DjangoPlatformifier) Platformify() error {
+func (p *DjangoPlatformifier) Platformify(context.Context) error {
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {

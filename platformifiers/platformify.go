@@ -1,6 +1,7 @@
 package platformifiers
 
 import (
+	"context"
 	"embed"
 	"os"
 	"path"
@@ -34,7 +35,7 @@ type PlatformifierInterface interface {
 	// getRelationships maps service names from answers to config relationships.
 	getRelationships(answers *models.Answers) map[string]string
 	// Platformify exports the configuration to yaml files for the user's project.
-	Platformify() error
+	Platformify(ctx context.Context) error
 }
 
 // GetPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.

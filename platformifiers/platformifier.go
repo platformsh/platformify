@@ -1,6 +1,7 @@
 package platformifiers
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -92,7 +93,7 @@ func (pfier *Platformifier) getRelationships(answers *models.Answers) map[string
 	return relationships
 }
 
-func (pfier *Platformifier) Platformify() error {
+func (pfier *Platformifier) Platformify(context.Context) error {
 	// Create template writer(s).
 	// Write the files.
 	return nil
