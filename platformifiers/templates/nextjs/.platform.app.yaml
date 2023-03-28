@@ -6,10 +6,10 @@ name: "{{ .Name }}"
 #   The runtime the application uses.
 type: "{{ .Type }}"
 
-{{ if .Dependencies -}}
 ##########################
 # Dependencies
 
+{{ if .Dependencies -}}
 dependencies:
   {{ range $key, $value := .Dependencies -}}
   {{ $key }}:
@@ -17,6 +17,10 @@ dependencies:
     {{- $key }}: "{{ $value }}"
     {{- end }}
   {{- end }}
+{{ else }}
+# dependencies:
+#   nodejs: # Specify one NPM package per line.
+#     pm2: '^4.5.0'
 {{- end }}
 
 {{ if .Build -}}
@@ -24,6 +28,9 @@ build:
   {{ range $key, $value := .Build }}
   {{- $key }}: {{ $value }}
   {{ end }}
+{{ else }}
+# build:
+#   flavor: none
 {{ end -}}
 
 ##########################
@@ -87,18 +94,19 @@ web:
     #  allow: true
   {{ end }}
 
-{{ if .Disk -}}
 ##########################
 # Disk
 
 # The size of the persistent disk of the application (in MB).
+{{ if .Disk -}}
 disk: {{ .Disk }}
+{{ else }}
+# disk: 128
 {{- end }}
 
-{{ if .Mounts -}}
 ##########################
 # Mounts
-
+{{ if .Mounts -}}
 mounts:
   {{ range $key, $value := .Mounts -}}
     "{{ $key }}":
@@ -106,21 +114,11 @@ mounts:
       {{- $key }}: "{{ $value }}"
       {{ end -}}
   {{- end }}
-{{- end }}
-
-{{ if .SourceOperations -}}
-##########################
-# Source
-
-source:
-  operations:
-    {{ range $key, $value := .SourceOperations -}}
-    {{ $key }}:
-      command: |
-        {{ range $value := $value -}}
-        {{ $value }}
-        {{ end -}}
-    {{- end }}
+{{ else }}
+# mounts:
+#   "DIRECTORY":
+#     source: "SOURCE_LOCATION"
+#     source_path: "SOURCE_PATH_LOCATION"
 {{- end }}
 
 ##########################

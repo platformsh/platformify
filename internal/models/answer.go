@@ -18,7 +18,6 @@ type Answers struct {
 	Dependencies      map[string]map[string]string `json:"dependencies"`
 	Disk              string                       `json:"disk"`
 	Mounts            map[string]map[string]string `json:"mounts"`
-	SourceOperations  map[string][]string          `json:"source_operations"`
 	Build             map[string]string            `json:"build"`
 	Services          []Service                    `json:"services"`
 }

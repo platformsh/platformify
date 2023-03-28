@@ -52,7 +52,6 @@ type UserInput struct {
 	Dependencies      map[string]map[string]string      `json:"dependencies"`
 	Disk              string                            `json:"disk"`
 	Mounts            map[string]map[string]string      `json:"mounts"`
-	SourceOperations  map[string][]string               `json:"source_operations"`
 	Build             map[string]string                 `json:"build"`
 	Services          []Service
 }
@@ -89,12 +88,11 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 				"passthru": true,
 			},
 		},
-		Dependencies:     answers.Dependencies,
-		Build:            answers.Build,
-		Disk:             answers.Disk,
-		Mounts:           answers.Mounts,
-		SourceOperations: answers.SourceOperations,
-		Services:         services,
+		Dependencies: answers.Dependencies,
+		Build:        answers.Build,
+		Disk:         answers.Disk,
+		Mounts:       answers.Mounts,
+		Services:     services,
 	}
 	switch answers.Stack {
 	case models.Laravel:
