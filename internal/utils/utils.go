@@ -4,14 +4,21 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+
+	"golang.org/x/exp/slices"
 )
+
+var skipDirs = []string{
+	"vendor",
+	"node_modules",
+}
 
 // FileExists checks if the file exists
 func FileExists(searchPath, name string) bool {
 	return FindFile(searchPath, name) != ""
 }
 
-// FindFile searches for the file inside the path (non-recursively)
+// FindFile searches for the file inside the path recursively
 // and returns the full path of the file if found
 func FindFile(searchPath, name string) string {
 	var found string
@@ -22,7 +29,11 @@ func FindFile(searchPath, name string) string {
 		}
 
 		if d.IsDir() {
-			return filepath.SkipDir
+			// Skip vendor directories
+			if slices.Contains(skipDirs, d.Name()) {
+				return filepath.SkipDir
+			}
+			return nil
 		}
 
 		if d.Name() == name {
