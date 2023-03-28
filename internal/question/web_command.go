@@ -27,7 +27,8 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 
 	question := &survey.Input{Message: "Web command:"}
 	cwd, _ := os.Getwd()
-	if answers.Stack == models.Django {
+	switch answers.Stack {
+	case models.Django:
 		prefix := ""
 		pythonPath := ""
 		wsgi := "app.wsgi"
@@ -54,6 +55,8 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		} else {
 			question.Default = fmt.Sprintf("%sgunicorn %s -b unix:$UNIX %s --log-file -", prefix, pythonPath, wsgi)
 		}
+	case models.NextJS:
+		question.Default = "npx next start -p $PORT"
 	}
 
 	var webCommand string

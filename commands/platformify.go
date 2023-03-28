@@ -38,6 +38,8 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.WebCommand{},
 			&question.Services{},
 			&question.Dependency{},
+			&question.Mount{},
+			&question.SourceOperation{},
 		)
 		err := q.AskQuestions(ctx)
 		if err != nil {

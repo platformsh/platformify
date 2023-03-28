@@ -20,6 +20,10 @@ func (q *ListenInterface) Ask(ctx context.Context) error {
 		return nil
 	}
 
+	if answers.Stack == models.NextJS {
+		return nil
+	}
+
 	question := &survey.Select{
 		Message: "Choose interface to listen to:",
 		Options: models.ListenInterfaces.AllTitles(),

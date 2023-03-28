@@ -6,21 +6,55 @@ name: "{{ .Name }}"
 #   The runtime the application uses.
 type: "{{ .Type }}"
 
+{{ if .Dependencies -}}
+##########################
+# Dependencies
+
+dependencies:
+  {{ range $key, $value := .Dependencies -}}
+  {{ $key }}:
+    {{ range $key, $value := $value }}
+    {{- $key }}: "{{ $value }}"
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{ if .Build -}}
+build:
+  {{ range $key, $value := .Build }}
+  {{- $key }}: {{ $value }}
+  {{ end }}
+{{ end -}}
+
 ##########################
 # Builds and variables
 
 # Build-time visible variables.
+{{ if .Environment -}}
 variables:
   env:
     {{ range $key, $value := .Environment }}
     {{- $key }}: "{{ $value }}"
     {{ end }}
+{{ else }}
+# variables:
+#   env:
+#     KEY: "value"
+{{- end }}
+
+# The hooks that will be triggered when the package is deployed.
 hooks:
+  # The build hook runs after package manager has been downloaded.
+  # No services are available but the disk is writeable.
   build: |
     set -eux
     {{ range $step := .BuildSteps }}
     {{- $step }}
     {{ end }}
+  # The deploy hook runs after your application has been deployed and started.
+  # Code cannot be modified at this point but the database is available.
+  # The site is not accepting requests while this script runs so keep it
+  # fast.
   deploy: {{ .DeployCommand }}
 
 ##########################
@@ -52,6 +86,42 @@ web:
     #  expires: 1h
     #  allow: true
   {{ end }}
+
+{{ if .Disk -}}
+##########################
+# Disk
+
+# The size of the persistent disk of the application (in MB).
+disk: {{ .Disk }}
+{{- end }}
+
+{{ if .Mounts -}}
+##########################
+# Mounts
+
+mounts:
+  {{ range $key, $value := .Mounts -}}
+    "{{ $key }}":
+      {{ range $key, $value := $value }}
+      {{- $key }}: "{{ $value }}"
+      {{ end -}}
+  {{- end }}
+{{- end }}
+
+{{ if .SourceOperations -}}
+##########################
+# Source
+
+source:
+  operations:
+    {{ range $key, $value := .SourceOperations -}}
+    {{ $key }}:
+      command: |
+        {{ range $value := $value -}}
+        {{ $value }}
+        {{ end -}}
+    {{- end }}
+{{- end }}
 
 ##########################
 # Services

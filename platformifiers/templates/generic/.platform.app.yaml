@@ -10,11 +10,18 @@ type: "{{ .Type }}"
 # Builds and variables
 
 # Build-time visible variables.
+{{ if .Environment -}}
 variables:
   env:
     {{ range $key, $value := .Environment }}
     {{- $key }}: "{{ $value }}"
     {{ end }}
+{{ else }}
+# variables:
+#   env:
+#     KEY: "value"
+{{- end }}
+
 hooks:
   build: |
     set -eux

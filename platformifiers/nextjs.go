@@ -6,6 +6,7 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"path/filepath"
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -13,7 +14,10 @@ import (
 	"github.com/platformsh/platformify/internal/models"
 )
 
-const nextjsTemplatesPath = "templates/nextjs"
+const (
+	nextjsTemplatesPath = "templates/nextjs"
+	handleMountsFile    = "handle_mounts.sh"
+)
 
 type NextJSPlatformifier struct {
 	*UserInput
@@ -47,6 +51,22 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+
+	handleMountsFilePath := filepath.Join(cwd, handleMountsFile)
+	tpl, err := template.New(handleMountsFile).Funcs(sprig.FuncMap()).ParseFS(
+		templatesFs, "templates/_extras/nextjs/handle_mounts.sh",
+	)
+	if err != nil {
+		return fmt.Errorf("could not parse template: %w", err)
+	}
+	if err := writeTemplate(ctx, handleMountsFilePath, tpl, p.UserInput); err != nil {
+		return err
+	}
+
+	fmt.Printf(
+		"We have created a %s file for you.\n",
+		handleMountsFile,
+	)
 
 	return nil
 }

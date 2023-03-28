@@ -39,6 +39,9 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 			}
 			question.Default = fmt.Sprintf("%spython %s migrate", prefix, managePyPath)
 		}
+	} else if answers.Stack == models.NextJS {
+		answers.DeployCommand = "./handle_mounts.sh # Move committed files from temp directory back into mounts."
+		return nil
 	}
 
 	var command string

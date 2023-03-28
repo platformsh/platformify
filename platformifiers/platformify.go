@@ -49,6 +49,11 @@ type UserInput struct {
 	DeployCommand     string                            `json:"deploy_command"`
 	DependencyManager string                            `json:"dependency_manager"`
 	Locations         map[string]map[string]interface{} `json:"locations"`
+	Dependencies      map[string]map[string]string      `json:"dependencies"`
+	Disk              string                            `json:"disk"`
+	Mounts            map[string]map[string]string      `json:"mounts"`
+	SourceOperations  map[string][]string               `json:"source_operations"`
+	Build             map[string]string                 `json:"build"`
 	Services          []Service
 }
 
@@ -59,7 +64,7 @@ type Platformifier interface {
 
 // NewPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
 func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
-	services := make([]Service, 0)
+	services := make([]Service, 0, len(answers.Services))
 	for _, service := range answers.Services {
 		services = append(services, Service{
 			Name: service.Name,
@@ -84,7 +89,12 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 				"passthru": true,
 			},
 		},
-		Services: services,
+		Dependencies:     answers.Dependencies,
+		Build:            answers.Build,
+		Disk:             answers.Disk,
+		Mounts:           answers.Mounts,
+		SourceOperations: answers.SourceOperations,
+		Services:         services,
 	}
 	switch answers.Stack {
 	case models.Laravel:
