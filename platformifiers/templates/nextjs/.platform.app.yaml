@@ -31,7 +31,7 @@ build:
 {{ else }}
 # build:
 #   flavor: none
-{{ end -}}
+{{- end }}
 
 ##########################
 # Builds and variables
@@ -93,33 +93,6 @@ web:
     #  expires: 1h
     #  allow: true
   {{ end }}
-
-##########################
-# Disk
-
-# The size of the persistent disk of the application (in MB).
-{{ if .Disk -}}
-disk: {{ .Disk }}
-{{ else }}
-# disk: 128
-{{- end }}
-
-##########################
-# Mounts
-{{ if .Mounts -}}
-mounts:
-  {{ range $key, $value := .Mounts -}}
-    "{{ $key }}":
-      {{ range $key, $value := $value }}
-      {{- $key }}: "{{ $value }}"
-      {{ end -}}
-  {{- end }}
-{{ else }}
-# mounts:
-#   "DIRECTORY":
-#     source: "SOURCE_LOCATION"
-#     source_path: "SOURCE_PATH_LOCATION"
-{{- end }}
 
 ##########################
 # Services

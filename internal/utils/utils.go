@@ -11,6 +11,7 @@ import (
 var skipDirs = []string{
 	"vendor",
 	"node_modules",
+	".next",
 }
 
 // FileExists checks if the file exists

@@ -50,8 +50,6 @@ type UserInput struct {
 	DependencyManager string                            `json:"dependency_manager"`
 	Locations         map[string]map[string]interface{} `json:"locations"`
 	Dependencies      map[string]map[string]string      `json:"dependencies"`
-	Disk              string                            `json:"disk"`
-	Mounts            map[string]map[string]string      `json:"mounts"`
 	Build             map[string]string                 `json:"build"`
 	Services          []Service
 }
@@ -90,8 +88,6 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		},
 		Dependencies: answers.Dependencies,
 		Build:        answers.Build,
-		Disk:         answers.Disk,
-		Mounts:       answers.Mounts,
 		Services:     services,
 	}
 	switch answers.Stack {

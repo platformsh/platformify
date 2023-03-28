@@ -78,17 +78,11 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				answers.BuildSteps,
 				"yarn",
 				"yarn build",
-				"# Move committed files in soon-to-be mounts into temp directory.",
-				"chmod +x handle_mounts.sh",
-				"./handle_mounts.sh",
 			)
 		case models.Npm:
 			answers.BuildSteps = append(
 				answers.BuildSteps,
 				"npm run build ",
-				"# Move committed files in soon-to-be mounts into temp directory.",
-				"chmod +x handle_mounts.sh",
-				"./handle_mounts.sh",
 			)
 		}
 	}
