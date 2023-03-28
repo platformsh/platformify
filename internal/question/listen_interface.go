@@ -21,6 +21,8 @@ func (q *ListenInterface) Ask(ctx context.Context) error {
 	}
 
 	if answers.Stack == models.NextJS {
+		// Next.js doesn't support Unix-sockets
+		answers.ListenInterface = models.HTTP
 		return nil
 	}
 

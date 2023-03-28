@@ -56,7 +56,9 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			question.Default = fmt.Sprintf("%sgunicorn %s -b unix:$UNIX %s --log-file -", prefix, pythonPath, wsgi)
 		}
 	case models.NextJS:
-		question.Default = "npx next start -p $PORT"
+		if answers.ListenInterface == models.HTTP {
+			question.Default = "npx next start -p $PORT"
+		}
 	}
 
 	var webCommand string
