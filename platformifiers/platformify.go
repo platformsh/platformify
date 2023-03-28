@@ -12,8 +12,21 @@ import (
 	"github.com/platformsh/platformify/internal/models"
 )
 
-//go:embed templates/**/*
-var templatesFs embed.FS
+var (
+	//go:embed templates/**/*
+	templatesFs embed.FS
+	databases   = []string{
+		"mariadb",
+		"mysql",
+		"oracle-mysql",
+		"postgresql",
+	}
+	caches = []string{
+		"redis",
+		"redis-persistent",
+		"memcached",
+	}
+)
 
 // Service contains the configuration for a service needed by the application.
 type Service struct {
@@ -24,18 +37,19 @@ type Service struct {
 
 // UserInput contains the configuration from user input.
 type UserInput struct {
-	Stack           string                            `json:"stack"`
-	Root            string                            `json:"root"`
-	ApplicationRoot string                            `json:"application_root"`
-	Name            string                            `json:"name"`
-	Type            string                            `json:"type"`
-	Environment     map[string]string                 `json:"environment"`
-	BuildSteps      []string                          `json:"build_steps"`
-	WebCommand      string                            `json:"web_command"`
-	ListenInterface string                            `json:"listen_interface"`
-	DeployCommand   string                            `json:"deploy_command"`
-	Locations       map[string]map[string]interface{} `json:"locations"`
-	Services        []Service
+	Stack             string                            `json:"stack"`
+	Root              string                            `json:"root"`
+	ApplicationRoot   string                            `json:"application_root"`
+	Name              string                            `json:"name"`
+	Type              string                            `json:"type"`
+	Environment       map[string]string                 `json:"environment"`
+	BuildSteps        []string                          `json:"build_steps"`
+	WebCommand        string                            `json:"web_command"`
+	ListenInterface   string                            `json:"listen_interface"`
+	DeployCommand     string                            `json:"deploy_command"`
+	DependencyManager string                            `json:"dependency_manager"`
+	Locations         map[string]map[string]interface{} `json:"locations"`
+	Services          []Service
 }
 
 // A Platformifier handles the business logic of a given runtime to platformify.
@@ -54,34 +68,34 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		})
 	}
 	input := &UserInput{
-		Stack:           answers.Stack.String(),
-		Root:            "",
-		ApplicationRoot: answers.ApplicationRoot,
-		Name:            answers.Name,
-		Type:            answers.Type.String(),
-		Environment:     answers.Environment,
-		BuildSteps:      answers.BuildSteps,
-		WebCommand:      answers.WebCommand,
-		ListenInterface: answers.ListenInterface.String(),
-		DeployCommand:   answers.DeployCommand,
+		Stack:             answers.Stack.String(),
+		Root:              "",
+		ApplicationRoot:   answers.ApplicationRoot,
+		Name:              answers.Name,
+		Type:              answers.Type.String(),
+		Environment:       answers.Environment,
+		BuildSteps:        answers.BuildSteps,
+		WebCommand:        answers.WebCommand,
+		ListenInterface:   answers.ListenInterface.String(),
+		DependencyManager: answers.DependencyManager.String(),
+		DeployCommand:     answers.DeployCommand,
 		Locations: map[string]map[string]interface{}{
 			"/": {
-				"passthrough": true,
+				"passthru": true,
 			},
 		},
 		Services: services,
 	}
-	var pfier Platformifier
 	switch answers.Stack {
 	case models.Laravel:
-		pfier = &LaravelPlatformifier{UserInput: input}
+		return &LaravelPlatformifier{UserInput: input}, nil
 	case models.NextJS:
-		pfier = &NextJSPlatformifier{UserInput: input}
+		return &NextJSPlatformifier{UserInput: input}, nil
+	case models.Django:
+		return &DjangoPlatformifier{UserInput: input}, nil
 	default:
-		pfier = &GenericPlatformifier{UserInput: input}
+		return &GenericPlatformifier{UserInput: input}, nil
 	}
-
-	return pfier, nil
 }
 
 // Relationships returns a map of service names to their relationship names.
@@ -92,6 +106,32 @@ func (ui *UserInput) Relationships() map[string]string {
 		relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
 	}
 	return relationships
+}
+
+// Database returns the first service that is a database.
+func (ui *UserInput) Database() string {
+	for _, service := range ui.Services {
+		for _, db := range databases {
+			if strings.Contains(service.Type, db) {
+				return service.Name
+			}
+		}
+	}
+
+	return ""
+}
+
+// Cache returns the first service that is a database.
+func (ui *UserInput) Cache() string {
+	for _, service := range ui.Services {
+		for _, cache := range caches {
+			if strings.Contains(service.Type, cache) {
+				return service.Name
+			}
+		}
+	}
+
+	return ""
 }
 
 func writeTemplate(_ context.Context, tplPath string, tpl *template.Template, input any) error {

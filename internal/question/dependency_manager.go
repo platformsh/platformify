@@ -7,11 +7,15 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/utils"
 )
 
 const (
 	npmLockFileName  = "package-lock.json"
 	yarnLockFileName = "yarn.lock"
+	poetryLockFile   = "poetry.lock"
+	pipenvLockFile   = "Pipfile.lock"
+	pipLockFile      = "requirements.txt"
 )
 
 type DependencyManager struct{}
@@ -22,34 +26,6 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		return nil
 	}
 	if answers.DependencyManager.String() != "" {
-		// Skip the step
-		return nil
-	}
-
-	switch answers.Type.Runtime {
-	case models.Python:
-		// TODO: check for python dependency manager
-	case models.PHP:
-		// TODO: check for php dependency manager
-	case models.NodeJS:
-		// Check if the project uses "npm" as a dependency manager
-		exists, err := fileExists(npmLockFileName)
-		if err != nil {
-			return err
-		} else if exists {
-			answers.DependencyManager = models.Npm
-			return nil
-		}
-
-		// Check if the project uses "yarn" as a dependency manager
-		exists, err = fileExists(yarnLockFileName)
-		if err != nil {
-			return err
-		} else if exists {
-			answers.DependencyManager = models.Yarn
-			return nil
-		}
-	default:
 		// Skip the step
 		return nil
 	}
@@ -66,9 +42,32 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		Options: depManagers,
 	}
 
+	if cwd, err := os.Getwd(); err == nil {
+		switch answers.Type.Runtime {
+		case models.Python:
+			if exists := utils.FileExists(cwd, poetryLockFile); exists {
+				question.Default = models.Poetry.Title()
+			} else if exists := utils.FileExists(cwd, pipenvLockFile); exists {
+				question.Default = models.Pipenv.Title()
+			} else if exists := utils.FileExists(cwd, pipLockFile); exists {
+				question.Default = models.Pip.Title()
+			}
+		case models.PHP:
+			// TODO: check for php dependency manager
+		case models.NodeJS:
+			if exists := utils.FileExists(cwd, npmLockFileName); exists {
+				question.Default = models.Npm.Title()
+			} else if exists := utils.FileExists(cwd, yarnLockFileName); exists {
+				question.Default = models.Yarn.Title()
+			}
+		default:
+			// Skip the step
+			return nil
+		}
+	}
+
 	var title string
-	err := survey.AskOne(question, &title)
-	if err != nil {
+	if err := survey.AskOne(question, &title); err != nil {
 		return err
 	}
 
@@ -79,16 +78,4 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 	answers.DependencyManager = manager
 
 	return nil
-}
-
-// fileExists checks if the file exists
-func fileExists(name string) (bool, error) {
-	_, err := os.Stat(name)
-	if err != nil {
-		if os.IsNotExist(err) {
-			return false, nil
-		}
-		return false, err
-	}
-	return true, nil
 }

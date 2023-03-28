@@ -2,7 +2,7 @@ package question
 
 import (
 	"context"
-	"strings"
+	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -21,46 +21,47 @@ func (q *Environment) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	for {
-		question := &survey.Confirm{
-			Message: "Do you want to add a variable?",
-			Default: true,
+	if answers.Stack == models.Django {
+		if answers.DependencyManager == models.Poetry {
+			answers.Environment = map[string]string{
+				"POETRY_VERSION":                "1.4.0",
+				"POETRY_VIRTUALENVS_IN_PROJECT": "true",
+			}
+		} else if answers.DependencyManager == models.Pipenv {
+			answers.Environment = map[string]string{
+				"PIPENV_VERSION":         "2023.2.18",
+				"PIPENV_VENV_IN_PROJECT": "1",
+			}
 		}
+	}
 
-		var addVariable = true
-		err := survey.AskOne(question, &addVariable)
-		if err != nil {
+	if len(answers.Environment) > 0 {
+		fmt.Println("We identified a few environment variables for you already!")
+		for key, value := range answers.Environment {
+			fmt.Println("  ", key, "=", value)
+		}
+	}
+
+	for {
+		var key string
+		keyPrompt := survey.Input{Message: "Add an environment variable (leave blank to skip)"}
+		if len(answers.Environment) > 0 {
+			keyPrompt.Message = "Add another environment variable (leave blank to skip)"
+		}
+		if err := survey.AskOne(&keyPrompt, &key, nil); err != nil {
 			return err
 		}
-
-		if !addVariable {
+		if key == "" {
 			break
 		}
 
-		questions := []*survey.Question{
-			{
-				Name:      "key",
-				Prompt:    &survey.Input{Message: "Env var name"},
-				Validate:  survey.Required,
-				Transform: survey.TransformString(strings.ToUpper),
-			},
-			{
-				Name:   "value",
-				Prompt: &survey.Input{Message: "Env var value"},
-			},
-		}
-
-		variable := struct {
-			Key   string
-			Value string
-		}{}
-
-		err = survey.Ask(questions, &variable)
-		if err != nil {
+		var value string
+		valuePrompt := survey.Input{Message: "Set the value for \"" + key + "\""}
+		if err := survey.AskOne(&valuePrompt, &value, survey.WithValidator(survey.Required)); err != nil {
 			return err
 		}
 
-		answers.Environment[variable.Key] = variable.Value
+		answers.Environment[key] = value
 	}
 
 	return nil

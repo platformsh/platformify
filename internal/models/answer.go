@@ -21,7 +21,7 @@ type Answers struct {
 type Service struct {
 	Name string      `json:"name"`
 	Type ServiceType `json:"type"`
-	Disk string      `json:"disk"`
+	Disk string      `json:"disk,omitempty"`
 }
 
 type RuntimeType struct {
