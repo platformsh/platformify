@@ -37,7 +37,6 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.ListenInterface{},
 			&question.WebCommand{},
 			&question.Services{},
-			&question.Dependency{},
 		)
 		err := q.AskQuestions(ctx)
 		if err != nil {
