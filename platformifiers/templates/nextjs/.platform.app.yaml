@@ -20,7 +20,7 @@ hooks:
     set -eux
     {{ range $step := .BuildSteps }}
     {{- $step }}
-    {{ end -}}
+    {{ end }}
   deploy: {{ .DeployCommand }}
 
 ##########################

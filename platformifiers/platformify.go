@@ -9,8 +9,21 @@ import (
 	"github.com/platformsh/platformify/internal/models"
 )
 
-//go:embed templates/**/*
-var templatesFs embed.FS
+var (
+	//go:embed templates/**/*
+	templatesFs embed.FS
+	databases   = []string{
+		"mariadb",
+		"mysql",
+		"oracle-mysql",
+		"postgresql",
+	}
+	caches = []string{
+		"redis",
+		"redis-persistent",
+		"memcached",
+	}
+)
 
 // A PlatformifierInterface describes platformifiers. A Platformifier handles the business logic of a given runtime.
 type PlatformifierInterface interface {

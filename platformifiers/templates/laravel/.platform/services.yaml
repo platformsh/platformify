@@ -3,7 +3,7 @@
 {{- range $value := .Services -}}
 {{ $value.Name }}:
   type: {{ $value.Type }}
-  disk: {{ $value.Disk }}
+  {{ if $value.Disk }}disk: {{ $value.Disk }}{{ end }}
 {{ end -}}
 {{ else }}
 # relationships
