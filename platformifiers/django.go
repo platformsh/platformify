@@ -1,7 +1,6 @@
 package platformifiers
 
 import (
-	"context"
 	"fmt"
 	"io/fs"
 	"os"
@@ -21,14 +20,19 @@ const (
 )
 
 type DjangoPlatformifier struct {
-	*UserInput
+	Platformifier
 }
 
-func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != models.Django.String() {
-		return fmt.Errorf("cannot platformify non-django stack: %s", p.Stack)
+func NewDjangoPlatformifier(answers *models.Answers) (*DjangoPlatformifier, error) {
+	if answers.Stack.String() != models.Django.String() {
+		return nil, fmt.Errorf("cannot platformify non-django stack: %s", answers.Stack)
 	}
+	pfier := &DjangoPlatformifier{}
+	pfier.setPshConfig(answers)
+	return pfier, nil
+}
 
+func (p *DjangoPlatformifier) Platformify() error {
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -44,7 +48,7 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 		}
 
 		filePath = path.Join(cwd, filePath[len("templates/django"):])
-		if writeErr := writeTemplate(ctx, filePath, tpl, p.UserInput); writeErr != nil {
+		if writeErr := writeTemplate(filePath, tpl, p.PshConfig); writeErr != nil {
 			return fmt.Errorf("could not write template: %w", writeErr)
 		}
 		return nil
@@ -53,7 +57,7 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 		return err
 	}
 
-	appRoot := path.Join(cwd, p.Root, p.ApplicationRoot)
+	appRoot := path.Join(cwd, p.Answers.ApplicationRoot)
 	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
 		pshSettingsPath := filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile)
 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).ParseFS(
@@ -62,7 +66,7 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 		if parseErr != nil {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
-		if err := writeTemplate(ctx, pshSettingsPath, tpl, p.UserInput); err != nil {
+		if err := writeTemplate(pshSettingsPath, tpl, p.PshConfig); err != nil {
 			return err
 		}
 

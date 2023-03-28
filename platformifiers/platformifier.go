@@ -47,12 +47,14 @@ type PshConfig struct {
 
 // A Platformifier handles the business logic of a given runtime to platformify.
 type Platformifier struct {
-	PshConfig
+	PshConfig PshConfig
+	Answers   *models.Answers
 }
 
 func NewPlatformifier(answers *models.Answers) (*Platformifier, error) {
 	if answers.Stack.String() == "generic" || answers.Stack.String() == "" {
 		pfier := &Platformifier{}
+		pfier.Answers = answers
 		return pfier.setPshConfig(answers), nil
 	}
 	return nil, fmt.Errorf("cannot platformify stack: %s", answers.Stack.String())
