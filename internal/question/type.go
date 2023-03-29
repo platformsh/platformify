@@ -47,7 +47,7 @@ func (q *Type) Ask(ctx context.Context) error {
 	}
 	answers.Type.Runtime = runtime
 
-	versions, ok := models.Types[runtime]
+	versions, ok := models.LanguageTypeVersions[runtime]
 	if !ok || len(versions) == 0 {
 		return nil
 	}
