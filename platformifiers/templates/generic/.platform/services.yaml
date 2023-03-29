@@ -2,8 +2,11 @@
 {{- if .Services -}}
 {{- range $value := .Services -}}
 {{ $value.Name }}:
-  type: {{ $value.Type }}
-  {{ if $value.Disk }}disk: {{ $value.Disk }}{{ end }}
+  type: {{ $value.Type }} # All available versions are: {{ $value.TypeVersions | join ", "}}
+  {{- if $value.Disk }}
+  disk: {{ $value.Disk -}}
+  {{ end }}
+
 {{ end -}}
 {{ else }}
 # relationships

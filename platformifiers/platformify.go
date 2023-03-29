@@ -30,9 +30,10 @@ var (
 
 // Service contains the configuration for a service needed by the application.
 type Service struct {
-	Name string `json:"name"`
-	Type string `json:"type"`
-	Disk string `json:"disk"`
+	Name         string   `json:"name"`
+	Type         string   `json:"type"`
+	TypeVersions []string `json:"type_versions"`
+	Disk         string   `json:"disk"`
 }
 
 // UserInput contains the configuration from user input.
@@ -62,9 +63,10 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 	services := make([]Service, 0)
 	for _, service := range answers.Services {
 		services = append(services, Service{
-			Name: service.Name,
-			Type: service.Type.String(),
-			Disk: service.Disk,
+			Name:         service.Name,
+			Type:         service.Type.String(),
+			TypeVersions: service.TypeVersions,
+			Disk:         service.Disk.String(),
 		})
 	}
 	input := &UserInput{

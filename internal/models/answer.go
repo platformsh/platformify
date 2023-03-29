@@ -19,9 +19,10 @@ type Answers struct {
 }
 
 type Service struct {
-	Name string      `json:"name"`
-	Type ServiceType `json:"type"`
-	Disk string      `json:"disk,omitempty"`
+	Name         string      `json:"name"`
+	Type         ServiceType `json:"type"`
+	TypeVersions []string    `json:"type_versions"`
+	Disk         ServiceDisk `json:"disk,omitempty"`
 }
 
 type RuntimeType struct {
