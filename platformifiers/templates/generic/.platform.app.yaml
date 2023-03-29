@@ -10,6 +10,7 @@ type: "{{ .Type }}"
 # Builds and variables
 
 # Build-time visible variables.
+{{ if .Environment -}}
 variables:
   env:
     {{ range $key, $value := .Environment }}
@@ -20,6 +21,11 @@ variables:
     # PYTHONUNBUFFERED: "1"
     # XDEBUG_MODE: off
     {{ end }}
+{{ else }}
+# variables:
+#   env:
+#     KEY: "value"
+{{- end }}
 
 hooks:
   build: |

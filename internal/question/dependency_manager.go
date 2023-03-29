@@ -55,10 +55,10 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		case models.PHP:
 			// TODO: check for php dependency manager
 		case models.NodeJS:
-			if exists := utils.FileExists(cwd, npmLockFileName); exists {
-				question.Default = models.Npm.Title()
-			} else if exists := utils.FileExists(cwd, yarnLockFileName); exists {
+			if exists := utils.FileExists(cwd, yarnLockFileName); exists {
 				question.Default = models.Yarn.Title()
+			} else if exists := utils.FileExists(cwd, npmLockFileName); exists {
+				question.Default = models.Npm.Title()
 			}
 		default:
 			// Skip the step
@@ -76,6 +76,17 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		return err
 	}
 	answers.DependencyManager = manager
+
+	switch manager {
+	case models.Npm:
+		answers.Dependencies = map[string]map[string]string{
+			"nodejs": {"sharp": "*"},
+		}
+	case models.Yarn:
+		answers.Dependencies = map[string]map[string]string{
+			"nodejs": {"yarn": "^1.22.0"},
+		}
+	}
 
 	return nil
 }

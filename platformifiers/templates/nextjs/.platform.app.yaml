@@ -7,9 +7,30 @@ name: "{{ .Name }}"
 type: "{{ .Type }}"
 
 ##########################
+# Dependencies
+
+{{ if .Dependencies -}}
+dependencies:
+  {{ range $key, $value := .Dependencies -}}
+  {{ $key }}:
+    {{ range $key, $value := $value }}
+    {{- $key }}: "{{ $value }}"
+    {{- end }}
+  {{- end }}
+{{ else }}
+# dependencies:
+#   nodejs: # Specify one NPM package per line.
+#     pm2: '^4.5.0'
+{{- end }}
+
+build:
+  flavor: none
+
+##########################
 # Builds and variables
 
 # Build-time visible variables.
+{{ if .Environment -}}
 variables:
   env:
     {{ range $key, $value := .Environment }}
@@ -18,8 +39,16 @@ variables:
     # Add environment variables here that are static.
     # NODE_ENV: development
     {{ end }}
+{{ else }}
+# variables:
+#   env:
+#     KEY: "value"
+{{- end }}
 
+# The hooks that will be triggered when the package is deployed.
 hooks:
+  # The build hook runs after package manager has been downloaded.
+  # No services are available but the disk is writeable.
   build: |
     set -eux
     {{ range $step := .BuildSteps }}
@@ -29,6 +58,10 @@ hooks:
     # echo 'I am a build step'
     {{ end }}
   {{- if .DeployCommand }}
+  # The deploy hook runs after your application has been deployed and started.
+  # Code cannot be modified at this point but the database is available.
+  # The site is not accepting requests while this script runs so keep it
+  # fast.
   deploy: {{ .DeployCommand }}
   {{- else }}
   # Run a command during deployment

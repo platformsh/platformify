@@ -10,6 +10,7 @@ type: "{{ .Type }}"
 # Builds and variables
 
 # Build-time visible variables.
+{{ if .Environment -}}
 variables:
   env:
     {{ range $key, $value := .Environment }}
@@ -18,6 +19,11 @@ variables:
     # Add environment variables here that are static.
     # PYTHONUNBUFFERED: "1"
     {{ end }}
+{{ else }}
+# variables:
+#   env:
+#     KEY: "value"
+{{- end }}
 
 hooks:
   build: |

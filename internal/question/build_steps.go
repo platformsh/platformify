@@ -23,7 +23,8 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	if answers.Stack == models.Django {
+	switch answers.Stack {
+	case models.Django:
 		prefix := ""
 		switch answers.DependencyManager {
 		case models.Poetry:
@@ -62,6 +63,21 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				answers.BuildSteps,
 				"# Collect static files so that they can be served by Platform.sh",
 				fmt.Sprintf("%spython %s collectstatic --noinput", prefix, managePyPath),
+			)
+		}
+	case models.NextJS:
+		switch answers.DependencyManager {
+		case models.Yarn:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"yarn",
+				"yarn build",
+			)
+		case models.Npm:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"npm i",
+				"npm run build",
 			)
 		}
 	}

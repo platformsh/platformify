@@ -5,17 +5,18 @@ import (
 )
 
 type Answers struct {
-	Stack             Stack             `json:"stack"`
-	Type              RuntimeType       `json:"type"`
-	Name              string            `json:"name"`
-	ApplicationRoot   string            `json:"application_root"`
-	Environment       map[string]string `json:"environment"`
-	BuildSteps        []string          `json:"build_steps"`
-	WebCommand        string            `json:"web_command"`
-	ListenInterface   ListenInterface   `json:"listen_interface"`
-	DeployCommand     string            `json:"deploy_command"`
-	DependencyManager DepManager        `json:"dependency_manager"`
-	Services          []Service         `json:"services"`
+	Stack             Stack                        `json:"stack"`
+	Type              RuntimeType                  `json:"type"`
+	Name              string                       `json:"name"`
+	ApplicationRoot   string                       `json:"application_root"`
+	Environment       map[string]string            `json:"environment"`
+	BuildSteps        []string                     `json:"build_steps"`
+	WebCommand        string                       `json:"web_command"`
+	ListenInterface   ListenInterface              `json:"listen_interface"`
+	DeployCommand     string                       `json:"deploy_command"`
+	DependencyManager DepManager                   `json:"dependency_manager"`
+	Dependencies      map[string]map[string]string `json:"dependencies"`
+	Services          []Service                    `json:"services"`
 }
 
 type Service struct {
