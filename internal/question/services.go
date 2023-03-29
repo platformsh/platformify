@@ -46,6 +46,7 @@ func (q *Services) Ask(ctx context.Context) error {
 		}
 		if serviceName.IsPersistent() {
 			service.Disk = models.ServiceDisks[0]
+			service.DiskSizes = models.ServiceDisks
 		}
 
 		answers.Services = append(answers.Services, service)

@@ -34,6 +34,7 @@ type Service struct {
 	Type         string   `json:"type"`
 	TypeVersions []string `json:"type_versions"`
 	Disk         string   `json:"disk"`
+	DiskSizes    []string `json:"disk_sizes"`
 }
 
 // UserInput contains the configuration from user input.
@@ -63,11 +64,16 @@ type Platformifier interface {
 func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 	services := make([]Service, 0, len(answers.Services))
 	for _, service := range answers.Services {
+		diskSizes := make([]string, 0, len(service.DiskSizes))
+		for _, size := range service.DiskSizes {
+			diskSizes = append(diskSizes, size.String())
+		}
 		services = append(services, Service{
 			Name:         service.Name,
 			Type:         service.Type.String(),
 			TypeVersions: service.TypeVersions,
 			Disk:         service.Disk.String(),
+			DiskSizes:    diskSizes,
 		})
 	}
 	input := &UserInput{

@@ -4,8 +4,8 @@
 {{ $value.Name }}:
   type: {{ $value.Type }} # All available versions are: {{ $value.TypeVersions | join ", "}}
   {{- if $value.Disk }}
-  disk: {{ $value.Disk -}}
-  {{ end }}
+  disk: {{ $value.Disk }} # All available sizes are: {{ $value.DiskSizes | join ", "}}
+  {{- end }}
 
 {{ end -}}
 {{ else }}
