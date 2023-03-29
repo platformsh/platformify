@@ -7,8 +7,6 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/AlecAivazis/survey/v2"
-
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -22,10 +20,6 @@ type BuildSteps struct{}
 func (q *BuildSteps) Ask(ctx context.Context) error {
 	answers, ok := models.FromContext(ctx)
 	if !ok {
-		return nil
-	}
-	if len(answers.BuildSteps) != 0 {
-		// Skip the step
 		return nil
 	}
 
@@ -93,22 +87,6 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 		for _, step := range answers.BuildSteps {
 			fmt.Println("  " + step)
 		}
-	}
-
-	for {
-		var step string
-		keyPrompt := survey.Input{Message: "Add a build step (leave blank to skip)"}
-		if len(answers.BuildSteps) > 0 {
-			keyPrompt.Message = "Add another build step (leave blank to skip)"
-		}
-		if err := survey.AskOne(&keyPrompt, &step, nil); err != nil {
-			return err
-		}
-		if step == "" {
-			break
-		}
-
-		answers.BuildSteps = append(answers.BuildSteps, step)
 	}
 
 	return nil

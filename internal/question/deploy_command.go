@@ -7,8 +7,6 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/AlecAivazis/survey/v2"
-
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -20,12 +18,8 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	if answers.DeployCommand != "" {
-		// Skip the step
-		return nil
-	}
 
-	question := &survey.Input{Message: "Deploy command:"}
+	deployCommand := ""
 	cwd, _ := os.Getwd()
 	if answers.Stack == models.Django {
 		if managePyPath := utils.FindFile(path.Join(cwd, answers.ApplicationRoot), managePyFile); managePyPath != "" {
@@ -37,17 +31,14 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 			case models.Poetry:
 				prefix = "poetry run "
 			}
-			question.Default = fmt.Sprintf("%spython %s migrate", prefix, managePyPath)
+			deployCommand = fmt.Sprintf("%spython %s migrate", prefix, managePyPath)
 		}
 	}
 
-	var command string
-	err := survey.AskOne(question, &command)
-	if err != nil {
-		return err
+	if deployCommand != "" {
+		fmt.Println("We identified the command to use during deployment for you!")
+		fmt.Println("  ", deployCommand)
 	}
-
-	answers.DeployCommand = command
 
 	return nil
 }

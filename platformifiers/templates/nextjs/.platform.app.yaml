@@ -35,6 +35,9 @@ variables:
   env:
     {{ range $key, $value := .Environment }}
     {{- $key }}: "{{ $value }}"
+    {{ else }}
+    # Add environment variables here that are static.
+    # NODE_ENV: development
     {{ end }}
 {{ else }}
 # variables:
@@ -50,12 +53,20 @@ hooks:
     set -eux
     {{ range $step := .BuildSteps }}
     {{- $step }}
+    {{ else }}
+    # Add build steps here.
+    # echo 'I am a build step'
     {{ end }}
+  {{- if .DeployCommand }}
   # The deploy hook runs after your application has been deployed and started.
   # Code cannot be modified at this point but the database is available.
   # The site is not accepting requests while this script runs so keep it
   # fast.
   deploy: {{ .DeployCommand }}
+  {{- else }}
+  # Run a command during deployment
+  # deploy: echo 'Put your deploy command here'
+  {{- end }}
 
 ##########################
 # Web configuration

@@ -15,6 +15,11 @@ variables:
   env:
     {{ range $key, $value := .Environment }}
     {{- $key }}: "{{ $value }}"
+    {{ else }}
+    # Add environment variables here that are static.
+    # NODE_ENV: development
+    # PYTHONUNBUFFERED: "1"
+    # XDEBUG_MODE: off
     {{ end }}
 {{ else }}
 # variables:
@@ -27,8 +32,16 @@ hooks:
     set -eux
     {{ range $step := .BuildSteps }}
     {{- $step }}
+    {{ else }}
+    # Add build steps here.
+    # echo 'I am a build step'
     {{ end }}
+  {{- if .DeployCommand }}
   deploy: {{ .DeployCommand }}
+  {{- else }}
+  # Run a command during deployment
+  # deploy: echo 'Put your deploy command here'
+  {{- end }}
 
 ##########################
 # Web configuration
