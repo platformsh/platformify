@@ -3,7 +3,7 @@ PROJECT_NAME = platformify
 .PHONY: test
 test: ## Run unit tests
 	go clean -testcache
-	go test -v -race -mod=readonly ./...
+	go test -v -race -mod=readonly -cover ./...
 
 .PHONY: lint
 lint: ## Run linter
