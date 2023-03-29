@@ -20,6 +20,12 @@ func (q *ListenInterface) Ask(ctx context.Context) error {
 		return nil
 	}
 
+	if answers.Stack == models.NextJS {
+		// Next.js doesn't support Unix-sockets
+		answers.ListenInterface = models.HTTP
+		return nil
+	}
+
 	question := &survey.Select{
 		Message: "Choose interface to listen to:",
 		Options: models.ListenInterfaces.AllTitles(),
