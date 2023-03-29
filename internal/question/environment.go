@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AlecAivazis/survey/v2"
-
 	"github.com/platformsh/platformify/internal/models"
 )
 
@@ -14,10 +12,6 @@ type Environment struct{}
 func (q *Environment) Ask(ctx context.Context) error {
 	answers, ok := models.FromContext(ctx)
 	if !ok {
-		return nil
-	}
-	if len(answers.Environment) != 0 {
-		// Skip the step
 		return nil
 	}
 
@@ -40,28 +34,6 @@ func (q *Environment) Ask(ctx context.Context) error {
 		for key, value := range answers.Environment {
 			fmt.Println("  ", key, "=", value)
 		}
-	}
-
-	for {
-		var key string
-		keyPrompt := survey.Input{Message: "Add an environment variable (leave blank to skip)"}
-		if len(answers.Environment) > 0 {
-			keyPrompt.Message = "Add another environment variable (leave blank to skip)"
-		}
-		if err := survey.AskOne(&keyPrompt, &key, nil); err != nil {
-			return err
-		}
-		if key == "" {
-			break
-		}
-
-		var value string
-		valuePrompt := survey.Input{Message: "Set the value for \"" + key + "\""}
-		if err := survey.AskOne(&valuePrompt, &value, survey.WithValidator(survey.Required)); err != nil {
-			return err
-		}
-
-		answers.Environment[key] = value
 	}
 
 	return nil
