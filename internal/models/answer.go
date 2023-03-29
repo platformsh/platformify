@@ -16,7 +16,6 @@ type Answers struct {
 	DeployCommand     string                       `json:"deploy_command"`
 	DependencyManager DepManager                   `json:"dependency_manager"`
 	Dependencies      map[string]map[string]string `json:"dependencies"`
-	Build             map[string]string            `json:"build"`
 	Services          []Service                    `json:"services"`
 }
 

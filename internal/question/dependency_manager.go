@@ -86,7 +86,6 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		answers.Dependencies = map[string]map[string]string{
 			"nodejs": {"yarn": "^1.22.0"},
 		}
-		answers.Build = map[string]string{"flavor": "none"}
 	}
 
 	return nil

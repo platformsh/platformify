@@ -23,15 +23,8 @@ dependencies:
 #     pm2: '^4.5.0'
 {{- end }}
 
-{{ if .Build -}}
 build:
-  {{ range $key, $value := .Build }}
-  {{- $key }}: {{ $value }}
-  {{ end }}
-{{ else }}
-# build:
-#   flavor: none
-{{- end }}
+  flavor: none
 
 ##########################
 # Builds and variables

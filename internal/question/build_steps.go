@@ -82,7 +82,8 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 		case models.Npm:
 			answers.BuildSteps = append(
 				answers.BuildSteps,
-				"npm run build ",
+				"npm i",
+				"npm run build",
 			)
 		}
 	}
