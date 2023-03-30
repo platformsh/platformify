@@ -47,8 +47,9 @@ func (p *Platformifier) setUserInput(answers *models.Answers) *Platformifier {
 				"passthru": true,
 			},
 		},
-		Dependencies: answers.Dependencies,
-		Services:     services,
+		Dependencies:  answers.Dependencies,
+		Services:      services,
+		Relationships: p.getRelationships(answers),
 	}
 
 	return p
@@ -65,9 +66,6 @@ func (p *Platformifier) getRelationships(answers *models.Answers) map[string]str
 }
 
 func (p *Platformifier) Platformify(ctx context.Context) error {
-	if p.UserInput.Stack != models.Laravel.String() {
-		return fmt.Errorf("cannot platformify non-laravel stack: %s", p.UserInput.Stack)
-	}
 
 	// Get working directory.
 	cwd, err := os.Getwd()

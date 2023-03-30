@@ -43,6 +43,7 @@ type UserInput struct {
 	Locations         map[string]map[string]interface{} `json:"locations"`
 	Dependencies      map[string]map[string]string      `json:"dependencies"`
 	Services          []models.Service
+	Relationships     map[string]string
 }
 
 // A PlatformifierInterface handles the business logic of a given runtime to platformify.
