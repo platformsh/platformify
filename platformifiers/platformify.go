@@ -47,8 +47,8 @@ type UserInput struct {
 
 // A PlatformifierInterface handles the business logic of a given runtime to platformify.
 type PlatformifierInterface interface {
-	//// getRelationships converts user answers to a Relationships map.
-	//getRelationships(answers *models.Answers) map[string]string
+	// getRelationships converts user answers to a Relationships map.
+	getRelationships(answers *models.Answers) map[string]string
 	// setUserInput converts user answers to platform.sh config values.
 	setUserInput(answers *models.Answers) *Platformifier
 
