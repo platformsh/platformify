@@ -52,7 +52,7 @@ type UserInput struct {
 	DependencyManager string                            `json:"dependency_manager"`
 	Locations         map[string]map[string]interface{} `json:"locations"`
 	Dependencies      map[string]map[string]string      `json:"dependencies"`
-	Services          []Service
+	Services          []models.Service
 }
 
 // A Platformifier handles the business logic of a given runtime to platformify.
@@ -62,17 +62,14 @@ type Platformifier interface {
 
 // NewPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
 func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
-	services := make([]Service, 0, len(answers.Services))
+	services := make([]models.Service, 0, len(answers.Services))
 	for _, service := range answers.Services {
-		diskSizes := make([]string, 0, len(service.DiskSizes))
-		for _, size := range service.DiskSizes {
-			diskSizes = append(diskSizes, size.String())
-		}
-		services = append(services, Service{
+		diskSizes := service.DiskSizes
+		services = append(services, models.Service{
 			Name:         service.Name,
-			Type:         service.Type.String(),
+			Type:         service.Type,
 			TypeVersions: service.TypeVersions,
-			Disk:         service.Disk.String(),
+			Disk:         service.Disk,
 			DiskSizes:    diskSizes,
 		})
 	}
@@ -112,7 +109,7 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 func (ui *UserInput) Relationships() map[string]string {
 	relationships := make(map[string]string)
 	for _, service := range ui.Services {
-		endpoint := strings.Split(service.Type, ":")[0]
+		endpoint := strings.Split(service.Type.String(), ":")[0]
 		relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
 	}
 	return relationships
@@ -122,7 +119,7 @@ func (ui *UserInput) Relationships() map[string]string {
 func (ui *UserInput) Database() string {
 	for _, service := range ui.Services {
 		for _, db := range databases {
-			if strings.Contains(service.Type, db) {
+			if strings.Contains(service.Type.String(), db) {
 				return service.Name
 			}
 		}
@@ -135,7 +132,7 @@ func (ui *UserInput) Database() string {
 func (ui *UserInput) Cache() string {
 	for _, service := range ui.Services {
 		for _, cache := range caches {
-			if strings.Contains(service.Type, cache) {
+			if strings.Contains(service.Type.String(), cache) {
 				return service.Name
 			}
 		}
