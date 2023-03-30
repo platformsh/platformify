@@ -42,17 +42,17 @@ func TestNewPlatformifier(t *testing.T) {
 			if err != nil && !tt.wantErr {
 				t.Errorf("NewPlatformifier error = #{err}, wantErr #{tt.wantErr}")
 			}
-			// Don't return a Platformifier if there's an error.
-			//if tt.wantErr {
+			//// Don't return a Platformifier if there's an error.
+			// if tt.wantErr {
 			//	assert.Nil(t, pfier)
-			//} else {
-			// Otherwise, make sure it's a Platformifier.
+			// } else {
+			//// Otherwise, make sure it's a Platformifier.
 			assert.IsType(t, new(Platformifier), pfier, "created object is not a Platformifier")
 			// And ensure it implements the PlatformifierInterface.
 			var inter interface{} = pfier
 			_, pass := inter.(PlatformifierInterface)
 			assert.True(t, pass, "created Platformifier but it does not implement PlatformifierInterface")
-			//}
+			// }
 		})
 	}
 }

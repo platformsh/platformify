@@ -2,8 +2,9 @@ package platformifiers
 
 import (
 	"context"
-	"github.com/platformsh/platformify/internal/models"
 	"testing"
+
+	"github.com/platformsh/platformify/internal/models"
 )
 
 func TestLaravelPlatformifier_Platformify(t *testing.T) {

@@ -59,7 +59,6 @@ type PlatformifierInterface interface {
 
 // NewPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
 func NewPlatformifier(answers *models.Answers) (PlatformifierInterface, error) {
-
 	var p PlatformifierInterface
 	switch answers.Stack {
 	case models.Laravel:

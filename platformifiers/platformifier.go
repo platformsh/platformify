@@ -3,13 +3,15 @@ package platformifiers
 import (
 	"context"
 	"fmt"
-	"github.com/Masterminds/sprig/v3"
-	"github.com/platformsh/platformify/internal/models"
 	"io/fs"
 	"os"
 	"path"
 	"strings"
 	"text/template"
+
+	"github.com/Masterminds/sprig/v3"
+
+	"github.com/platformsh/platformify/internal/models"
 )
 
 // A Platformifier handles the business logic of a given runtime to platformify.
@@ -66,7 +68,6 @@ func (p *Platformifier) getRelationships(answers *models.Answers) map[string]str
 }
 
 func (p *Platformifier) Platformify(ctx context.Context) error {
-
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
