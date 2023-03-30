@@ -26,6 +26,24 @@ var (
 	}
 )
 
+// UserInput contains the configuration from user input.
+type UserInput struct {
+	Stack             string                            `json:"stack"`
+	Root              string                            `json:"root"`
+	ApplicationRoot   string                            `json:"application_root"`
+	Name              string                            `json:"name"`
+	Type              string                            `json:"type"`
+	Environment       map[string]string                 `json:"environment"`
+	BuildSteps        []string                          `json:"build_steps"`
+	WebCommand        string                            `json:"web_command"`
+	ListenInterface   string                            `json:"listen_interface"`
+	DeployCommand     string                            `json:"deploy_command"`
+	DependencyManager string                            `json:"dependency_manager"`
+	Locations         map[string]map[string]interface{} `json:"locations"`
+	Dependencies      map[string]map[string]string      `json:"dependencies"`
+	Services          []models.Service
+}
+
 // A PlatformifierInterface describes platformifiers. A Platformifier handles the business logic of a given runtime.
 type PlatformifierInterface interface {
 	// setPshConfig maps answers to config values.
@@ -41,6 +59,8 @@ type PlatformifierInterface interface {
 // GetPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.
 func GetPlatformifier(answers *models.Answers) (PlatformifierInterface, error) {
 	switch answers.Stack.String() {
+	case models.Django.String():
+		return NewDjangoPlatformifier(answers)
 	case models.Laravel.String():
 		return NewLaravelPlatformifier(answers)
 	case models.NextJS.String():

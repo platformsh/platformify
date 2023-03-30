@@ -13,7 +13,9 @@ import (
 	"github.com/platformsh/platformify/internal/models"
 )
 
-const nextjsTemplatesPath = "templates/nextjs"
+const (
+	nextjsTemplatesPath = "templates/nextjs"
+)
 
 type NextJSPlatformifier struct {
 	Platformifier
