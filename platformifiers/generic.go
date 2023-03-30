@@ -15,7 +15,7 @@ const genericTemplatesPath = "templates/generic"
 
 // GenericPlatformifier contains the configuration for the application to Platformify
 type GenericPlatformifier struct {
-	*UserInput
+	Platformifier
 }
 
 // Platformify will generate the .platform.app.yaml and .platform/ directory

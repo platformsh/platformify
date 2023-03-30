@@ -2,12 +2,13 @@ package platformifiers
 
 import (
 	"context"
+	"github.com/platformsh/platformify/internal/models"
 	"testing"
 )
 
 func TestLaravelPlatformifier_Platformify(t *testing.T) {
 	type fields struct {
-		ui *UserInput
+		answers *models.Answers
 	}
 	type args struct {
 		ctx context.Context
@@ -20,20 +21,19 @@ func TestLaravelPlatformifier_Platformify(t *testing.T) {
 	}{
 		{
 			name:    "when the stack is empty",
-			fields:  fields{ui: &UserInput{Stack: ""}},
+			fields:  fields{answers: &models.Answers{Stack: ""}},
 			wantErr: true,
 		},
 		{
 			"when the stack is wrong",
-			fields{ui: &UserInput{Stack: "wrong"}},
+			fields{answers: &models.Answers{Stack: "wrong"}},
 			args{ctx: nil}, true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			p := &LaravelPlatformifier{
-				UserInput: tt.fields.ui,
-			}
+			platformifier := LaravelPlatformifier{}
+			p := platformifier.setUserInput(tt.fields.answers)
 			if err := p.Platformify(tt.args.ctx); (err != nil) != tt.wantErr {
 				t.Errorf("Platformify() error = %v, wantErr %v", err, tt.wantErr)
 			}

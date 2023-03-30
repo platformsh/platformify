@@ -21,12 +21,12 @@ const (
 )
 
 type DjangoPlatformifier struct {
-	*UserInput
+	Platformifier
 }
 
 func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != models.Django.String() {
-		return fmt.Errorf("cannot platformify non-django stack: %s", p.Stack)
+	if p.UserInput.Stack != models.Django.String() {
+		return fmt.Errorf("cannot platformify non-django stack: %s", p.UserInput.Stack)
 	}
 
 	// Get working directory.
@@ -53,7 +53,7 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 		return err
 	}
 
-	appRoot := path.Join(cwd, p.Root, p.ApplicationRoot)
+	appRoot := path.Join(cwd, p.UserInput.Root, p.UserInput.ApplicationRoot)
 	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
 		pshSettingsPath := filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile)
 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).ParseFS(

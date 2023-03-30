@@ -18,12 +18,12 @@ const (
 )
 
 type NextJSPlatformifier struct {
-	*UserInput
+	Platformifier
 }
 
 func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
-	if p.Stack != models.NextJS.String() {
-		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.Stack)
+	if p.UserInput.Stack != models.NextJS.String() {
+		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.UserInput.Stack)
 	}
 
 	// Get working directory.
