@@ -21,6 +21,7 @@ type Platformifier struct {
 }
 
 func (p *Platformifier) setUserInput(answers *models.Answers) *Platformifier {
+	p.Answers = answers
 	services := make([]models.Service, 0, len(answers.Services))
 	for _, service := range answers.Services {
 		diskSizes := service.DiskSizes
@@ -68,6 +69,9 @@ func (p *Platformifier) getRelationships(answers *models.Answers) map[string]str
 }
 
 func (p *Platformifier) Platformify(ctx context.Context) error {
+	if p.UserInput.Stack != p.Answers.Stack.String() {
+		return fmt.Errorf("cannot platformify non-%s stack: %s", p.Answers.Stack.String(), p.UserInput.Stack)
+	}
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
