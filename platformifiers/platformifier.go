@@ -93,8 +93,30 @@ func (pfier *Platformifier) getRelationships(answers *models.Answers) map[string
 	return relationships
 }
 
-func (pfier *Platformifier) Platformify(context.Context) error {
-	// Create template writer(s).
-	// Write the files.
+func (pfier *Platformifier) Platformify(ctx context.Context) error {
+	// Get working directory.
+	cwd, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("could not get current working directory: %w", err)
+	}
+	err = fs.WalkDir(templatesFs, nextjsTemplatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
+		if d.IsDir() {
+			return nil
+		}
+		tpl, er := template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(templatesFs, filePath)
+		if er != nil {
+			return fmt.Errorf("could not parse template: %w", er)
+		}
+
+		filePath = path.Join(cwd, filePath[len(nextjsTemplatesPath):])
+		if er := writeTemplate(ctx, filePath, tpl, pfier.PshConfig); er != nil {
+			return fmt.Errorf("could not write template: %w", er)
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

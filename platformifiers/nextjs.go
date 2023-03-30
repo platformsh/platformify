@@ -44,7 +44,7 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 		}
 
 		filePath = path.Join(cwd, filePath[len(nextjsTemplatesPath):])
-		if er := writeTemplate(filePath, tpl, p.PshConfig); er != nil {
+		if er := writeTemplate(ctx, filePath, tpl, p.PshConfig); er != nil {
 			return fmt.Errorf("could not write template: %w", er)
 		}
 		return nil

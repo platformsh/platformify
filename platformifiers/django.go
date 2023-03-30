@@ -33,7 +33,7 @@ func NewDjangoPlatformifier(answers *models.Answers) (*DjangoPlatformifier, erro
 	return pfier, nil
 }
 
-func (p *DjangoPlatformifier) Platformify(context.Context) error {
+func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
@@ -49,7 +49,7 @@ func (p *DjangoPlatformifier) Platformify(context.Context) error {
 		}
 
 		filePath = path.Join(cwd, filePath[len("templates/django"):])
-		if writeErr := writeTemplate(filePath, tpl, p.PshConfig); writeErr != nil {
+		if writeErr := writeTemplate(ctx, filePath, tpl, p.PshConfig); writeErr != nil {
 			return fmt.Errorf("could not write template: %w", writeErr)
 		}
 		return nil
@@ -67,7 +67,7 @@ func (p *DjangoPlatformifier) Platformify(context.Context) error {
 		if parseErr != nil {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
-		if err := writeTemplate(pshSettingsPath, tpl, p.PshConfig); err != nil {
+		if err := writeTemplate(ctx, pshSettingsPath, tpl, p.PshConfig); err != nil {
 			return err
 		}
 
