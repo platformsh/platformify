@@ -27,22 +27,22 @@ const (
 
 var (
 	ServiceNames = ServiceNameList{
-		ChromeHeadless,
-		InfluxDB,
-		Kafka,
 		MariaDB,
-		Memcached,
 		MySQL,
-		NetworkStorage,
-		OpenSearch,
-		OracleMySQL,
 		PostgreSQL,
-		RabbitMQ,
 		Redis,
 		RedisPersistent,
+		Memcached,
+		OpenSearch,
 		Solr,
 		Varnish,
+		Kafka,
 		VaultKMS,
+		RabbitMQ,
+		InfluxDB,
+		ChromeHeadless,
+		NetworkStorage,
+		OracleMySQL,
 	}
 )
 

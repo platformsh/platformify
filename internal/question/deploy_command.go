@@ -35,10 +35,7 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		}
 	}
 
-	if deployCommand != "" {
-		fmt.Println("We identified the command to use during deployment for you!")
-		fmt.Println("  ", deployCommand)
-	}
+	answers.DeployCommand = deployCommand
 
 	return nil
 }

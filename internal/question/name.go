@@ -2,6 +2,7 @@ package question
 
 import (
 	"context"
+	"path"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -20,7 +21,7 @@ func (q *Name) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	question := &survey.Input{Message: "Application name:", Default: "app"}
+	question := &survey.Input{Message: "Tell us your project name:", Default: path.Base(answers.WorkingDirectory)}
 
 	var name string
 	err := survey.AskOne(question, &name, survey.WithValidator(survey.Required))

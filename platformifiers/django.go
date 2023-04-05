@@ -11,6 +11,7 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 
+	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -65,13 +66,34 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 		if err := writeTemplate(ctx, pshSettingsPath, tpl, p.UserInput); err != nil {
 			return err
 		}
+	}
 
-		fmt.Printf(
-			"We have created a %s file for you. Please add the following line to your %s file:\n",
-			settingsPshPyFile,
-			settingsPyFile,
-		)
-		fmt.Println("    from .settings_psh import *")
+	// append from settings_psh import * to the bottom of settings.py
+	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
+		f, err := os.OpenFile(settingsPath, os.O_APPEND|os.O_WRONLY, 0o644)
+		if err != nil {
+			return nil
+		}
+		defer f.Close()
+
+		if _, err := f.WriteString("\n\nfrom settings_psh import *\n"); err != nil {
+			out, _, ok := colors.FromContext(ctx)
+			if !ok {
+				return nil
+			}
+
+			fmt.Fprintf(
+				out,
+				colors.Colorize(
+					colors.WarningCode,
+					"We have created a %s file for you. Please add the following line to your %s file:\n",
+				),
+				settingsPshPyFile,
+				settingsPyFile,
+			)
+			fmt.Fprint(out, colors.Colorize(colors.WarningCode, "    from .settings_psh import *\n"))
+			return nil
+		}
 	}
 
 	return nil
