@@ -21,7 +21,11 @@ type NextJSPlatformifier struct {
 	Platformifier
 }
 
-func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
+func (p *NextJSPlatformifier) getTemplatesPath() string {
+	return nextjsTemplatesPath
+}
+
+func (p *NextJSPlatformifier) Platformify(ctx context.Context, templatesPath string) error {
 	if p.UserInput.Stack != models.NextJS.String() {
 		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.UserInput.Stack)
 	}
@@ -31,7 +35,7 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)
 	}
-	err = fs.WalkDir(templatesFs, nextjsTemplatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
+	err = fs.WalkDir(templatesFs, templatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
 		}
@@ -40,7 +44,7 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 			return fmt.Errorf("could not parse template: %w", er)
 		}
 
-		filePath = path.Join(cwd, filePath[len(nextjsTemplatesPath):])
+		filePath = path.Join(cwd, filePath[len(templatesPath):])
 		if er := writeTemplate(ctx, filePath, tpl, p.UserInput); er != nil {
 			return fmt.Errorf("could not write template: %w", er)
 		}

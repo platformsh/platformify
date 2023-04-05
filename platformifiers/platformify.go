@@ -61,9 +61,11 @@ type PlatformifierInterface interface {
 	getRelationships(answers *models.Answers) map[string]string
 	// setUserInput converts user answers to platform.sh config values.
 	setUserInput(answers *models.Answers) *Platformifier
+	// getTemplatesPath is the getter for the template path on an individual platformifier.
+	getTemplatesPath() string
 
 	// Platformify loads and writes the templates to the user's system.
-	Platformify(ctx context.Context) error
+	Platformify(ctx context.Context, templatesPath string) error
 }
 
 // NewPlatformifier is a Platformifier factory creating the appropriate instance based on UserInput.

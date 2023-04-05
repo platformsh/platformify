@@ -13,13 +13,17 @@ import (
 	"github.com/platformsh/platformify/internal/models"
 )
 
-var templatesPath = "templates/laravel"
+const laravelTemplatesPath = "templates/laravel"
 
 type LaravelPlatformifier struct {
 	Platformifier
 }
 
-func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
+func (p *LaravelPlatformifier) getTemplatesPath() string {
+	return laravelTemplatesPath
+}
+
+func (p *LaravelPlatformifier) Platformify(ctx context.Context, templatesPath string) error {
 	if p.UserInput.Stack != models.Laravel.String() {
 		return fmt.Errorf("cannot platformify non-laravel stack: %s", p.UserInput.Stack)
 	}

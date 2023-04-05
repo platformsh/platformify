@@ -24,7 +24,11 @@ type DjangoPlatformifier struct {
 	Platformifier
 }
 
-func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
+func (p *DjangoPlatformifier) getTemplatesPath() string {
+	return "templates/django"
+}
+
+func (p *DjangoPlatformifier) Platformify(ctx context.Context, templatesPath string) error {
 	if p.UserInput.Stack != models.Django.String() {
 		return fmt.Errorf("cannot platformify non-django stack: %s", p.UserInput.Stack)
 	}
@@ -34,7 +38,7 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)
 	}
-	err = fs.WalkDir(templatesFs, "templates/django", func(filePath string, d fs.DirEntry, walkErr error) error {
+	err = fs.WalkDir(templatesFs, templatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
 		}
@@ -43,7 +47,7 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
 
-		filePath = path.Join(cwd, filePath[len("templates/django"):])
+		filePath = path.Join(cwd, filePath[len(templatesPath):])
 		if writeErr := writeTemplate(ctx, filePath, tpl, p.UserInput); writeErr != nil {
 			return fmt.Errorf("could not write template: %w", writeErr)
 		}
