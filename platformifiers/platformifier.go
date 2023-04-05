@@ -17,11 +17,9 @@ import (
 // A Platformifier handles the business logic of a given runtime to platformify.
 type Platformifier struct {
 	UserInput *UserInput
-	Answers   *models.Answers
 }
 
 func (p *Platformifier) setUserInput(answers *models.Answers) *Platformifier {
-	p.Answers = answers
 	services := make([]Service, 0, len(answers.Services))
 	for _, service := range answers.Services {
 		diskSizes := make([]string, 0, len(service.DiskSizes))
@@ -72,9 +70,6 @@ func (p *Platformifier) getRelationships(answers *models.Answers) map[string]str
 }
 
 func (p *Platformifier) Platformify(ctx context.Context) error {
-	if p.UserInput.Stack != p.Answers.Stack.String() {
-		return fmt.Errorf("cannot platformify non-%s stack: %s", p.Answers.Stack.String(), p.UserInput.Stack)
-	}
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
