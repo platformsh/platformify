@@ -27,6 +27,15 @@ var (
 	}
 )
 
+// Service contains the configuration for a service needed by the application.
+type Service struct {
+	Name         string   `json:"name"`
+	Type         string   `json:"type"`
+	TypeVersions []string `json:"type_versions"`
+	Disk         string   `json:"disk"`
+	DiskSizes    []string `json:"disk_sizes"`
+}
+
 // UserInput contains the configuration from user input.
 type UserInput struct {
 	Stack             string                            `json:"stack"`
@@ -42,7 +51,7 @@ type UserInput struct {
 	DependencyManager string                            `json:"dependency_manager"`
 	Locations         map[string]map[string]interface{} `json:"locations"`
 	Dependencies      map[string]map[string]string      `json:"dependencies"`
-	Services          []models.Service
+	Services          []Service
 	Relationships     map[string]string
 }
 
@@ -78,7 +87,7 @@ func NewPlatformifier(answers *models.Answers) (PlatformifierInterface, error) {
 func (ui *UserInput) Database() string {
 	for _, service := range ui.Services {
 		for _, db := range databases {
-			if strings.Contains(service.Type.String(), db) {
+			if strings.Contains(service.Type, db) {
 				return service.Name
 			}
 		}
@@ -91,7 +100,7 @@ func (ui *UserInput) Database() string {
 func (ui *UserInput) Cache() string {
 	for _, service := range ui.Services {
 		for _, cache := range caches {
-			if strings.Contains(service.Type.String(), cache) {
+			if strings.Contains(service.Type, cache) {
 				return service.Name
 			}
 		}

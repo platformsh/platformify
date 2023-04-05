@@ -22,14 +22,17 @@ type Platformifier struct {
 
 func (p *Platformifier) setUserInput(answers *models.Answers) *Platformifier {
 	p.Answers = answers
-	services := make([]models.Service, 0, len(answers.Services))
+	services := make([]Service, 0, len(answers.Services))
 	for _, service := range answers.Services {
-		diskSizes := service.DiskSizes
-		services = append(services, models.Service{
+		diskSizes := make([]string, 0, len(service.DiskSizes))
+		for _, size := range service.DiskSizes {
+			diskSizes = append(diskSizes, size.String())
+		}
+		services = append(services, Service{
 			Name:         service.Name,
-			Type:         service.Type,
+			Type:         service.Type.String(),
 			TypeVersions: service.TypeVersions,
-			Disk:         service.Disk,
+			Disk:         service.Disk.String(),
 			DiskSizes:    diskSizes,
 		})
 	}
