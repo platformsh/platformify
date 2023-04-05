@@ -21,7 +21,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 	}
 
 	question := &survey.Select{
-		Message: "Choose your stack:",
+		Message: "What Stack is your project using?",
 		Options: models.Stacks.AllTitles(),
 	}
 
