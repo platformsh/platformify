@@ -27,5 +27,9 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	viper.SetEnvPrefix("PLATFORMIFY")
-	viper.AutomaticEnv() // read in environment variables that match
+	viper.AutomaticEnv()        // read in environment variables that match
+	viper.MustBindEnv("COLORS") // white-space separated string. ex: PLATFORMIFY_COLORS=33+hb cyan 247 default
+
+	colors := viper.GetStringSlice("COLORS")
+	setColors(colors...)
 }
