@@ -16,6 +16,7 @@ const (
 	poetryLockFile   = "poetry.lock"
 	pipenvLockFile   = "Pipfile.lock"
 	pipLockFile      = "requirements.txt"
+	composerLockFile = "composer.lock"
 )
 
 type DependencyManager struct{}
@@ -53,7 +54,9 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 				question.Default = models.Pip.Title()
 			}
 		case models.PHP:
-			// TODO: check for php dependency manager
+			if exists := utils.FileExists(cwd, composerLockFile); exists {
+				question.Default = models.Composer.Title()
+			}
 		case models.NodeJS:
 			if exists := utils.FileExists(cwd, yarnLockFileName); exists {
 				question.Default = models.Yarn.Title()
@@ -78,6 +81,10 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 	answers.DependencyManager = manager
 
 	switch manager {
+	case models.Composer:
+		answers.Dependencies = map[string]map[string]string{
+			"php": {"composer/composer": "^2"},
+		}
 	case models.Npm:
 		answers.Dependencies = map[string]map[string]string{
 			"nodejs": {"sharp": "*"},
