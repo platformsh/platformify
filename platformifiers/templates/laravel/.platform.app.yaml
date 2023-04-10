@@ -27,7 +27,7 @@ variables:
 
 hooks:
   build: |
-    set -eux
+    set -e
     {{ range $step := .BuildSteps }}
     {{- $step }}
     {{ else }}
@@ -35,7 +35,11 @@ hooks:
     # echo 'I am a build step'
     {{ end }}
   {{- if .DeployCommand }}
-  deploy: {{ .DeployCommand }}
+  deploy: |
+    set -e
+    {{ range $deploycmd := .DeployCommand }}
+    {{- $deploycmd }}
+    {{ end }}
   {{- else }}
   # Run a command during deployment
   # deploy: echo 'Put your deploy command here'
