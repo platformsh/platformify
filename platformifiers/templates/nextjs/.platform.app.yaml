@@ -62,11 +62,14 @@ hooks:
   # Code cannot be modified at this point but the database is available.
   # The site is not accepting requests while this script runs so keep it
   # fast.
-  deploy: {{ .DeployCommand }}
-  {{- else }}
-  # Run a command during deployment
-  # deploy: echo 'Put your deploy command here'
-  {{- end }}
+  deploy: |
+    set -e
+    {{ range $deploycmd := .DeployCommand }}
+    {{- $deploycmd }}
+    {{ end }}
+    {{ else }}
+    # echo 'Put your deploy command here'
+    {{ end }}
 
 ##########################
 # Web configuration

@@ -36,12 +36,18 @@ hooks:
     # Add build steps here.
     # echo 'I am a build step'
     {{ end }}
-  {{- if .DeployCommand }}
-  deploy: {{ .DeployCommand }}
-  {{- else }}
-  # Run a command during deployment
-  # deploy: echo 'Put your deploy command here'
-  {{- end }}
+  # The deploy hook runs after your application has been deployed and started.
+  # Code cannot be modified at this point but the database is available.
+  # The site is not accepting requests while this script runs so keep it
+  # fast.
+  deploy: |
+    set -e
+    {{ range $deploycmd := .DeployCommand }}
+    {{- $deploycmd }}
+    {{ end }}
+    {{ else }}
+    # echo 'Put your deploy command here'
+    {{ end }}
 
 ##########################
 # Web configuration

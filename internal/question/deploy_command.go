@@ -32,7 +32,9 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 			case models.Poetry:
 				prefix = "poetry run "
 			}
-			deployCommand = fmt.Sprintf("%spython %s migrate", prefix, managePyPath)
+			answers.DeployCommand = append(answers.DeployCommand,
+				fmt.Sprintf("%spython %s migrate", prefix, managePyPath),
+			)
 		}
 	case models.Laravel:
 		answers.DeployCommand = append(answers.DeployCommand,
