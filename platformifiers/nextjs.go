@@ -21,11 +21,12 @@ type NextJSPlatformifier struct {
 	Platformifier
 }
 
-func (p *NextJSPlatformifier) GetTemplatesPath() string {
+func (p *NextJSPlatformifier) getTemplatesPath() string {
 	return nextjsTemplatesPath
 }
 
-func (p *NextJSPlatformifier) Platformify(ctx context.Context, templatesPath string) error {
+func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
+	templatesPath := p.getTemplatesPath()
 	if p.UserInput.Stack != models.NextJS.String() {
 		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.UserInput.Stack)
 	}

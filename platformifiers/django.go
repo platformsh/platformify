@@ -24,11 +24,12 @@ type DjangoPlatformifier struct {
 	Platformifier
 }
 
-func (p *DjangoPlatformifier) GetTemplatesPath() string {
+func (p *DjangoPlatformifier) getTemplatesPath() string {
 	return "templates/django"
 }
 
-func (p *DjangoPlatformifier) Platformify(ctx context.Context, templatesPath string) error {
+func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
+	templatesPath := p.getTemplatesPath()
 	if p.UserInput.Stack != models.Django.String() {
 		return fmt.Errorf("cannot platformify non-django stack: %s", p.UserInput.Stack)
 	}

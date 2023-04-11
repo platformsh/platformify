@@ -35,7 +35,7 @@ func TestLaravelPlatformifier_Platformify(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			platformifier := &LaravelPlatformifier{}
 			platformifier.setUserInput(tt.fields.answers)
-			err := platformifier.Platformify(tt.args.ctx, "")
+			err := platformifier.Platformify(tt.args.ctx)
 			if err == nil && tt.wantErr {
 				t.Errorf("Platformify() error = %v, wantErr %v", err, tt.wantErr)
 			}

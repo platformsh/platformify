@@ -14,15 +14,15 @@ import (
 	"github.com/platformsh/platformify/internal/models"
 )
 
-const templatesPath = "templates/generic"
+const genericTemplatesPath = "templates/generic"
 
 // A Platformifier handles the business logic of a given runtime to platformify.
 type Platformifier struct {
 	UserInput *UserInput
 }
 
-func (p *Platformifier) GetTemplatesPath() string {
-	return templatesPath
+func (p *Platformifier) getTemplatesPath() string {
+	return genericTemplatesPath
 }
 
 func (p *Platformifier) setUserInput(answers *models.Answers) *Platformifier {
@@ -75,7 +75,8 @@ func (p *Platformifier) getRelationships(answers *models.Answers) map[string]str
 	return relationships
 }
 
-func (p *Platformifier) Platformify(ctx context.Context, templatesPath string) error {
+func (p *Platformifier) Platformify(ctx context.Context) error {
+	templatesPath := p.getTemplatesPath()
 	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {

@@ -19,11 +19,12 @@ type LaravelPlatformifier struct {
 	Platformifier
 }
 
-func (p *LaravelPlatformifier) GetTemplatesPath() string {
+func (p *LaravelPlatformifier) getTemplatesPath() string {
 	return laravelTemplatesPath
 }
 
-func (p *LaravelPlatformifier) Platformify(ctx context.Context, templatesPath string) error {
+func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
+	templatesPath := p.getTemplatesPath()
 	if p.UserInput.Stack != models.Laravel.String() {
 		return fmt.Errorf("cannot platformify non-laravel stack: %s", p.UserInput.Stack)
 	}
