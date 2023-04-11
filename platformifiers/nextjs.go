@@ -21,7 +21,7 @@ type NextJSPlatformifier struct {
 	Platformifier
 }
 
-func (p *NextJSPlatformifier) getTemplatesPath() string {
+func (p *NextJSPlatformifier) GetTemplatesPath() string {
 	return nextjsTemplatesPath
 }
 

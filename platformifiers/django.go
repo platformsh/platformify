@@ -24,7 +24,7 @@ type DjangoPlatformifier struct {
 	Platformifier
 }
 
-func (p *DjangoPlatformifier) getTemplatesPath() string {
+func (p *DjangoPlatformifier) GetTemplatesPath() string {
 	return "templates/django"
 }
 

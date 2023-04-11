@@ -21,7 +21,7 @@ type Platformifier struct {
 	UserInput *UserInput
 }
 
-func (p *Platformifier) getTemplatesPath() string {
+func (p *Platformifier) GetTemplatesPath() string {
 	return templatesPath
 }
 

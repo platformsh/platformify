@@ -19,7 +19,7 @@ type LaravelPlatformifier struct {
 	Platformifier
 }
 
-func (p *LaravelPlatformifier) getTemplatesPath() string {
+func (p *LaravelPlatformifier) GetTemplatesPath() string {
 	return laravelTemplatesPath
 }
 
