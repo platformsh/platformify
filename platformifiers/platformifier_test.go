@@ -1,6 +1,7 @@
 package platformifiers
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/platformsh/platformify/internal/models"
@@ -12,28 +13,33 @@ func TestNewPlatformifier(t *testing.T) {
 	type fields struct {
 		answers *models.Answers
 	}
-	type args struct {
+
+	// Test all the known stacks create a platformifier.
+	for _, stack := range models.Stacks {
+		t.Run(fmt.Sprintf("when the stack is %s", stack), func(t *testing.T) {
+			pfier, err := NewPlatformifier(&models.Answers{Stack: stack})
+			assert.Nil(t, err, "error creating platformifier")
+
+			// Ensure it implements the PlatformifierInterface.
+			var inter interface{} = pfier
+			_, pass := inter.(PlatformifierInterface)
+			assert.True(t, pass, "created Platformifier does not implement PlatformifierInterface")
+		})
 	}
+
+	// Test the unknown stacks.
 	var tests = []struct {
 		name    string
 		fields  fields
-		args    args
 		wantErr bool
 	}{
 		{
 			"when the stack is empty",
-			fields{&models.Answers{Stack: ""}},
-			args{}, false,
+			fields{&models.Answers{Stack: ""}}, false,
 		},
 		{
-			"when the stack is wrong",
-			fields{&models.Answers{Stack: "wrong"}},
-			args{}, true,
-		},
-		{
-			"when a generic platformifier is created successfully",
-			fields{&models.Answers{Stack: "generic"}},
-			args{}, false,
+			"when the stack is unrecognized",
+			fields{&models.Answers{Stack: "wrong"}}, false,
 		},
 	}
 	for _, tt := range tests {
@@ -42,17 +48,13 @@ func TestNewPlatformifier(t *testing.T) {
 			if err != nil && !tt.wantErr {
 				t.Errorf("NewPlatformifier error = #{err}, wantErr #{tt.wantErr}")
 			}
-			//// Don't return a Platformifier if there's an error.
-			// if tt.wantErr {
-			//	assert.Nil(t, pfier)
-			// } else {
-			//// Otherwise, make sure it's a Platformifier.
-			assert.IsType(t, new(Platformifier), pfier, "created object is not a Platformifier")
-			// And ensure it implements the PlatformifierInterface.
-			var inter interface{} = pfier
-			_, pass := inter.(PlatformifierInterface)
-			assert.True(t, pass, "created Platformifier but it does not implement PlatformifierInterface")
-			// }
+			// Don't return a Platformifier if there's an error.
+			if tt.wantErr || err != nil {
+				assert.Nil(t, pfier)
+			} else {
+				// Otherwise, make sure it's a Platformifier.
+				assert.IsType(t, new(Platformifier), pfier, "created object is not a Platformifier")
+			}
 		})
 	}
 }

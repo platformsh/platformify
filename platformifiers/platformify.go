@@ -78,8 +78,10 @@ func NewPlatformifier(answers *models.Answers) (PlatformifierInterface, error) {
 		p = &NextJSPlatformifier{}
 	case models.Django:
 		p = &DjangoPlatformifier{}
-	default:
+	case models.GenericStack:
 		p = &GenericPlatformifier{}
+	default:
+		p = &Platformifier{}
 	}
 
 	return p.setUserInput(answers), nil
