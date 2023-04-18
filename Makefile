@@ -10,6 +10,10 @@ lint: ## Run linter
 	command -v golangci-lint >/dev/null || go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	golangci-lint run --timeout=10m --verbose
 
+.PHONY: generate
+generate: ## Generate mock data
+	go generate ./...
+
 .PHONY: clean
 clean: ## Remove the binary file from the root folder
 	rm -rf $(PROJECT_NAME)

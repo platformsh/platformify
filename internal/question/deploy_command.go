@@ -7,7 +7,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
 

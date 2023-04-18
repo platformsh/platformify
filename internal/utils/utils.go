@@ -2,7 +2,9 @@ package utils
 
 import (
 	"errors"
+	"io"
 	"os"
+	"path"
 	"path/filepath"
 
 	"golang.org/x/exp/slices"
@@ -46,4 +48,18 @@ func FindFile(searchPath, name string) string {
 	})
 
 	return found
+}
+
+func NewFileCreator() *FileCreator {
+	return &FileCreator{}
+}
+
+type FileCreator struct{}
+
+func (f *FileCreator) Create(filePath string) (io.WriteCloser, error) {
+	if err := os.MkdirAll(path.Dir(filePath), os.ModeDir|os.ModePerm); err != nil {
+		return nil, err
+	}
+
+	return os.Create(filePath)
 }

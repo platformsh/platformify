@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/question/models"
 )
 
 type Environment struct{}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 
-	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
 
@@ -82,10 +82,12 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		answers.Dependencies = map[string]map[string]string{
 			"nodejs": {"sharp": "*"},
 		}
+		answers.BuildFlavor = "none"
 	case models.Yarn:
 		answers.Dependencies = map[string]map[string]string{
 			"nodejs": {"yarn": "^1.22.0"},
 		}
+		answers.BuildFlavor = "none"
 	}
 
 	return nil
