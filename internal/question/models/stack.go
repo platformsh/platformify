@@ -2,13 +2,15 @@ package models
 
 import (
 	"fmt"
+
+	"github.com/AlecAivazis/survey/v2"
 )
 
 const (
-	GenericStack Stack = "generic"
-	Django       Stack = "django"
-	Laravel      Stack = "laravel"
-	NextJS       Stack = "next-js"
+	GenericStack Stack = iota
+	Django
+	Laravel
+	NextJS
 )
 
 var (
@@ -20,14 +22,10 @@ var (
 	}
 )
 
-type Stack string
+type Stack int
 
-func (s Stack) String() string {
-	return string(s)
-}
-
-func (s Stack) Title() string {
-	switch s {
+func (s *Stack) Title() string {
+	switch *s {
 	case GenericStack:
 		return "Other"
 	case Django:
@@ -41,6 +39,20 @@ func (s Stack) Title() string {
 	}
 }
 
+func (s *Stack) WriteAnswer(_ string, value interface{}) error {
+	switch answer := value.(type) {
+	case survey.OptionAnswer: // Select
+		stack, err := Stacks.stackByTitle(answer.Value)
+		if err != nil {
+			return err
+		}
+		*s = stack
+	default:
+		return fmt.Errorf("unsupported type")
+	}
+	return nil
+}
+
 type StackList []Stack
 
 func (s StackList) AllTitles() []string {
@@ -51,11 +63,11 @@ func (s StackList) AllTitles() []string {
 	return titles
 }
 
-func (s StackList) StackByTitle(title string) (Stack, error) {
+func (s StackList) stackByTitle(title string) (Stack, error) {
 	for _, stack := range s {
 		if stack.Title() == title {
 			return stack, nil
 		}
 	}
-	return "", fmt.Errorf("stack by title is not found")
+	return GenericStack, fmt.Errorf("stack by title is not found")
 }

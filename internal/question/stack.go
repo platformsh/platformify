@@ -15,22 +15,14 @@ func (q *Stack) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	if answers.Stack.String() != "" {
-		// Skip the step
-		return nil
-	}
 
 	question := &survey.Select{
 		Message: "What Stack is your project using?",
 		Options: models.Stacks.AllTitles(),
 	}
 
-	var title string
-	err := survey.AskOne(question, &title, survey.WithPageSize(len(question.Options)))
-	if err != nil {
-		return err
-	}
-	stack, err := models.Stacks.StackByTitle(title)
+	var stack models.Stack
+	err := survey.AskOne(question, &stack, survey.WithPageSize(len(question.Options)))
 	if err != nil {
 		return err
 	}
