@@ -14,7 +14,7 @@ dependencies:
     {{ range $key, $value := $value }}
     {{- $key }}: "{{ $value }}"
     {{- end }}
-
+  {{- end }}
 ##########################
 # Builds and variables
 
