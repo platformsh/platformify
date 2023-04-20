@@ -19,9 +19,9 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	deployCommand := ""
 	cwd, _ := os.Getwd()
-	if answers.Stack == models.Django {
+	switch answers.Stack {
+	case models.Django:
 		if managePyPath := utils.FindFile(path.Join(cwd, answers.ApplicationRoot), managePyFile); managePyPath != "" {
 			managePyPath, _ = filepath.Rel(path.Join(cwd, answers.ApplicationRoot), managePyPath)
 			prefix := ""
@@ -31,11 +31,16 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 			case models.Poetry:
 				prefix = "poetry run "
 			}
-			deployCommand = fmt.Sprintf("%spython %s migrate", prefix, managePyPath)
+			answers.DeployCommand = append(answers.DeployCommand,
+				fmt.Sprintf("%spython %s migrate", prefix, managePyPath),
+			)
 		}
+	case models.Laravel:
+		answers.DeployCommand = append(answers.DeployCommand,
+			"php artisan optimize:clear",
+			"php artisan migrate --force",
+		)
 	}
-
-	answers.DeployCommand = deployCommand
 
 	return nil
 }
