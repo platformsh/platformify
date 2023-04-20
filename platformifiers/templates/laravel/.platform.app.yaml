@@ -1,11 +1,20 @@
 # Container configuration.
+# This file describes an application. You can have multiple applications
+# in the same project.
 
 #   The name of this app. Must be unique within a project.
 name: "{{ .Name }}"
 
-#   The runtime the application uses.
+# The type of the application to build.
 type: "{{ .Type }}"
 
+dependencies:
+  {{ range $key, $value := .Dependencies -}}
+  {{ $key }}:
+    {{ range $key, $value := $value }}
+    {{- $key }}: "{{ $value }}"
+    {{- end }}
+  {{- end }}
 ##########################
 # Builds and variables
 
@@ -27,19 +36,24 @@ variables:
 
 hooks:
   build: |
-    set -eux
+    set -e
     {{ range $step := .BuildSteps }}
     {{- $step }}
     {{ else }}
     # Add build steps here.
     # echo 'I am a build step'
     {{ end }}
-  {{- if .DeployCommand }}
-  deploy: {{ .DeployCommand }}
-  {{- else }}
-  # Run a command during deployment
-  # deploy: echo 'Put your deploy command here'
-  {{- end }}
+  # The deploy hook runs after your application has been deployed and started.
+  # Code cannot be modified at this point but the database is available.
+  # The site is not accepting requests while this script runs so keep it
+  # fast.
+  deploy: |
+    set -e
+    {{ range $deploycmd := .DeployCommand }}
+    {{- $deploycmd }}
+    {{ else -}}
+    # echo 'Put your deploy command here'
+    {{ end }}
 
 ##########################
 # Web configuration

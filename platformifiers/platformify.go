@@ -48,7 +48,7 @@ type UserInput struct {
 	BuildSteps        []string                          `json:"build_steps"`
 	WebCommand        string                            `json:"web_command"`
 	ListenInterface   string                            `json:"listen_interface"`
-	DeployCommand     string                            `json:"deploy_command"`
+	DeployCommand     []string                          `json:"deploy_command"`
 	DependencyManager string                            `json:"dependency_manager"`
 	Locations         map[string]map[string]interface{} `json:"locations"`
 	Dependencies      map[string]map[string]string      `json:"dependencies"`
