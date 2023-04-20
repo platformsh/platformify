@@ -80,6 +80,14 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				"npm run build",
 			)
 		}
+	case models.Laravel:
+		answers.BuildSteps = append(
+			answers.BuildSteps,
+			"composer --no-ansi --no-interaction install --no-progress --prefer-dist --optimize-autoloader --no-dev",
+			"# Install a specific NodeJS version https://github.com/platformsh/snippets/",
+			"# uncomment next line to build assets deploying",
+			"# npm install && npm run production",
+		)
 	}
 
 	if len(answers.BuildSteps) > 0 {

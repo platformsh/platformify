@@ -38,7 +38,7 @@ type UserInput struct {
 	BuildSteps        []string
 	WebCommand        string
 	ListenInterface   string
-	DeployCommand     string
+	DeployCommand     []string
 	DependencyManager string
 	Locations         map[string]map[string]interface{}
 	Dependencies      map[string]map[string]string
