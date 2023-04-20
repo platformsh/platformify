@@ -2,10 +2,12 @@ package question
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 
+	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/models"
 )
 
@@ -20,6 +22,19 @@ func (q *Services) Ask(ctx context.Context) error {
 		// Skip the step
 		return nil
 	}
+
+	out, _, ok := colors.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+	fmt.Fprintln(
+		out,
+		colors.Colorize(
+			colors.AccentCode,
+			"Last but not least, unless you’re creating a static website, your project uses services. Let’s define them:",
+		),
+	)
+	fmt.Fprintln(out)
 
 	question := &survey.MultiSelect{
 		Message: "Which services are you using?",

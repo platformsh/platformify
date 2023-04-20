@@ -17,6 +17,8 @@ type Answers struct {
 	DependencyManager DepManager                   `json:"dependency_manager"`
 	Dependencies      map[string]map[string]string `json:"dependencies"`
 	Services          []Service                    `json:"services"`
+	WorkingDirectory  string                       `json:"working_directory"`
+	FilesCreated      []string                     `json:"files_created"`
 }
 
 type Service struct {

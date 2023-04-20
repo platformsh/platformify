@@ -39,7 +39,7 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 	}
 
 	question := &survey.Select{
-		Message: "Choose your dependency manager:",
+		Message: "What dependency manager is your project using?",
 		Options: depManagers,
 	}
 

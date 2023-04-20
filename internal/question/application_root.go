@@ -49,13 +49,5 @@ func (q *ApplicationRoot) Ask(ctx context.Context) error {
 		}
 	}
 
-	var applicationRoot string
-	err := survey.AskOne(question, &applicationRoot, survey.WithValidator(survey.Required))
-	if err != nil {
-		return err
-	}
-
-	answers.ApplicationRoot = applicationRoot
-
 	return nil
 }

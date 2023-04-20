@@ -90,12 +90,5 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 		)
 	}
 
-	if len(answers.BuildSteps) > 0 {
-		fmt.Println("We identified a few build steps for you already!")
-		for _, step := range answers.BuildSteps {
-			fmt.Println("  " + step)
-		}
-	}
-
 	return nil
 }
