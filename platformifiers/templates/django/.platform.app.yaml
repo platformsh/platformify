@@ -42,8 +42,7 @@ hooks:
     set -e
     {{ range $deploycmd := .DeployCommand }}
     {{- $deploycmd }}
-    {{ end }}
-    {{ else }}
+    {{ else -}}
     # echo 'Put your deploy command here'
     {{ end }}
 

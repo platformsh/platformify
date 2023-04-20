@@ -19,7 +19,6 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	deployCommand := ""
 	cwd, _ := os.Getwd()
 	switch answers.Stack {
 	case models.Django:
@@ -43,7 +42,7 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		)
 	}
 
-	if deployCommand != "" {
+	if len(answers.DeployCommand) != 0 {
 		fmt.Println("We identified the commands to use during deployment for you!")
 		for _, step := range answers.DeployCommand {
 			fmt.Println("  " + step)
