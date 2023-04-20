@@ -21,6 +21,11 @@ dependencies:
   {{- end }}
 {{ else }}
 # dependencies:
+#   python3: # Specify one Python 3 package per line.
+#     numpy: '*'
+#   php: # Specify one Composer package per line.
+#     drush/drush: '8.0.0'
+#     composer/composer: '^2'
 #   nodejs: # Specify one NPM package per line.
 #     pm2: '^4.5.0'
 {{- end }}
