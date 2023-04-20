@@ -1,12 +1,14 @@
 package platformifiers
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -17,8 +19,9 @@ import (
 )
 
 const (
-	settingsPyFile    = "settings.py"
-	settingsPshPyFile = "settings_psh.py"
+	settingsPyFile        = "settings.py"
+	settingsPshPyFile     = "settings_psh.py"
+	importSettingsPshLine = "from settings_psh import *"
 )
 
 type DjangoPlatformifier struct {
@@ -76,25 +79,54 @@ func (p *DjangoPlatformifier) Platformify(ctx context.Context) error {
 		}
 		defer f.Close()
 
-		if _, err := f.WriteString("\n\nfrom settings_psh import *\n"); err != nil {
-			out, _, ok := colors.FromContext(ctx)
-			if !ok {
+		// Check if there is an import line in the file
+		found, err := containsStringInFile(settingsPath, importSettingsPshLine)
+		if err != nil {
+			return err
+		}
+
+		if !found {
+			if _, err = f.WriteString("\n\n" + importSettingsPshLine + "\n"); err != nil {
+				out, _, ok := colors.FromContext(ctx)
+				if !ok {
+					return nil
+				}
+
+				fmt.Fprintf(
+					out,
+					colors.Colorize(
+						colors.WarningCode,
+						"We have created a %s file for you. Please add the following line to your %s file:\n",
+					),
+					settingsPshPyFile,
+					settingsPyFile,
+				)
+				fmt.Fprint(out, colors.Colorize(colors.WarningCode, "    "+importSettingsPshLine+"\n"))
 				return nil
 			}
-
-			fmt.Fprintf(
-				out,
-				colors.Colorize(
-					colors.WarningCode,
-					"We have created a %s file for you. Please add the following line to your %s file:\n",
-				),
-				settingsPshPyFile,
-				settingsPyFile,
-			)
-			fmt.Fprint(out, colors.Colorize(colors.WarningCode, "    from .settings_psh import *\n"))
-			return nil
 		}
 	}
 
 	return nil
+}
+
+func containsStringInFile(filename, target string) (bool, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return false, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), target) {
+			return true, nil
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return false, err
+	}
+
+	return false, nil
 }
