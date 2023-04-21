@@ -18,6 +18,7 @@ import (
 
 const (
 	genericTemplatesDir = "templates/generic"
+	environmentFile     = ".environment"
 	appConfigFile       = ".platform.app.yaml"
 	routesConfigFile    = ".platform/routes.yaml"
 	servicesConfigFile  = ".platform/services.yaml"
@@ -60,7 +61,11 @@ func (s *PlatformifyGenericSuiteTester) SetupTest() {
 
 func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
 	// GIVEN mock buffers to store config files
-	appBuff, routesBuff, servicesBuff := &MockBuffer{}, &MockBuffer{}, &MockBuffer{}
+	envBuff, appBuff, routesBuff, servicesBuff := &MockBuffer{}, &MockBuffer{}, &MockBuffer{}, &MockBuffer{}
+	// AND creation of the environment file returns no errors
+	s.creator.EXPECT().
+		Create(gomock.Eq(path.Join(s.cwd, environmentFile))).
+		Return(envBuff, nil).Times(1)
 	// AND creation of the app config file returns no errors
 	s.creator.EXPECT().
 		Create(gomock.Eq(path.Join(s.cwd, appConfigFile))).
@@ -82,9 +87,29 @@ func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
 	// THEN it doesn't return any errors
 	assert.NoError(s.T(), err)
 	// AND the buffers contain configs
+	assert.NotEmpty(s.T(), envBuff)
 	assert.NotEmpty(s.T(), appBuff)
 	assert.NotEmpty(s.T(), routesBuff)
 	assert.NotEmpty(s.T(), servicesBuff)
+}
+
+func (s *PlatformifyGenericSuiteTester) TestEnvironmentCreationError() {
+	// GIVEN creating environment file fails
+	s.creator.EXPECT().
+		Create(gomock.Eq(path.Join(s.cwd, environmentFile))).
+		Return(nil, errors.New("")).Times(1)
+	// AND creating other config files work fine
+	s.creator.EXPECT().
+		Create(gomock.Any()).
+		Return(&MockBuffer{}, nil).AnyTimes()
+	// AND user input is empty (because it doesn't matter if it's empty or not)
+	input := &UserInput{}
+
+	// WHEN run config files creation
+	p := newGenericPlatformifier(s.templates, s.creator)
+	err := p.Platformify(context.Background(), input)
+	// THEN it fails
+	assert.Error(s.T(), err)
 }
 
 func (s *PlatformifyGenericSuiteTester) TestAppConfigCreationError() {
