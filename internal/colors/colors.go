@@ -2,7 +2,9 @@ package colors
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/AlecAivazis/survey/v2/core"
 	"github.com/mgutz/ansi"
 )
 
@@ -23,23 +25,21 @@ var (
 	resetCode     = ansi.ColorCode("reset")
 )
 
+func init() {
+	// If NO_COLOR environment variable is set and is not 0, reset colors to ""
+	if os.Getenv("NO_COLOR") != "" && os.Getenv("NO_COLOR") != "0" {
+		BrandCode = ""
+		AccentCode = ""
+		SecondaryCode = ""
+		WarningCode = ""
+		ErrorCode = ""
+		DefaultCode = ""
+		resetCode = ""
+		core.DisableColor = true
+	}
+}
+
 // Colorize the given string with the given color code
 func Colorize(code, str string) string {
 	return fmt.Sprintf("%s%s%s", code, str, resetCode)
-}
-
-func SetColors(brand, accent, secondary, warning, errorColor, defaultColor string) {
-	Brand = brand
-	Accent = accent
-	Secondary = secondary
-	Warning = warning
-	Error = errorColor
-	Default = defaultColor
-
-	BrandCode = ansi.ColorCode(Brand)
-	AccentCode = ansi.ColorCode(Accent)
-	SecondaryCode = ansi.ColorCode(Secondary)
-	WarningCode = ansi.ColorCode(Warning)
-	ErrorCode = ansi.ColorCode(Error)
-	DefaultCode = ansi.ColorCode(Default)
 }
