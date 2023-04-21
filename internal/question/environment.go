@@ -2,7 +2,6 @@ package question
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/platformsh/platformify/internal/question/models"
 )
@@ -26,13 +25,6 @@ func (q *Environment) Ask(ctx context.Context) error {
 				"PIPENV_VERSION":         "2023.2.18",
 				"PIPENV_VENV_IN_PROJECT": "1",
 			}
-		}
-	}
-
-	if len(answers.Environment) > 0 {
-		fmt.Println("We identified a few environment variables for you already!")
-		for key, value := range answers.Environment {
-			fmt.Println("  ", key, "=", value)
 		}
 	}
 

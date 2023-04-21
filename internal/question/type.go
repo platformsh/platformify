@@ -30,7 +30,7 @@ func (q *Type) Ask(ctx context.Context) error {
 		runtime = models.NodeJS
 	default:
 		question := &survey.Select{
-			Message: "Choose your PSH type:",
+			Message: "What language is your project using? We support the following:",
 			Options: models.Runtimes.AllTitles(),
 		}
 
@@ -51,20 +51,7 @@ func (q *Type) Ask(ctx context.Context) error {
 	if !ok || len(versions) == 0 {
 		return nil
 	}
-
-	question := &survey.Select{
-		Message:  "Choose " + runtime.Title() + " version:",
-		Options:  versions,
-		PageSize: len(versions),
-	}
-
-	var version string
-	err := survey.AskOne(question, &version)
-	if err != nil {
-		return err
-	}
-
-	answers.Type.Version = version
+	answers.Type.Version = versions[0]
 
 	return nil
 }

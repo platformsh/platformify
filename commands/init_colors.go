@@ -4,33 +4,18 @@ import (
 	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
+
+	"github.com/platformsh/platformify/internal/colors"
 )
 
-var (
-	// Colors. See Documentation: https://github.com/mgutz/ansi#style-format
-	color1      = "33"  // DodgerBlue1
-	color2      = "210" // LightCoral
-	color3      = "247" // Grey62
-	color4      = "red" // Red3
-	color5      = "default"
-	colorSchema = []*string{&color1, &color2, &color3, &color4, &color5}
-)
-
-func setColors(colors ...string) {
-	if len(colors) > len(colorSchema) {
-		colors = colors[:len(colorSchema)]
-	}
-	for i, color := range colors {
-		*colorSchema[i] = color
-	}
-
+func init() {
 	survey.InputQuestionTemplate = fmt.Sprintf(`
 {{- color "%[1]s"}}{{ .Message }} {{color "reset"}}
 {{- if .ShowAnswer}}
 	{{- color "%[2]s"}}[{{.Answer}}]{{color "reset"}}{{"\n"}}
 {{ else }}
 	{{- if .Default }}{{color "%[3]s"}}[{{.Default}}] {{color "reset"}}{{ end }}
-{{- end }}`, color1, color2, color3, color4, color5)
+{{- end }}`, colors.Accent, colors.Brand, colors.Secondary, colors.Error, colors.Default)
 
 	//nolint:lll
 	survey.SelectQuestionTemplate = fmt.Sprintf(`
@@ -47,7 +32,7 @@ func setColors(colors ...string) {
     {{- template "option" $.IterateOption $ix $option}}
   {{- end}}
   {{- color "%[3]s"}}Use arrows to move up and down, type to filter{{color "reset"}}{{"\n"}}
-{{- end}}`, color1, color2, color3, color4, color5)
+{{- end }}`, colors.Accent, colors.Brand, colors.Secondary, colors.Error, colors.Default)
 
 	survey.ConfirmQuestionTemplate = fmt.Sprintf(`
 {{- color "%[1]s"}}{{ .Message }} {{color "reset"}}
@@ -55,7 +40,7 @@ func setColors(colors ...string) {
   {{- color "%[2]s"}}[{{.Answer}}]{{color "reset"}}{{"\n"}}
 {{- else }}
   {{- color "%[3]s"}}{{if .Default}}Press "y" for yes, "n" for no. {{else}}(y/N){{end}}{{color "reset"}}{{"\n"}}
-{{- end}}`, color1, color2, color3, color4, color5)
+{{- end }}`, colors.Accent, colors.Brand, colors.Secondary, colors.Error, colors.Default)
 
 	//nolint:lll
 	survey.MultiSelectQuestionTemplate = fmt.Sprintf(`
@@ -73,5 +58,5 @@ func setColors(colors ...string) {
     {{- template "option" $.IterateOption $ix $option}}
   {{- end}}
   {{- color "%[3]s"}}Use arrows to move, space to select, type to filter{{color "reset"}}{{"\n"}}
-{{- end}}`, color1, color2, color3, color4, color5)
+{{- end }}`, colors.Accent, colors.Brand, colors.Secondary, colors.Error, colors.Default)
 }

@@ -42,12 +42,5 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		)
 	}
 
-	if len(answers.DeployCommand) != 0 {
-		fmt.Println("We identified the commands to use during deployment for you!")
-		for _, step := range answers.DeployCommand {
-			fmt.Println("  " + step)
-		}
-	}
-
 	return nil
 }

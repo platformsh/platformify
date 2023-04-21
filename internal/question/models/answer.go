@@ -22,6 +22,8 @@ type Answers struct {
 	Dependencies      map[string]map[string]string `json:"dependencies"`
 	BuildFlavor       string                       `json:"build_flavor"`
 	Services          []Service                    `json:"services"`
+	WorkingDirectory  string                       `json:"working_directory"`
+	FilesCreated      []string                     `json:"files_created"`
 }
 
 type Service struct {

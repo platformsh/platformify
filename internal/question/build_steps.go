@@ -11,10 +11,6 @@ import (
 	"github.com/platformsh/platformify/internal/utils"
 )
 
-const (
-	managePyFile = "manage.py"
-)
-
 type BuildSteps struct{}
 
 func (q *BuildSteps) Ask(ctx context.Context) error {
@@ -88,13 +84,6 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			"# uncomment next line to build assets deploying",
 			"# npm install && npm run production",
 		)
-	}
-
-	if len(answers.BuildSteps) > 0 {
-		fmt.Println("We identified a few build steps for you already!")
-		for _, step := range answers.BuildSteps {
-			fmt.Println("  " + step)
-		}
 	}
 
 	return nil

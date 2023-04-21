@@ -24,8 +24,8 @@ var (
 
 type Stack int
 
-func (s *Stack) Title() string {
-	switch *s {
+func (s Stack) Title() string {
+	switch s {
 	case GenericStack:
 		return "Other"
 	case Django:
