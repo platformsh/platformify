@@ -6,6 +6,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/utils"
 )
 
 type Stack struct{}
@@ -15,14 +16,15 @@ func (q *Stack) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	if answers.Stack.String() != "" {
-		// Skip the step
-		return nil
-	}
 
 	question := &survey.Select{
 		Message: "What Stack is your project using?",
 		Options: models.Stacks.AllTitles(),
+	}
+	hasSettingsPy := utils.FileExists(answers.WorkingDirectory, "settings.py")
+	hasManagePy := utils.FileExists(answers.WorkingDirectory, "manage.py")
+	if hasSettingsPy && hasManagePy {
+		question.Default = models.Django.Title()
 	}
 
 	var title string
