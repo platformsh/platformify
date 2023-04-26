@@ -56,9 +56,21 @@ web:
   # You can configure a UNIX socket or a TCP port (default).
   # upstream:
   #  socket_family: unix
+  {{- if .WebCommand }}
   commands:
+    # The command to start your application.
     # You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
     start: {{ .WebCommand }}
+  {{- else }}
+  # commands:
+  #   The command to start your application.
+  #   You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
+  {{- if hasPrefix "php:" .Type }}
+  #   PHP applications run PHP-fpm by default
+  #   Read about alternative commands here: https://docs.platform.sh/languages/php.html#alternate-start-commands
+  {{- end }}
+  #   start: echo 'Put your start command here'
+  {{- end }}
   {{- if .Locations }}
   locations:
     {{ range $key, $value := .Locations -}}
