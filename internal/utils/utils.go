@@ -1,10 +1,18 @@
 package utils
 
 import (
+	"bufio"
+	"context"
 	"errors"
+	"fmt"
+	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
+	"strings"
+	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"golang.org/x/exp/slices"
 )
 
@@ -46,4 +54,74 @@ func FindFile(searchPath, name string) string {
 	})
 
 	return found
+}
+
+// WriteTemplates in the given directory, making sure the user is okay with overwriting existing files
+func WriteTemplates(ctx context.Context, root string, templates map[string]*template.Template, input any) error {
+	for path, t := range templates {
+		if err := writeTemplate(ctx, filepath.Join(root, path), t, input); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// GatherTemplates with the given prefix inside the templates filesystem
+func GatherTemplates(ctx context.Context, templatesFs fs.FS, prefix string) (map[string]*template.Template, error) {
+	templates := make(map[string]*template.Template)
+	err := fs.WalkDir(templatesFs, prefix, func(filePath string, d fs.DirEntry, walkErr error) error {
+		if d.IsDir() {
+			return nil
+		}
+		tpl, parseErr := template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(templatesFs, filePath)
+		if parseErr != nil {
+			return fmt.Errorf("could not parse template: %w", parseErr)
+		}
+
+		filePath = filePath[len(prefix)+1:]
+		templates[filePath] = tpl
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	return templates, nil
+}
+
+// Checks if the given file contains the given string
+func ContainsStringInFile(filename, target string) (bool, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return false, err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), target) {
+			return true, nil
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return false, err
+	}
+
+	return false, nil
+}
+
+func writeTemplate(_ context.Context, tplPath string, tpl *template.Template, input any) error {
+	if err := os.MkdirAll(path.Dir(tplPath), os.ModeDir|os.ModePerm); err != nil {
+		return err
+	}
+
+	f, err := os.Create(tplPath)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	return tpl.Execute(f, input)
 }

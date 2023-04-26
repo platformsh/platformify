@@ -4,10 +4,7 @@ import (
 	"context"
 	"embed"
 	"fmt"
-	"os"
-	"path"
 	"strings"
-	"text/template"
 
 	"github.com/platformsh/platformify/internal/models"
 )
@@ -142,18 +139,4 @@ func (ui *UserInput) Cache() string {
 	}
 
 	return ""
-}
-
-func writeTemplate(_ context.Context, tplPath string, tpl *template.Template, input any) error {
-	if err := os.MkdirAll(path.Dir(tplPath), os.ModeDir|os.ModePerm); err != nil {
-		return err
-	}
-
-	f, err := os.Create(tplPath)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	return tpl.Execute(f, input)
 }
