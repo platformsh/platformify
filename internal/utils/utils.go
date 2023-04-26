@@ -12,6 +12,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/AlecAivazis/survey/v2"
 	"github.com/Masterminds/sprig/v3"
 	"golang.org/x/exp/slices"
 )
@@ -58,6 +59,31 @@ func FindFile(searchPath, name string) string {
 
 // WriteTemplates in the given directory, making sure the user is okay with overwriting existing files
 func WriteTemplates(ctx context.Context, root string, templates map[string]*template.Template, input any) error {
+	existingFiles := make([]string, 0, len(templates))
+	for path := range templates {
+		if st, err := os.Stat(filepath.Join(root, path)); err == nil && !st.IsDir() {
+			existingFiles = append(existingFiles, path)
+		}
+	}
+
+	if len(existingFiles) > 0 {
+		message := "The following files already exist."
+		accept := false
+		for _, path := range existingFiles {
+			message += "\n  * " + path
+		}
+		message += "\n\nDo you want to overwrite them?"
+		question := &survey.Confirm{
+			Message: message,
+		}
+		if err := survey.AskOne(question, &accept); err != nil {
+			return err
+		}
+		if !accept {
+			return fmt.Errorf("aborted by user")
+		}
+	}
+
 	for path, t := range templates {
 		if err := writeTemplate(ctx, filepath.Join(root, path), t, input); err != nil {
 			return err
