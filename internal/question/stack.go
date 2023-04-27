@@ -3,8 +3,6 @@ package question
 import (
 	"context"
 
-	"github.com/AlecAivazis/survey/v2"
-
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -17,27 +15,30 @@ func (q *Stack) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	question := &survey.Select{
-		Message: "What Stack is your project using?",
-		Options: models.Stacks.AllTitles(),
-	}
+	answers.Stack = models.GenericStack
+
 	hasSettingsPy := utils.FileExists(answers.WorkingDirectory, "settings.py")
 	hasManagePy := utils.FileExists(answers.WorkingDirectory, "manage.py")
 	if hasSettingsPy && hasManagePy {
-		question.Default = models.Django.Title()
+		answers.Stack = models.Django
+		return nil
 	}
 
-	var title string
-	err := survey.AskOne(question, &title, survey.WithPageSize(len(question.Options)))
-	if err != nil {
-		return err
-	}
-	stack, err := models.Stacks.StackByTitle(title)
-	if err != nil {
-		return err
+	composerJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, "composer.json")
+	for _, composerJSONPath := range composerJSONPaths {
+		if _, ok := utils.GetJSONKey([]string{"require", "laravel/framework"}, composerJSONPath); ok {
+			answers.Stack = models.Laravel
+			return nil
+		}
 	}
 
-	answers.Stack = stack
+	packageJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, "package.json")
+	for _, packageJSONPath := range packageJSONPaths {
+		if _, ok := utils.GetJSONKey([]string{"dependencies", "next"}, packageJSONPath); ok {
+			answers.Stack = models.NextJS
+			return nil
+		}
+	}
 
 	return nil
 }

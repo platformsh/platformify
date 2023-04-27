@@ -3,8 +3,10 @@ package utils
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 	"path"
@@ -55,6 +57,72 @@ func FindFile(searchPath, name string) string {
 	})
 
 	return found
+}
+
+// FindAllFiles searches for the file inside the path recursively and returns all matches
+func FindAllFiles(searchPath, name string) []string {
+	found := make([]string, 0)
+	_ = filepath.WalkDir(searchPath, func(p string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			// Skip vendor directories
+			if slices.Contains(skipDirs, d.Name()) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		if d.Name() == name {
+			found = append(found, p)
+		}
+
+		return nil
+	})
+
+	return found
+}
+
+// GetJSONKey gets a value from a JSON file, by traversing the path given
+func GetJSONKey(jsonPath []string, filePath string) (value interface{}, ok bool) {
+	fin, err := os.Open(filePath)
+	if err != nil {
+		return nil, false
+	}
+	defer fin.Close()
+
+	input, err := io.ReadAll(fin)
+	if err != nil {
+		return nil, false
+	}
+
+	var data map[string]interface{}
+	err = json.Unmarshal(input, &data)
+	if err != nil {
+		return nil, false
+	}
+
+	if len(jsonPath) == 0 {
+		return data, true
+	}
+
+	for _, key := range jsonPath[:len(jsonPath)-1] {
+		if value, ok = data[key]; !ok {
+			return nil, false
+		}
+
+		if data, ok = value.(map[string]interface{}); !ok {
+			return nil, false
+		}
+	}
+
+	if value, ok = data[jsonPath[len(jsonPath)-1]]; !ok {
+		return nil, false
+	}
+
+	return value, true
 }
 
 // WriteTemplates in the given directory, making sure the user is okay with overwriting existing files
