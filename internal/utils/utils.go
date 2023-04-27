@@ -94,7 +94,7 @@ func WriteTemplates(ctx context.Context, root string, templates map[string]*temp
 }
 
 // GatherTemplates with the given prefix inside the templates filesystem
-func GatherTemplates(ctx context.Context, templatesFs fs.FS, prefix string) (map[string]*template.Template, error) {
+func GatherTemplates(_ context.Context, templatesFs fs.FS, prefix string) (map[string]*template.Template, error) {
 	templates := make(map[string]*template.Template)
 	err := fs.WalkDir(templatesFs, prefix, func(filePath string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
