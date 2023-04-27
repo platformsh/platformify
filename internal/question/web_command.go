@@ -52,7 +52,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		case models.Poetry:
 			prefix = "poetry run "
 		}
-		if answers.ListenInterface == models.HTTP {
+		if answers.SocketFamily == models.TCP {
 			answers.WebCommand = fmt.Sprintf("%sgunicorn %s -b 0.0.0.0:$PORT %s --log-file -", prefix, pythonPath, wsgi)
 			return nil
 		}
