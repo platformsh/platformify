@@ -100,6 +100,17 @@ web:
   {{ end }}
 
 ##########################
+# The size of the persistent disk of the application (in MB).
+disk: 512
+
+# The mounts that will be available to your application when deployed.
+mounts:
+    # NPM caching directory, so it must be writeable.
+    '/.npm':
+        source: local
+        source_path: 'npm'
+
+##########################
 # Services
 
 # The relationships of the application with services or other applications.
