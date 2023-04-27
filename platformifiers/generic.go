@@ -3,12 +3,9 @@ package platformifiers
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"os"
-	"path"
-	"text/template"
 
-	"github.com/Masterminds/sprig/v3"
+	"github.com/platformsh/platformify/internal/utils"
 )
 
 const genericTemplatesPath = "templates/generic"
@@ -20,27 +17,19 @@ type GenericPlatformifier struct {
 
 // Platformify will generate the .platform.app.yaml and .platform/ directory
 func (p *GenericPlatformifier) Platformify(ctx context.Context) error {
+	// Gather templates.
+	templates, err := utils.GatherTemplates(ctx, templatesFs, genericTemplatesPath)
+	if err != nil {
+		return err
+	}
+
+	// Get working directory.
 	cwd, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)
 	}
-	err = fs.WalkDir(templatesFs, genericTemplatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
-		if d.IsDir() {
-			return nil
-		}
-		tpl, er := template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(templatesFs, filePath)
-		if er != nil {
-			return fmt.Errorf("could not parse template: %w", er)
-		}
-
-		filePath = path.Join(cwd, filePath[len(genericTemplatesPath):])
-		if er := writeTemplate(ctx, filePath, tpl, p.UserInput); er != nil {
-			return fmt.Errorf("could not write template: %w", er)
-		}
-		return nil
-	})
-	if err != nil {
-		return err
+	if err := utils.WriteTemplates(ctx, cwd, templates, p.UserInput); err != nil {
+		return fmt.Errorf("could not write Platform.sh files: %w", err)
 	}
 
 	return nil

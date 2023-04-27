@@ -3,14 +3,10 @@ package platformifiers
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"os"
-	"path"
-	"text/template"
-
-	"github.com/Masterminds/sprig/v3"
 
 	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/utils"
 )
 
 const (
@@ -23,7 +19,13 @@ type NextJSPlatformifier struct {
 
 func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 	if p.Stack != models.NextJS.String() {
-		return fmt.Errorf("cannot platformify non-next.js stack: %s", p.Stack)
+		return fmt.Errorf("cannot platformify non-Next.js stack: %s", p.Stack)
+	}
+
+	// Gather templates.
+	templates, err := utils.GatherTemplates(ctx, templatesFs, nextjsTemplatesPath)
+	if err != nil {
+		return err
 	}
 
 	// Get working directory.
@@ -31,23 +33,8 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 	if err != nil {
 		return fmt.Errorf("could not get current working directory: %w", err)
 	}
-	err = fs.WalkDir(templatesFs, nextjsTemplatesPath, func(filePath string, d fs.DirEntry, walkErr error) error {
-		if d.IsDir() {
-			return nil
-		}
-		tpl, er := template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(templatesFs, filePath)
-		if er != nil {
-			return fmt.Errorf("could not parse template: %w", er)
-		}
-
-		filePath = path.Join(cwd, filePath[len(nextjsTemplatesPath):])
-		if er := writeTemplate(ctx, filePath, tpl, p.UserInput); er != nil {
-			return fmt.Errorf("could not write template: %w", er)
-		}
-		return nil
-	})
-	if err != nil {
-		return err
+	if err := utils.WriteTemplates(ctx, cwd, templates, p.UserInput); err != nil {
+		return fmt.Errorf("could not write Platform.sh files: %w", err)
 	}
 
 	return nil
