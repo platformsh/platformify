@@ -24,7 +24,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 	}
 
 	// Do not ask the command for PHP applications
-	if answers.Type.Runtime.String() == models.PHP.String() {
+	if answers.Type.Runtime == models.PHP {
 		return nil
 	}
 
@@ -64,7 +64,11 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		return nil
 	default:
 		//nolint:lll
-		answers.WebCommand = "echo 'Put your web server command in here! You need to listen to '$SOCKET' unix socket. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'"
+		answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
+		if answers.SocketFamily == models.TCP {
+			//nolint:lll
+			answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$PORT\" port. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
+		}
 		return nil
 	}
 }

@@ -77,7 +77,7 @@ web:
   commands:
     # The command to start your application.
     # You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
-    start: {{ .WebCommand }}
+    start: {{ quote .WebCommand }}
   {{- else }}
   # commands:
   #   The command to start your application.
