@@ -44,7 +44,7 @@ type UserInput struct {
 	Environment       map[string]string                 `json:"environment"`
 	BuildSteps        []string                          `json:"build_steps"`
 	WebCommand        string                            `json:"web_command"`
-	ListenInterface   string                            `json:"listen_interface"`
+	SocketFamily      string                            `json:"socket_family"`
 	DeployCommand     []string                          `json:"deploy_command"`
 	DependencyManager string                            `json:"dependency_manager"`
 	Locations         map[string]map[string]interface{} `json:"locations"`
@@ -82,7 +82,7 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 		Environment:       answers.Environment,
 		BuildSteps:        answers.BuildSteps,
 		WebCommand:        answers.WebCommand,
-		ListenInterface:   answers.ListenInterface.String(),
+		SocketFamily:      answers.SocketFamily.String(),
 		DependencyManager: answers.DependencyManager.String(),
 		DeployCommand:     answers.DeployCommand,
 		Locations: map[string]map[string]interface{}{

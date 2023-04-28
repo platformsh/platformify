@@ -51,12 +51,34 @@ hooks:
 
 # The configuration of the application when it is exposed to the web.
 web:
-  # You can configure a UNIX socket or a TCP port (default).
+  # You can listen to a UNIX socket (unix) or a TCP port (tcp, default).
+  {{- if hasPrefix "php:" .Type }}
+  # For PHP, the defaults are configured for PHP-FPM and shouldn't need adjustment.
+  {{- end }}
+  # Read more about upstream here: https://docs.platform.sh/create-apps/app-reference.html#upstream
+  {{- if .SocketFamily }}
+  upstream:
+    socket_family: {{ .SocketFamily }}
+  {{- else }}
   # upstream:
   #  socket_family: unix
+  {{- end }}
+
+  {{- if .WebCommand }}
   commands:
+    # The command to start your application.
     # You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
-    start: {{ .WebCommand }}
+    start: {{ quote .WebCommand }}
+  {{- else }}
+  # commands:
+  #   The command to start your application.
+  #   You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
+  {{- if hasPrefix "php:" .Type }}
+  #   PHP applications run PHP-fpm by default
+  #   Read about alternative commands here: https://docs.platform.sh/languages/php.html#alternate-start-commands
+  {{- end }}
+  #   start: echo 'Put your start command here'
+  {{- end }}
   {{- if .Locations }}
   locations:
     {{ range $key, $value := .Locations -}}

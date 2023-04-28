@@ -12,7 +12,7 @@ type Answers struct {
 	Environment       map[string]string            `json:"environment"`
 	BuildSteps        []string                     `json:"build_steps"`
 	WebCommand        string                       `json:"web_command"`
-	ListenInterface   ListenInterface              `json:"listen_interface"`
+	SocketFamily      SocketFamily                 `json:"socket_family"`
 	DeployCommand     []string                     `json:"deploy_command"`
 	DependencyManager DepManager                   `json:"dependency_manager"`
 	Dependencies      map[string]map[string]string `json:"dependencies"`
