@@ -15,7 +15,7 @@ import (
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
 var PlatformifyCmd = &cobra.Command{
 	Use:   "platformify",
-	Short: "Platfomrify your application, and deploy it to the Platform.sh",
+	Short: "Platformify your application, and deploy it to the Platform.sh",
 	Long: `Platformify your application, creating all the needed files
 for it to be deployed to Platform.sh.
 
@@ -43,7 +43,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.Environment{},
 			&question.BuildSteps{},
 			&question.DeployCommand{},
-			&question.ListenInterface{},
+			&question.SocketFamily{},
 			&question.WebCommand{},
 			&question.AlmostDone{},
 			&question.Services{},

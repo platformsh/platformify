@@ -53,3 +53,23 @@ func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) 
 
 	return nil
 }
+
+// FIXME: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
+// 	// Gather templates.
+// 	templates, err := utils.GatherTemplates(ctx, p.templates, ".")
+// 	if err != nil {
+// 		return err
+// 	}
+//
+// 	// Get working directory.
+// 	cwd, err := os.Getwd()
+// 	if err != nil {
+// 		return fmt.Errorf("could not get current working directory: %w", err)
+// 	}
+// 	if err := utils.WriteTemplates(ctx, cwd, templates, input); err != nil {
+// 		return fmt.Errorf("could not write Platform.sh files: %w", err)
+// 	}
+//
+// 	return nil
+// }

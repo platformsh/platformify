@@ -1,12 +1,12 @@
 {{ if .Database }}
 # Set database environment variables
-export DATABASE_HOST=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].host")
-export DATABASE_PORT=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].port")
-export DATABASE_NAME=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].path")
-export DATABASE_USER=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].username")
-export DATABASE_USER=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].username")
-export DATABASE_SCHEME=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].scheme")
-export DATABAES_URL="${DATABASE_SCHEME}://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"
+export DB_HOST=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].host")
+export DB_PORT=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].port")
+export DB_DATABASE=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].path")
+export DB_USERNAME=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].username")
+export DB_PASSWORD=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].password")
+export DB_CONNECTION=$(echo $PLATFORM_RELATIONSHIPS | base64 --decode | jq -r ".{{ .Database }}[0].scheme")
+export DATABASE_URL="${DB_CONNECTION}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}"
 {{ end }}
 
 {{ if .Cache }}

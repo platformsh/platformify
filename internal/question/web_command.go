@@ -7,8 +7,6 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/AlecAivazis/survey/v2"
-
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -25,7 +23,11 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	question := &survey.Input{Message: "Web command:"}
+	// Do not ask the command for PHP applications
+	if answers.Type.Runtime == models.PHP {
+		return nil
+	}
+
 	cwd, _ := os.Getwd()
 	switch answers.Stack {
 	case models.Django:
@@ -50,24 +52,23 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		case models.Poetry:
 			prefix = "poetry run "
 		}
-		if answers.ListenInterface == models.HTTP {
-			question.Default = fmt.Sprintf("%sgunicorn %s -b 0.0.0.0:$PORT %s --log-file -", prefix, pythonPath, wsgi)
-		} else {
-			question.Default = fmt.Sprintf("%sgunicorn %s -b unix:$UNIX %s --log-file -", prefix, pythonPath, wsgi)
+		if answers.SocketFamily == models.TCP {
+			answers.WebCommand = fmt.Sprintf("%sgunicorn %s -b 0.0.0.0:$PORT %s --log-file -", prefix, pythonPath, wsgi)
+			return nil
 		}
+
+		answers.WebCommand = fmt.Sprintf("%sgunicorn %s -b unix:$UNIX %s --log-file -", prefix, pythonPath, wsgi)
+		return nil
 	case models.NextJS:
-		if answers.ListenInterface == models.HTTP {
-			question.Default = "npx next start -p $PORT"
+		answers.WebCommand = "npx next start -p $PORT"
+		return nil
+	default:
+		//nolint:lll
+		answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
+		if answers.SocketFamily == models.TCP {
+			//nolint:lll
+			answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$PORT\" port. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
 		}
+		return nil
 	}
-
-	var webCommand string
-	err := survey.AskOne(question, &webCommand)
-	if err != nil {
-		return err
-	}
-
-	answers.WebCommand = webCommand
-
-	return nil
 }

@@ -37,7 +37,7 @@ type UserInput struct {
 	Environment       map[string]string
 	BuildSteps        []string
 	WebCommand        string
-	ListenInterface   string
+	SocketFamily      string
 	DeployCommand     []string
 	DependencyManager string
 	Locations         map[string]map[string]interface{}
