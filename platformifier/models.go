@@ -43,6 +43,8 @@ type UserInput struct {
 	Locations         map[string]map[string]interface{}
 	Dependencies      map[string]map[string]string
 	BuildFlavor       string
+	Disk              string
+	Mounts            map[string]map[string]string
 	Services          []Service
 	Relationships     map[string]string
 }

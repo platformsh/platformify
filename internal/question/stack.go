@@ -10,8 +10,8 @@ import (
 const (
 	settingsPyFile   = "settings.py"
 	managePyFile     = "manage.py"
-	composerJsonFile = "composer.json"
-	packageJsonFile  = "package.json"
+	composerJSONFile = "composer.json"
+	packageJSONFile  = "package.json"
 )
 
 type Stack struct{}
@@ -31,7 +31,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	composerJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, composerJsonFile)
+	composerJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, composerJSONFile)
 	for _, composerJSONPath := range composerJSONPaths {
 		if _, ok := utils.GetJSONKey([]string{"require", "laravel/framework"}, composerJSONPath); ok {
 			answers.Stack = models.Laravel
@@ -39,7 +39,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 		}
 	}
 
-	packageJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, packageJsonFile)
+	packageJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, packageJSONFile)
 	for _, packageJSONPath := range packageJSONPaths {
 		if _, ok := utils.GetJSONKey([]string{"dependencies", "next"}, packageJSONPath); ok {
 			answers.Stack = models.NextJS

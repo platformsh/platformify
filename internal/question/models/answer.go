@@ -21,6 +21,8 @@ type Answers struct {
 	DependencyManager DepManager                   `json:"dependency_manager"`
 	Dependencies      map[string]map[string]string `json:"dependencies"`
 	BuildFlavor       string                       `json:"build_flavor"`
+	Disk              string                       `json:"disk"`
+	Mounts            map[string]map[string]string `json:"mounts"`
 	Services          []Service                    `json:"services"`
 	WorkingDirectory  string                       `json:"working_directory"`
 	FilesCreated      []string                     `json:"files_created"`
@@ -109,6 +111,8 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 		},
 		Dependencies:  a.Dependencies,
 		BuildFlavor:   a.BuildFlavor,
+		Disk:          a.Disk,
+		Mounts:        a.Mounts,
 		Services:      services,
 		Relationships: getRelationships(a.Services),
 	}

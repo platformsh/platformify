@@ -133,16 +133,30 @@ web:
   {{ end }}
 
 ##########################
-# FIXME: !!!!!!!!!!!!!!!!!
+# Mounts
+
 # The size of the persistent disk of the application (in MB).
-disk: 512
+{{ if .Disk -}}
+disk: {{ .Disk }}
+{{- else -}}
+# disk: 512
+{{- end }}
 
 # The mounts that will be available to your application when deployed.
+{{ if .Mounts -}}
 mounts:
-    # NPM caching directory, so it must be writeable.
-    '/.npm':
-        source: local
-        source_path: 'npm'
+  {{ range $key, $value := .Mounts -}}
+  "{{ $key }}":
+    {{ range $key, $value := $value }}
+    {{- $key }}: "{{ $value }}"
+    {{ end -}}
+  {{- end }}
+{{- else -}}
+# mounts:
+#   "/.cache": # Represents the path in the app.
+#     source: "local" # "local" sources are unique to the app, while "service" sources can be shared among apps.
+#     source_path: "cache" # The subdirectory within the mounted disk (the source) where the mount should point.
+{{- end }}
 
 ##########################
 # Services

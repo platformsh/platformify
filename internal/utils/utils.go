@@ -184,7 +184,7 @@ func GatherTemplates(_ context.Context, templatesFs fs.FS, prefix string) (map[s
 	return templates, nil
 }
 
-// Checks if the given file contains the given string
+// ContainsStringInFile checks if the given file contains the given string
 func ContainsStringInFile(filename, target string) (bool, error) {
 	file, err := os.Open(filename)
 	if err != nil {

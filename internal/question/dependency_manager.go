@@ -49,7 +49,6 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 			} else if exists := utils.FileExists(cwd, npmLockFileName); exists {
 				answers.DependencyManager = models.Npm
 			}
-		default:
 		}
 	}
 
