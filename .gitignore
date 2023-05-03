@@ -1,5 +1,6 @@
 /platformify
 
+/.environment
 /.platform.app.yaml
 /.platform/
 

@@ -16,6 +16,9 @@ type Answers struct {
 	DeployCommand     []string                     `json:"deploy_command"`
 	DependencyManager DepManager                   `json:"dependency_manager"`
 	Dependencies      map[string]map[string]string `json:"dependencies"`
+	BuildFlavor       string                       `json:"build_flavor"`
+	Disk              string                       `json:"disk"`
+	Mounts            map[string]map[string]string `json:"mounts"`
 	Services          []Service                    `json:"services"`
 	WorkingDirectory  string                       `json:"working_directory"`
 	FilesCreated      []string                     `json:"files_created"`
