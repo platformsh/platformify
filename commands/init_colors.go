@@ -27,11 +27,10 @@ func init() {
 {{- color "%[1]s"}}{{ .Message }}{{ .FilterMessage }}{{color "reset"}}
 {{- if .ShowAnswer}}{{color "%[2]s"}} [{{.Answer}}]{{color "reset"}}{{"\n"}}{{"\n"}}
 {{- else}}
-  {{- "\n"}}
+{{ color "%[5]s"}}Use arrows to move up and down, type to filter{{color "reset"}}{{"\n"}}
   {{- range $ix, $option := .PageEntries}}
     {{- template "option" $.IterateOption $ix $option}}
   {{- end}}
-  {{- color "%[3]s"}}Use arrows to move up and down, type to filter{{color "reset"}}{{"\n"}}
 {{- end }}`, colors.Accent, colors.Brand, colors.Secondary, colors.Error, colors.Default)
 
 	survey.ConfirmQuestionTemplate = fmt.Sprintf(`
@@ -53,10 +52,9 @@ func init() {
 {{- color "%[1]s"}}{{ .Message }}{{ .FilterMessage }}{{color "reset"}}
 {{- if .ShowAnswer}}{{color "%[2]s"}} [{{.Answer}}]{{color "reset"}}{{"\n"}}{{"\n"}}
 {{- else }}
-  {{- "\n"}}
+{{ color "%[5]s"}}Use arrows to move, space to select, type to filter{{color "reset"}}{{"\n"}}
   {{- range $ix, $option := .PageEntries}}
     {{- template "option" $.IterateOption $ix $option}}
   {{- end}}
-  {{- color "%[3]s"}}Use arrows to move, space to select, type to filter{{color "reset"}}{{"\n"}}
 {{- end }}`, colors.Accent, colors.Brand, colors.Secondary, colors.Error, colors.Default)
 }
