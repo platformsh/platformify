@@ -49,7 +49,6 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 			} else if exists := utils.FileExists(cwd, npmLockFileName); exists {
 				answers.DependencyManager = models.Npm
 			}
-		default:
 		}
 	}
 
@@ -58,14 +57,17 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		answers.Dependencies = map[string]map[string]string{
 			"php": {"composer/composer": "^2"},
 		}
+		answers.BuildFlavor = "none"
 	case models.Npm:
 		answers.Dependencies = map[string]map[string]string{
 			"nodejs": {"sharp": "*"},
 		}
+		answers.BuildFlavor = "none"
 	case models.Yarn:
 		answers.Dependencies = map[string]map[string]string{
 			"nodejs": {"yarn": "^1.22.0"},
 		}
+		answers.BuildFlavor = "none"
 	}
 
 	return nil

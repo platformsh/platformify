@@ -27,28 +27,31 @@ var (
 
 // Service contains the configuration for a service needed by the application.
 type Service struct {
-	Name         string   `json:"name"`
-	Type         string   `json:"type"`
-	TypeVersions []string `json:"type_versions"`
-	Disk         string   `json:"disk"`
-	DiskSizes    []string `json:"disk_sizes"`
+	Name         string
+	Type         string
+	TypeVersions []string
+	Disk         string
+	DiskSizes    []string
 }
 
 // UserInput contains the configuration from user input.
 type UserInput struct {
-	Stack             string                            `json:"stack"`
-	Root              string                            `json:"root"`
-	ApplicationRoot   string                            `json:"application_root"`
-	Name              string                            `json:"name"`
-	Type              string                            `json:"type"`
-	Environment       map[string]string                 `json:"environment"`
-	BuildSteps        []string                          `json:"build_steps"`
-	WebCommand        string                            `json:"web_command"`
-	SocketFamily      string                            `json:"socket_family"`
-	DeployCommand     []string                          `json:"deploy_command"`
-	DependencyManager string                            `json:"dependency_manager"`
-	Locations         map[string]map[string]interface{} `json:"locations"`
-	Dependencies      map[string]map[string]string      `json:"dependencies"`
+	Stack             string
+	Root              string
+	ApplicationRoot   string
+	Name              string
+	Type              string
+	Environment       map[string]string
+	BuildSteps        []string
+	WebCommand        string
+	SocketFamily      string
+	DeployCommand     []string
+	DependencyManager string
+	Locations         map[string]map[string]interface{}
+	Dependencies      map[string]map[string]string
+	BuildFlavor       string
+	Disk              string
+	Mounts            map[string]map[string]string
 	Services          []Service
 }
 
@@ -91,6 +94,9 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 			},
 		},
 		Dependencies: answers.Dependencies,
+		BuildFlavor:  answers.BuildFlavor,
+		Disk:         answers.Disk,
+		Mounts:       answers.Mounts,
 		Services:     services,
 	}
 	switch answers.Stack {
