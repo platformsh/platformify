@@ -40,9 +40,29 @@ func (q *Services) Ask(ctx context.Context) error {
 		Message: "Which services are you using?",
 		Options: models.ServiceNames.AllTitles(),
 	}
+
 	var services models.ServiceNameList
-	if err := survey.AskOne(question, &services, survey.WithKeepFilter(true)); err != nil {
-		return err
+	for {
+		if err := survey.AskOne(question, &services, survey.WithKeepFilter(true)); err != nil {
+			return err
+		}
+
+		if len(services) > 0 {
+			break
+		}
+
+		confirmQuestion := &survey.Confirm{
+			Message: "You have not selected any service, would you like to proceed anyway?",
+			Default: false,
+		}
+		proceed := false
+		if err := survey.AskOne(confirmQuestion, &proceed); err != nil {
+			return err
+		}
+
+		if proceed {
+			break
+		}
 	}
 
 	for _, serviceName := range services {
