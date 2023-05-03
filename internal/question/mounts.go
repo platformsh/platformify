@@ -18,25 +18,9 @@ func (q *Mounts) Ask(ctx context.Context) error {
 	case models.Laravel:
 		answers.Disk = "2048" // in MB
 		answers.Mounts = map[string]map[string]string{
-			"storage/app/public": {
+			"storage": {
 				"source":      "local",
-				"source_path": "public",
-			},
-			"storage/framework/views": {
-				"source":      "local",
-				"source_path": "views",
-			},
-			"storage/framework/sessions": {
-				"source":      "local",
-				"source_path": "sessions",
-			},
-			"storage/framework/cache": {
-				"source":      "local",
-				"source_path": "cache",
-			},
-			"storage/logs": {
-				"source":      "local",
-				"source_path": "logs",
+				"source_path": "storage",
 			},
 			"bootstrap/cache": {
 				"source":      "local",
