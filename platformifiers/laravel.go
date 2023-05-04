@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path"
 
+	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -33,6 +35,23 @@ func (p *LaravelPlatformifier) Platformify(ctx context.Context) error {
 	}
 	if err := utils.WriteTemplates(ctx, cwd, templates, p.UserInput); err != nil {
 		return fmt.Errorf("could not write Platform.sh files: %w", err)
+	}
+
+	// Check for the Laravel Bridge.
+	appRoot := path.Join(cwd, p.Root, p.ApplicationRoot)
+	composerJSONPaths := utils.FindAllFiles(appRoot, "composer.json")
+	for _, composerJSONPath := range composerJSONPaths {
+		_, required := utils.GetJSONKey([]string{"require", "platformsh/laravel-bridge"}, composerJSONPath)
+		if !required {
+			out, _, ok := colors.FromContext(ctx)
+			if !ok {
+				return fmt.Errorf("output context failed")
+			}
+
+			var suggest = "\nPlease use composer to add the Laravel Bridge to your project:\n"
+			var composerRequire = "\n    composer require platformsh/laravel-bridge\n\n"
+			fmt.Fprint(out, colors.Colorize(colors.WarningCode, suggest+composerRequire))
+		}
 	}
 
 	return nil
