@@ -15,7 +15,7 @@ var ValidateCmd = &cobra.Command{
 		"This will check your git repository, and validate .platform.app.yaml, services.yaml and routes.yaml files.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var validator = validator.ConfigValidator{}
-		var ctx context.Context
+		var ctx = context.Background()
 		ctx = colors.ToContext(
 			ctx,
 			cmd.OutOrStderr(),
