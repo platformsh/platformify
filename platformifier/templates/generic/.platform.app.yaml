@@ -33,6 +33,9 @@ dependencies:
 {{ if .BuildFlavor -}}
 build:
   flavor: {{ .BuildFlavor }}
+{{- else -}}
+# build:
+#   flavor: none # Specifies a default set of build tasks to run.
 {{- end }}
 
 ##########################
@@ -147,10 +150,10 @@ disk: {{ .Disk }}
 mounts:
   {{ range $key, $value := .Mounts -}}
   "{{ $key }}":
-    {{ range $key, $value := $value }}
-    {{- $key }}: "{{ $value }}"
-    {{ end -}}
-  {{- end }}
+    {{- range $key, $value := $value }}
+    {{ $key }}: "{{ $value -}}"
+    {{- end }}
+  {{ end -}}
 {{- else -}}
 # mounts:
 #   "/.cache": # Represents the path in the app.

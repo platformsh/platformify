@@ -57,6 +57,7 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		answers.Dependencies = map[string]map[string]string{
 			"php": {"composer/composer": "^2"},
 		}
+		answers.BuildFlavor = "none"
 	case models.Npm:
 		answers.Dependencies = map[string]map[string]string{
 			"nodejs": {"sharp": "*"},
