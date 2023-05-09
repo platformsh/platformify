@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path"
 
+	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/models"
 )
@@ -55,9 +57,31 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 	}
 
 	gitRepoAbsPath := path.Dir(outBuf.String())
-	if gitRepoAbsPath != "." {
-		return fmt.Errorf("platformify should be run at the root of a Git repository, "+
-			"please change the directory to %s and run the command again", gitRepoAbsPath)
+	answers.HasGit = gitRepoAbsPath == "."
+	if !answers.HasGit {
+		fmt.Fprintln(
+			stderr,
+			colors.Colorize(
+				colors.WarningCode,
+				"Platformify should be run at the root of a Git repository.",
+			),
+		)
+		msg := fmt.Sprintf(
+			"Would you like to change directory to %s instead?",
+			gitRepoAbsPath,
+		)
+		proceed := true
+		if err := survey.AskOne(&survey.Confirm{
+			Message: msg,
+			Default: proceed,
+		}, &proceed); err != nil {
+			return nil
+		}
+
+		if proceed {
+			answers.WorkingDirectory = gitRepoAbsPath
+			answers.HasGit = true
+		}
 	}
 
 	return nil
