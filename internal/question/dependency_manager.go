@@ -2,7 +2,6 @@ package question
 
 import (
 	"context"
-	"os"
 
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
@@ -29,26 +28,24 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	if cwd, err := os.Getwd(); err == nil {
-		switch answers.Type.Runtime {
-		case models.Python:
-			if exists := utils.FileExists(cwd, poetryLockFile); exists {
-				answers.DependencyManager = models.Poetry
-			} else if exists := utils.FileExists(cwd, pipenvLockFile); exists {
-				answers.DependencyManager = models.Pipenv
-			} else if exists := utils.FileExists(cwd, pipLockFile); exists {
-				answers.DependencyManager = models.Pip
-			}
-		case models.PHP:
-			if exists := utils.FileExists(cwd, composerLockFile); exists {
-				answers.DependencyManager = models.Composer
-			}
-		case models.NodeJS:
-			if exists := utils.FileExists(cwd, yarnLockFileName); exists {
-				answers.DependencyManager = models.Yarn
-			} else if exists := utils.FileExists(cwd, npmLockFileName); exists {
-				answers.DependencyManager = models.Npm
-			}
+	switch answers.Type.Runtime {
+	case models.Python:
+		if exists := utils.FileExists(answers.WorkingDirectory, poetryLockFile); exists {
+			answers.DependencyManager = models.Poetry
+		} else if exists := utils.FileExists(answers.WorkingDirectory, pipenvLockFile); exists {
+			answers.DependencyManager = models.Pipenv
+		} else if exists := utils.FileExists(answers.WorkingDirectory, pipLockFile); exists {
+			answers.DependencyManager = models.Pip
+		}
+	case models.PHP:
+		if exists := utils.FileExists(answers.WorkingDirectory, composerLockFile); exists {
+			answers.DependencyManager = models.Composer
+		}
+	case models.NodeJS:
+		if exists := utils.FileExists(answers.WorkingDirectory, yarnLockFileName); exists {
+			answers.DependencyManager = models.Yarn
+		} else if exists := utils.FileExists(answers.WorkingDirectory, npmLockFileName); exists {
+			answers.DependencyManager = models.Npm
 		}
 	}
 

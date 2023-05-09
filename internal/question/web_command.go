@@ -3,7 +3,6 @@ package question
 import (
 	"context"
 	"fmt"
-	"os"
 	"path"
 	"path/filepath"
 
@@ -28,19 +27,22 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	cwd, _ := os.Getwd()
 	switch answers.Stack {
 	case models.Django:
 		prefix := ""
 		pythonPath := ""
 		wsgi := "app.wsgi"
 		// try to find the wsgi.py file to change the default command
-		if wsgiPath := utils.FindFile(path.Join(cwd, answers.ApplicationRoot), "wsgi.py"); wsgiPath != "" {
+		wsgiPath := utils.FindFile(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), "wsgi.py")
+		if wsgiPath != "" {
 			wsgiParentDir := path.Base(path.Dir(wsgiPath))
 			wsgi = fmt.Sprintf("%s.wsgi", wsgiParentDir)
 
 			// add the pythonpath if the wsgi.py file is not in the root of the app
-			wsgiRel, _ := filepath.Rel(path.Join(cwd, answers.ApplicationRoot), path.Dir(path.Dir(wsgiPath)))
+			wsgiRel, _ := filepath.Rel(
+				path.Join(answers.WorkingDirectory, answers.ApplicationRoot),
+				path.Dir(path.Dir(wsgiPath)),
+			)
 			if wsgiRel != "" {
 				pythonPath = "--pythonpath=" + path.Base(path.Dir(path.Dir(wsgiPath)))
 			}

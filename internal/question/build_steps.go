@@ -3,7 +3,6 @@ package question
 import (
 	"context"
 	"fmt"
-	"os"
 	"path"
 	"path/filepath"
 
@@ -56,9 +55,11 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			)
 		}
 
-		cwd, _ := os.Getwd()
-		if managePyPath := utils.FindFile(path.Join(cwd, answers.ApplicationRoot), managePyFile); managePyPath != "" {
-			managePyPath, _ = filepath.Rel(path.Join(cwd, answers.ApplicationRoot), managePyPath)
+		if managePyPath := utils.FindFile(
+			path.Join(answers.WorkingDirectory, answers.ApplicationRoot),
+			managePyFile,
+		); managePyPath != "" {
+			managePyPath, _ = filepath.Rel(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyPath)
 			answers.BuildSteps = append(
 				answers.BuildSteps,
 				"# Collect static files so that they can be served by Platform.sh",

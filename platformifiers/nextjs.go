@@ -3,7 +3,6 @@ package platformifiers
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/utils"
@@ -28,12 +27,7 @@ func (p *NextJSPlatformifier) Platformify(ctx context.Context) error {
 		return err
 	}
 
-	// Get working directory.
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("could not get current working directory: %w", err)
-	}
-	if err := utils.WriteTemplates(ctx, cwd, templates, p.UserInput); err != nil {
+	if err := utils.WriteTemplates(ctx, p.WorkingDirectory, templates, p.UserInput); err != nil {
 		return fmt.Errorf("could not write Platform.sh files: %w", err)
 	}
 
