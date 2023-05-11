@@ -38,7 +38,6 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.Type{},
 			&question.DependencyManager{},
 			&question.Mounts{},
-			&question.HalfWay{},
 			&question.Name{},
 			&question.ApplicationRoot{},
 			&question.Environment{},
@@ -48,7 +47,6 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.WebCommand{},
 			&question.AlmostDone{},
 			&question.Services{},
-			&question.Done{},
 		)
 		err := q.AskQuestions(ctx)
 		if err != nil {
@@ -67,6 +65,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			return fmt.Errorf("could not platformify project: %w", err)
 		}
 
-		return nil
+		done := question.Done{}
+		return done.Ask(ctx)
 	},
 }
