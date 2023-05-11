@@ -35,13 +35,7 @@ type djangoPlatformifier struct {
 }
 
 func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
-	// Get working directory.
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("could not get current working directory: %w", err)
-	}
-
-	appRoot := path.Join(cwd, input.Root, input.ApplicationRoot)
+	appRoot := path.Join(input.WorkingDirectory, input.Root, input.ApplicationRoot)
 	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
 		pshSettingsPath := filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile)
 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).
@@ -108,7 +102,7 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 // 		return err
 // 	}
 //
-// 	appRoot := path.Join(cwd, p.Root, p.ApplicationRoot)
+// 	appRoot := path.Join(p.WorkingDirectory, p.Root, p.ApplicationRoot)
 // 	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
 // 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).ParseFS(
 // 			templatesFs, "templates/_extras/django/settings_psh.py",
@@ -117,13 +111,13 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 // 			return fmt.Errorf("could not parse template: %w", parseErr)
 // 		}
 // 		pshSettingsPath, _ := filepath.Rel(
-// 			cwd,
+// 			p.WorkingDirectory,
 // 			filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile),
 // 		)
 // 		templates[pshSettingsPath] = tpl
 // 	}
 //
-// 	if err := utils.WriteTemplates(ctx, cwd, templates, p.UserInput); err != nil {
+// 	if err := utils.WriteTemplates(ctx, p.WorkingDirectory, templates, p.UserInput); err != nil {
 // 		return fmt.Errorf("could not write Platform.sh files: %w", err)
 // 	}
 //

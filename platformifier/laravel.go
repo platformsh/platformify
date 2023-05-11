@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"os"
 	"path"
 
 	"github.com/platformsh/platformify/internal/colors"
@@ -28,14 +27,9 @@ type laravelPlatformifier struct {
 }
 
 func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
-	// Get working directory.
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("could not get current working directory: %w", err)
-	}
-
 	// Check for the Laravel Bridge.
-	composerJSONPaths := utils.FindAllFiles(path.Join(cwd, input.Root, input.ApplicationRoot), composerJSONFile)
+	appRoot := path.Join(input.WorkingDirectory, input.Root, input.ApplicationRoot)
+	composerJSONPaths := utils.FindAllFiles(appRoot, composerJSONFile)
 	for _, composerJSONPath := range composerJSONPaths {
 		_, required := utils.GetJSONKey([]string{"require", "platformsh/laravel-bridge"}, composerJSONPath)
 		if !required {

@@ -5,12 +5,18 @@ import (
 	"fmt"
 
 	"github.com/platformsh/platformify/internal/colors"
+	"github.com/platformsh/platformify/internal/question/models"
 )
 
 type Done struct{}
 
 func (q *Done) Ask(ctx context.Context) error {
 	out, _, ok := colors.FromContext(ctx)
+	if !ok {
+		return nil
+	}
+
+	answers, ok := models.FromContext(ctx)
 	if !ok {
 		return nil
 	}
@@ -34,14 +40,33 @@ func (q *Done) Ask(ctx context.Context) error {
 	fmt.Fprintln(out, "  ( . .)")
 	fmt.Fprintln(out, "  o (_(“)(“)")
 	fmt.Fprintln(out)
+	if answers.HasGit {
+		fmt.Fprintln(out, colors.Colorize(colors.AccentCode, "You can now deploy your application to Platform.sh!"))
+		fmt.Fprintln(
+			out,
+			colors.Colorize(
+				colors.AccentCode,
+				"To do so, commit your files and deploy your application using the Platform.sh CLI:",
+			),
+		)
+		fmt.Fprintln(out, "  $ git add .")
+		fmt.Fprintln(out, "  $ git commit -m 'Add Platform.sh configuration files'")
+		fmt.Fprintln(out, "  $ platform project:set-remote")
+		fmt.Fprintln(out, "  $ platform push")
+		fmt.Fprintln(out)
+		return nil
+	}
+
 	fmt.Fprintln(out, colors.Colorize(colors.AccentCode, "You can now deploy your application to Platform.sh!"))
 	fmt.Fprintln(
 		out,
 		colors.Colorize(
 			colors.AccentCode,
-			"To do so, commit your files and deploy your application using the Platform.sh CLI:",
+			//nolint:lll
+			"To do so, you need to create a Git repository, commit your files and deploy your application using the Platform.sh CLI:",
 		),
 	)
+	fmt.Fprintf(out, "  $ git init %s\n", answers.WorkingDirectory)
 	fmt.Fprintln(out, "  $ git add .")
 	fmt.Fprintln(out, "  $ git commit -m 'Add Platform.sh configuration files'")
 	fmt.Fprintln(out, "  $ platform project:set-remote")

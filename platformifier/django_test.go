@@ -60,12 +60,12 @@ func (s *PlatformifyDjangoSuiteTester) TestSuccessfulFileCreation() {
 	}()
 	// AND mock buffers to store PSH settings file
 	buff := &MockBuffer{}
+	// AND working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creation of the PSH settings file returns no errors
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, settingsPshPyFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
 		Return(buff, nil).Times(1)
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newDjangoPlatformifier(s.templates, s.creator)
@@ -112,12 +112,12 @@ func (s *PlatformifyDjangoSuiteTester) TestPSHSettingsFileCreationError() {
 		err = os.Remove(settingsFilePath)
 		require.NoError(s.T(), err)
 	}()
+	// AND working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating PSH settings file fails
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, settingsPshPyFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
 		Return(nil, errors.New("")).Times(1)
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newDjangoPlatformifier(s.templates, s.creator)

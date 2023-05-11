@@ -47,6 +47,8 @@ type UserInput struct {
 	Mounts            map[string]map[string]string
 	Services          []Service
 	Relationships     map[string]string
+	WorkingDirectory  string
+	HasGit            bool
 }
 
 // Service contains the configuration for a service needed by the application.

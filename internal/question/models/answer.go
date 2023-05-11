@@ -25,6 +25,7 @@ type Answers struct {
 	Mounts            map[string]map[string]string `json:"mounts"`
 	Services          []Service                    `json:"services"`
 	WorkingDirectory  string                       `json:"working_directory"`
+	HasGit            bool                         `json:"has_git"`
 	FilesCreated      []string                     `json:"files_created"`
 }
 
@@ -109,12 +110,14 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 				"passthru": true,
 			},
 		},
-		Dependencies:  a.Dependencies,
-		BuildFlavor:   a.BuildFlavor,
-		Disk:          a.Disk,
-		Mounts:        a.Mounts,
-		Services:      services,
-		Relationships: getRelationships(a.Services),
+		Dependencies:     a.Dependencies,
+		BuildFlavor:      a.BuildFlavor,
+		Disk:             a.Disk,
+		Mounts:           a.Mounts,
+		Services:         services,
+		Relationships:    getRelationships(a.Services),
+		WorkingDirectory: a.WorkingDirectory,
+		HasGit:           a.HasGit,
 	}
 }
 

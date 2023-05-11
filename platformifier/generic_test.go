@@ -62,24 +62,24 @@ func (s *PlatformifyGenericSuiteTester) SetupTest() {
 func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
 	// GIVEN mock buffers to store config files
 	envBuff, appBuff, routesBuff, servicesBuff := &MockBuffer{}, &MockBuffer{}, &MockBuffer{}, &MockBuffer{}
+	// AND working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creation of the environment file returns no errors
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, environmentFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
 		Return(envBuff, nil).Times(1)
 	// AND creation of the app config file returns no errors
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, appConfigFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
 		Return(appBuff, nil).Times(1)
 	// AND creation of the routes config file returns no errors
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, routesConfigFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
 		Return(routesBuff, nil).Times(1)
 	// AND creation of the services config file returns no errors
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, servicesConfigFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
 		Return(servicesBuff, nil).Times(1)
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newGenericPlatformifier(s.templates, s.creator)
@@ -94,16 +94,16 @@ func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
 }
 
 func (s *PlatformifyGenericSuiteTester) TestEnvironmentCreationError() {
-	// GIVEN creating environment file fails
+	// GIVEN working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
+	// AND creating environment file fails
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, environmentFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.creator.EXPECT().
 		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newGenericPlatformifier(s.templates, s.creator)
@@ -113,16 +113,16 @@ func (s *PlatformifyGenericSuiteTester) TestEnvironmentCreationError() {
 }
 
 func (s *PlatformifyGenericSuiteTester) TestAppConfigCreationError() {
-	// GIVEN creating app config file fails
+	// GIVEN working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
+	// AND creating app config file fails
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, appConfigFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.creator.EXPECT().
 		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newGenericPlatformifier(s.templates, s.creator)
@@ -132,16 +132,16 @@ func (s *PlatformifyGenericSuiteTester) TestAppConfigCreationError() {
 }
 
 func (s *PlatformifyGenericSuiteTester) TestRoutesConfigCreationError() {
-	// GIVEN creating routes config file fails
+	// GIVEN working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
+	// AND creating routes config file fails
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, routesConfigFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.creator.EXPECT().
 		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newGenericPlatformifier(s.templates, s.creator)
@@ -151,16 +151,16 @@ func (s *PlatformifyGenericSuiteTester) TestRoutesConfigCreationError() {
 }
 
 func (s *PlatformifyGenericSuiteTester) TestServicesConfigCreationError() {
-	// GIVEN creating services config file fails
+	// GIVEN working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
+	// AND creating services config file fails
 	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, servicesConfigFile))).
+		Create(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.creator.EXPECT().
 		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newGenericPlatformifier(s.templates, s.creator)

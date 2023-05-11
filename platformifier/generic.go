@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"os"
 	"path"
 	"text/template"
 
@@ -26,19 +25,13 @@ type genericPlatformifier struct {
 
 // Platformify will generate the .platformifiers.app.yaml and .platformifiers/ directory
 func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) error {
-	// Get working directory.
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("could not get current working directory: %w", err)
-	}
-
-	err = fs.WalkDir(p.templates, ".", func(filePath string, d fs.DirEntry, walkErr error) error {
+	err := fs.WalkDir(p.templates, ".", func(filePath string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
 		}
 		tpl := template.Must(template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(p.templates, filePath))
 
-		filePath = path.Join(cwd, filePath)
+		filePath = path.Join(input.WorkingDirectory, filePath)
 		f, writeErr := p.file.Create(filePath)
 		if writeErr != nil {
 			return fmt.Errorf("could not write template: %w", writeErr)
@@ -62,12 +55,7 @@ func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) 
 // 		return err
 // 	}
 //
-// 	// Get working directory.
-// 	cwd, err := os.Getwd()
-// 	if err != nil {
-// 		return fmt.Errorf("could not get current working directory: %w", err)
-// 	}
-// 	if err := utils.WriteTemplates(ctx, cwd, templates, input); err != nil {
+// 	if err := utils.WriteTemplates(ctx, p.WorkingDirectory, templates, input); err != nil {
 // 		return fmt.Errorf("could not write Platform.sh files: %w", err)
 // 	}
 //

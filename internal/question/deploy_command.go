@@ -3,7 +3,6 @@ package question
 import (
 	"context"
 	"fmt"
-	"os"
 	"path"
 	"path/filepath"
 
@@ -19,11 +18,11 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	cwd, _ := os.Getwd()
 	switch answers.Stack {
 	case models.Django:
-		if managePyPath := utils.FindFile(path.Join(cwd, answers.ApplicationRoot), managePyFile); managePyPath != "" {
-			managePyPath, _ = filepath.Rel(path.Join(cwd, answers.ApplicationRoot), managePyPath)
+		managePyPath := utils.FindFile(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyFile)
+		if managePyPath != "" {
+			managePyPath, _ = filepath.Rel(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyPath)
 			prefix := ""
 			switch answers.DependencyManager {
 			case models.Pipenv:
