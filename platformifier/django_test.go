@@ -53,8 +53,8 @@ func (s *PlatformifyDjangoSuiteTester) TestSuccessfulFileCreation() {
 	settingsFilePath := path.Join(s.cwd, settingsPyFile)
 	f, err := os.Create(settingsFilePath)
 	require.NoError(s.T(), err)
-	defer f.Close()
 	defer func() {
+		f.Close()
 		err = os.Remove(settingsFilePath)
 		require.NoError(s.T(), err)
 	}()
@@ -107,8 +107,8 @@ func (s *PlatformifyDjangoSuiteTester) TestPSHSettingsFileCreationError() {
 	settingsFilePath := path.Join(s.cwd, settingsPyFile)
 	f, err := os.Create(settingsFilePath)
 	require.NoError(s.T(), err)
-	defer f.Close()
 	defer func() {
+		f.Close()
 		err = os.Remove(settingsFilePath)
 		require.NoError(s.T(), err)
 	}()

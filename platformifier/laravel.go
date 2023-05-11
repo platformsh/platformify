@@ -39,8 +39,8 @@ func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput
 			}
 
 			var suggest = "\nPlease use composer to add the Laravel Bridge to your project:\n"
-			var composerRequire = "\n    composer require platformsh/laravel-bridge\n\n"
-			fmt.Fprint(out, colors.Colorize(colors.WarningCode, suggest+composerRequire))
+			var composerRequire = "\n    composer require platformsh/laravel-bridge\n"
+			fmt.Fprintln(out, colors.Colorize(colors.WarningCode, suggest+composerRequire))
 		}
 	}
 

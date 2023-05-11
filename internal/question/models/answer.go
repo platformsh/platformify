@@ -122,18 +122,16 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 }
 
 func getStack(answersStack Stack) platformifier.Stack {
-	var stack platformifier.Stack
 	switch answersStack {
 	case Django:
-		stack = platformifier.Django
+		return platformifier.Django
 	case Laravel:
-		stack = platformifier.Laravel
+		return platformifier.Laravel
 	case NextJS:
-		stack = platformifier.NextJS
+		return platformifier.NextJS
 	default:
-		stack = platformifier.Generic
+		return platformifier.Generic
 	}
-	return stack
 }
 
 // getRelationships returns a map of service names to their relationship names.

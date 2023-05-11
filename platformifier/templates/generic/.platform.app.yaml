@@ -64,7 +64,7 @@ hooks:
   # The build hook runs after package manager has been downloaded.
   # No services are available but the disk is writeable.
   build: |
-    set -e
+    set -eux
     {{ range $step := .BuildSteps }}
     {{- $step }}
     {{ else }}
@@ -76,7 +76,7 @@ hooks:
   # The site is not accepting requests while this script runs so keep it
   # fast.
   deploy: |
-    set -e
+    set -eux
     {{ range $deploycmd := .DeployCommand }}
     {{- $deploycmd }}
     {{ else -}}

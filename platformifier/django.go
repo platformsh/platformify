@@ -19,7 +19,6 @@ const (
 	settingsPyFile        = "settings.py"
 	settingsPshPyFile     = "settings_psh.py"
 	importSettingsPshLine = "from settings_psh import *"
-	djangoTemplatesPath   = "templates/django"
 )
 
 func newDjangoPlatformifier(templates fs.FS, file fileCreator) *djangoPlatformifier {
@@ -102,22 +101,22 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 // 		return err
 // 	}
 //
-// 	appRoot := path.Join(p.WorkingDirectory, p.Root, p.ApplicationRoot)
+// 	appRoot := path.Join(input.WorkingDirectory, input.Root, input.ApplicationRoot)
 // 	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
 // 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).ParseFS(
-// 			templatesFs, "templates/_extras/django/settings_psh.py",
+// 			templatesFS, "templates/_extras/django/settings_psh.py",
 // 		)
 // 		if parseErr != nil {
 // 			return fmt.Errorf("could not parse template: %w", parseErr)
 // 		}
 // 		pshSettingsPath, _ := filepath.Rel(
-// 			p.WorkingDirectory,
+// 			input.WorkingDirectory,
 // 			filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile),
 // 		)
 // 		templates[pshSettingsPath] = tpl
 // 	}
 //
-// 	if err := utils.WriteTemplates(ctx, p.WorkingDirectory, templates, p.UserInput); err != nil {
+// 	if err := utils.WriteTemplates(ctx, input.WorkingDirectory, templates, input); err != nil {
 // 		return fmt.Errorf("could not write Platform.sh files: %w", err)
 // 	}
 //

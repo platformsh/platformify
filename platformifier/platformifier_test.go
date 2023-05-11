@@ -227,31 +227,6 @@ func (s *PlatformifySuiteTester) TestPlatformifyingError() {
 	}
 }
 
-func (s *PlatformifySuiteTester) TestContextCancellation() {
-	// GIVEN empty context with cancellation
-	ctx, cencel := context.WithCancel(context.Background())
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
-	// AND platformifying generic stack returns no errors
-	s.generic.EXPECT().
-		Platformify(gomock.Eq(ctx), gomock.Eq(input)).
-		Return(nil).Times(1)
-	// AND stack
-	stacks := []platformifier{s.generic}
-
-	// WHEN cancel the context immediately
-	cencel()
-	// AND run platformifying of the given stack
-	p := Platformifier{
-		input:  input,
-		stacks: stacks,
-	}
-	err := p.Platformify(ctx)
-	// THEN it returns context cancellation error
-	require.Error(s.T(), err)
-	assert.Equal(s.T(), context.Canceled, err)
-}
-
 func TestPlatformifySuite(t *testing.T) {
 	suite.Run(t, new(PlatformifySuiteTester))
 }

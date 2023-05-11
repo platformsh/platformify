@@ -48,14 +48,14 @@ func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) 
 }
 
 // FIXME: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
+// func (p *genericPlatformifier) Platformify2(ctx context.Context, input *UserInput) error {
 // 	// Gather templates.
 // 	templates, err := utils.GatherTemplates(ctx, p.templates, ".")
 // 	if err != nil {
 // 		return err
 // 	}
 //
-// 	if err := utils.WriteTemplates(ctx, p.WorkingDirectory, templates, input); err != nil {
+// 	if err := utils.WriteTemplates(ctx, input.WorkingDirectory, templates, input); err != nil {
 // 		return fmt.Errorf("could not write Platform.sh files: %w", err)
 // 	}
 //

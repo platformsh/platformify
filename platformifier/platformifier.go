@@ -75,25 +75,11 @@ type Platformifier struct {
 }
 
 func (p *Platformifier) Platformify(ctx context.Context) error {
-	out := make(chan error)
-
-	go func() {
-		var err error
-		defer func() { out <- err }()
-		for _, stack := range p.stacks {
-			err = stack.Platformify(ctx, p.input)
-			if err != nil {
-				return
-			}
+	for _, stack := range p.stacks {
+		err := stack.Platformify(ctx, p.input)
+		if err != nil {
+			return err
 		}
-	}()
-
-	// Do not wait for the end of the command execution
-	// if the context has been canceled or the deadline has been exceeded
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	case err := <-out:
-		return err
 	}
+	return nil
 }
