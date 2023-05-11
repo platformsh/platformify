@@ -53,6 +53,8 @@ type UserInput struct {
 	Disk              string
 	Mounts            map[string]map[string]string
 	Services          []Service
+	WorkingDirectory  string
+	HasGit            bool
 }
 
 // A Platformifier handles the business logic of a given runtime to platformify.
@@ -93,11 +95,13 @@ func NewPlatformifier(answers *models.Answers) (Platformifier, error) {
 				"passthru": true,
 			},
 		},
-		Dependencies: answers.Dependencies,
-		BuildFlavor:  answers.BuildFlavor,
-		Disk:         answers.Disk,
-		Mounts:       answers.Mounts,
-		Services:     services,
+		Dependencies:     answers.Dependencies,
+		BuildFlavor:      answers.BuildFlavor,
+		Disk:             answers.Disk,
+		Mounts:           answers.Mounts,
+		Services:         services,
+		WorkingDirectory: answers.WorkingDirectory,
+		HasGit:           answers.HasGit,
 	}
 	switch answers.Stack {
 	case models.Laravel:

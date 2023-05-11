@@ -38,7 +38,7 @@ func init() {
 {{- if .Answer}}
   {{- color "%[2]s"}}[{{.Answer}}]{{color "reset"}}{{"\n"}}
 {{- else }}
-  {{- color "%[3]s"}}{{if .Default}}Press "y" for yes, "n" for no. {{else}}(y/N){{end}}{{color "reset"}}{{"\n"}}
+  {{- color "%[3]s"}}{{if .Default}}(Y/n){{else}}(y/N){{end}}{{color "reset"}}{{"\n"}}
 {{- end }}`, colors.Accent, colors.Brand, colors.Secondary, colors.Error, colors.Default)
 
 	//nolint:lll

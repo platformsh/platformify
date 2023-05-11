@@ -21,6 +21,7 @@ type Answers struct {
 	Mounts            map[string]map[string]string `json:"mounts"`
 	Services          []Service                    `json:"services"`
 	WorkingDirectory  string                       `json:"working_directory"`
+	HasGit            bool                         `json:"has_git"`
 	FilesCreated      []string                     `json:"files_created"`
 }
 
