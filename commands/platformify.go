@@ -33,6 +33,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 		)
 		q := questionnaire.New(
 			&question.WorkingDirectory{},
+			&question.FilesOverwrite{},
 			&question.Welcome{},
 			&question.Stack{},
 			&question.Type{},
