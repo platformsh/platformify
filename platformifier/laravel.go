@@ -14,16 +14,14 @@ const (
 	composerJSONFile = "composer.json"
 )
 
-func newLaravelPlatformifier(templates fs.FS, file fileCreator) *laravelPlatformifier {
+func newLaravelPlatformifier(templates fs.FS) *laravelPlatformifier {
 	return &laravelPlatformifier{
 		templates: templates,
-		file:      file,
 	}
 }
 
 type laravelPlatformifier struct {
 	templates fs.FS
-	file      fileCreator
 }
 
 func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput) error {

@@ -6,7 +6,6 @@ package platformifier
 
 import (
 	context "context"
-	io "io"
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
@@ -47,42 +46,4 @@ func (m *Mockplatformifier) Platformify(ctx context.Context, input *UserInput) e
 func (mr *MockplatformifierMockRecorder) Platformify(ctx, input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Platformify", reflect.TypeOf((*Mockplatformifier)(nil).Platformify), ctx, input)
-}
-
-// MockfileCreator is a mock of fileCreator interface.
-type MockfileCreator struct {
-	ctrl     *gomock.Controller
-	recorder *MockfileCreatorMockRecorder
-}
-
-// MockfileCreatorMockRecorder is the mock recorder for MockfileCreator.
-type MockfileCreatorMockRecorder struct {
-	mock *MockfileCreator
-}
-
-// NewMockfileCreator creates a new mock instance.
-func NewMockfileCreator(ctrl *gomock.Controller) *MockfileCreator {
-	mock := &MockfileCreator{ctrl: ctrl}
-	mock.recorder = &MockfileCreatorMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockfileCreator) EXPECT() *MockfileCreatorMockRecorder {
-	return m.recorder
-}
-
-// Create mocks base method.
-func (m *MockfileCreator) Create(filePath string) (io.WriteCloser, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Create", filePath)
-	ret0, _ := ret[0].(io.WriteCloser)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Create indicates an expected call of Create.
-func (mr *MockfileCreatorMockRecorder) Create(filePath interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockfileCreator)(nil).Create), filePath)
 }

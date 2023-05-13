@@ -21,16 +21,16 @@ const (
 	importSettingsPshLine = "from settings_psh import *"
 )
 
-func newDjangoPlatformifier(templates fs.FS, file fileCreator) *djangoPlatformifier {
+func newDjangoPlatformifier(templates fs.FS, fileSystem FS) *djangoPlatformifier {
 	return &djangoPlatformifier{
-		templates: templates,
-		file:      file,
+		templates:  templates,
+		fileSystem: fileSystem,
 	}
 }
 
 type djangoPlatformifier struct {
-	templates fs.FS
-	file      fileCreator
+	templates  fs.FS
+	fileSystem FS
 }
 
 func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
@@ -42,7 +42,7 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 		if parseErr != nil {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
-		f, err := p.file.Create(pshSettingsPath)
+		f, err := p.fileSystem.CreateFile(pshSettingsPath)
 		if err != nil {
 			return err
 		}
@@ -92,69 +92,3 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 
 	return nil
 }
-
-// FIXME: !!!!!!!!!!!!!!!!!!!!!!
-// func (p *djangoPlatformifier) Platformify2(ctx context.Context, input *UserInput) error {
-// 	// Gather templates.
-// 	templates, err := utils.GatherTemplates(ctx, p.templates, ".")
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	appRoot := path.Join(input.WorkingDirectory, input.Root, input.ApplicationRoot)
-// 	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
-// 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).ParseFS(
-// 			templatesFS, "templates/_extras/django/settings_psh.py",
-// 		)
-// 		if parseErr != nil {
-// 			return fmt.Errorf("could not parse template: %w", parseErr)
-// 		}
-// 		pshSettingsPath, _ := filepath.Rel(
-// 			input.WorkingDirectory,
-// 			filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile),
-// 		)
-// 		templates[pshSettingsPath] = tpl
-// 	}
-//
-// 	if err := utils.WriteTemplates(ctx, input.WorkingDirectory, templates, input); err != nil {
-// 		return fmt.Errorf("could not write Platform.sh files: %w", err)
-// 	}
-//
-// 	// append from settings_psh import * to the bottom of settings.py
-// 	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
-// 		f, err := os.OpenFile(settingsPath, os.O_APPEND|os.O_WRONLY, 0o644)
-// 		if err != nil {
-// 			return nil
-// 		}
-// 		defer f.Close()
-//
-// 		// Check if there is an import line in the file
-// 		found, err := utils.ContainsStringInFile(settingsPath, importSettingsPshLine)
-// 		if err != nil {
-// 			return err
-// 		}
-//
-// 		if !found {
-// 			if _, err = f.WriteString("\n\n" + importSettingsPshLine + "\n"); err != nil {
-// 				out, _, ok := colors.FromContext(ctx)
-// 				if !ok {
-// 					return nil
-// 				}
-//
-// 				fmt.Fprintf(
-// 					out,
-// 					colors.Colorize(
-// 						colors.WarningCode,
-// 						"We have created a %s file for you. Please add the following line to your %s file:\n",
-// 					),
-// 					settingsPshPyFile,
-// 					settingsPyFile,
-// 				)
-// 				fmt.Fprint(out, colors.Colorize(colors.WarningCode, "    "+importSettingsPshLine+"\n"))
-// 				return nil
-// 			}
-// 		}
-// 	}
-//
-// 	return nil
-// }

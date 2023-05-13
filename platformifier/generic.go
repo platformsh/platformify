@@ -10,17 +10,17 @@ import (
 	"github.com/Masterminds/sprig/v3"
 )
 
-func newGenericPlatformifier(templates fs.FS, file fileCreator) *genericPlatformifier {
+func newGenericPlatformifier(templates fs.FS, fileSystem FS) *genericPlatformifier {
 	return &genericPlatformifier{
-		templates: templates,
-		file:      file,
+		templates:  templates,
+		fileSystem: fileSystem,
 	}
 }
 
 // genericPlatformifier contains the configuration for the application to Platformify
 type genericPlatformifier struct {
-	templates fs.FS
-	file      fileCreator
+	templates  fs.FS
+	fileSystem FS
 }
 
 // Platformify will generate the .platformifiers.app.yaml and .platformifiers/ directory
@@ -32,7 +32,7 @@ func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) 
 		tpl := template.Must(template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(p.templates, filePath))
 
 		filePath = path.Join(input.WorkingDirectory, filePath)
-		f, writeErr := p.file.Create(filePath)
+		f, writeErr := p.fileSystem.CreateFile(filePath)
 		if writeErr != nil {
 			return fmt.Errorf("could not write template: %w", writeErr)
 		}
@@ -46,18 +46,3 @@ func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) 
 
 	return nil
 }
-
-// FIXME: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// func (p *genericPlatformifier) Platformify2(ctx context.Context, input *UserInput) error {
-// 	// Gather templates.
-// 	templates, err := utils.GatherTemplates(ctx, p.templates, ".")
-// 	if err != nil {
-// 		return err
-// 	}
-//
-// 	if err := utils.WriteTemplates(ctx, input.WorkingDirectory, templates, input); err != nil {
-// 		return fmt.Errorf("could not write Platform.sh files: %w", err)
-// 	}
-//
-// 	return nil
-// }

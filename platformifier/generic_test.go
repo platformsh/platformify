@@ -40,15 +40,13 @@ func (b *MockBuffer) Close() error {
 type PlatformifyGenericSuiteTester struct {
 	suite.Suite
 
-	creator   *MockfileCreator
-	cwd       string
-	templates fs.FS
+	cwd        string
+	templates  fs.FS
+	fileSystem *MockFS
 }
 
 func (s *PlatformifyGenericSuiteTester) SetupTest() {
 	ctrl := gomock.NewController(s.T())
-
-	s.creator = NewMockfileCreator(ctrl)
 
 	cwd, err := os.Getwd()
 	require.NoError(s.T(), err)
@@ -57,6 +55,8 @@ func (s *PlatformifyGenericSuiteTester) SetupTest() {
 	templates, err := fs.Sub(testGenericTemplatesFS, genericTemplatesDir)
 	require.NoError(s.T(), err)
 	s.templates = templates
+
+	s.fileSystem = NewMockFS(ctrl)
 }
 
 func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
@@ -65,24 +65,24 @@ func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
 	// AND working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creation of the environment file returns no errors
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
 		Return(envBuff, nil).Times(1)
 	// AND creation of the app config file returns no errors
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
 		Return(appBuff, nil).Times(1)
 	// AND creation of the routes config file returns no errors
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
 		Return(routesBuff, nil).Times(1)
 	// AND creation of the services config file returns no errors
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
 		Return(servicesBuff, nil).Times(1)
 
 	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.creator)
+	p := newGenericPlatformifier(s.templates, s.fileSystem)
 	err := p.Platformify(context.Background(), input)
 	// THEN it doesn't return any errors
 	assert.NoError(s.T(), err)
@@ -97,16 +97,16 @@ func (s *PlatformifyGenericSuiteTester) TestEnvironmentCreationError() {
 	// GIVEN working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating environment file fails
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
-	s.creator.EXPECT().
-		Create(gomock.Any()).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.creator)
+	p := newGenericPlatformifier(s.templates, s.fileSystem)
 	err := p.Platformify(context.Background(), input)
 	// THEN it fails
 	assert.Error(s.T(), err)
@@ -116,16 +116,16 @@ func (s *PlatformifyGenericSuiteTester) TestAppConfigCreationError() {
 	// GIVEN working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating app config file fails
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
-	s.creator.EXPECT().
-		Create(gomock.Any()).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.creator)
+	p := newGenericPlatformifier(s.templates, s.fileSystem)
 	err := p.Platformify(context.Background(), input)
 	// THEN it fails
 	assert.Error(s.T(), err)
@@ -135,16 +135,16 @@ func (s *PlatformifyGenericSuiteTester) TestRoutesConfigCreationError() {
 	// GIVEN working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating routes config file fails
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
-	s.creator.EXPECT().
-		Create(gomock.Any()).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.creator)
+	p := newGenericPlatformifier(s.templates, s.fileSystem)
 	err := p.Platformify(context.Background(), input)
 	// THEN it fails
 	assert.Error(s.T(), err)
@@ -154,16 +154,16 @@ func (s *PlatformifyGenericSuiteTester) TestServicesConfigCreationError() {
 	// GIVEN working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating services config file fails
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
-	s.creator.EXPECT().
-		Create(gomock.Any()).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.creator)
+	p := newGenericPlatformifier(s.templates, s.fileSystem)
 	err := p.Platformify(context.Background(), input)
 	// THEN it fails
 	assert.Error(s.T(), err)

@@ -29,15 +29,15 @@ var (
 type PlatformifyDjangoSuiteTester struct {
 	suite.Suite
 
-	creator   *MockfileCreator
-	cwd       string
-	templates fs.FS
+	cwd        string
+	templates  fs.FS
+	fileSystem *MockFS
 }
 
 func (s *PlatformifyDjangoSuiteTester) SetupTest() {
 	ctrl := gomock.NewController(s.T())
 
-	s.creator = NewMockfileCreator(ctrl)
+	s.fileSystem = NewMockFS(ctrl)
 
 	cwd, err := os.Getwd()
 	require.NoError(s.T(), err)
@@ -63,12 +63,12 @@ func (s *PlatformifyDjangoSuiteTester) TestSuccessfulFileCreation() {
 	// AND working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creation of the PSH settings file returns no errors
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
 		Return(buff, nil).Times(1)
 
 	// WHEN run config files creation
-	p := newDjangoPlatformifier(s.templates, s.creator)
+	p := newDjangoPlatformifier(s.templates, s.fileSystem)
 	err = p.Platformify(context.Background(), input)
 	// THEN it doesn't return any errors
 	assert.NoError(s.T(), err)
@@ -87,14 +87,14 @@ func (s *PlatformifyDjangoSuiteTester) TestSettingsFileNotFound() {
 	// GIVEN mock buffers to store PSH settings file
 	buff := &MockBuffer{}
 	// AND creation of the PSH settings file returns no errors
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(s.cwd, settingsPshPyFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(s.cwd, settingsPshPyFile))).
 		Return(buff, nil).Times(1)
 	// AND user input is empty (because it doesn't matter if it's empty or not)
 	input := &UserInput{}
 
 	// WHEN run config files creation
-	p := newDjangoPlatformifier(s.templates, s.creator)
+	p := newDjangoPlatformifier(s.templates, s.fileSystem)
 	err := p.Platformify(context.Background(), input)
 	// THEN it doesn't return any errors
 	assert.NoError(s.T(), err)
@@ -115,12 +115,12 @@ func (s *PlatformifyDjangoSuiteTester) TestPSHSettingsFileCreationError() {
 	// AND working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating PSH settings file fails
-	s.creator.EXPECT().
-		Create(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
+	s.fileSystem.EXPECT().
+		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
 		Return(nil, errors.New("")).Times(1)
 
 	// WHEN run config files creation
-	p := newDjangoPlatformifier(s.templates, s.creator)
+	p := newDjangoPlatformifier(s.templates, s.fileSystem)
 	err = p.Platformify(context.Background(), input)
 	// THEN it fails
 	assert.Error(s.T(), err)

@@ -3,10 +3,7 @@ package platformifier
 import (
 	"context"
 	"embed"
-	"io"
 	"io/fs"
-
-	"github.com/platformsh/platformify/internal/utils"
 )
 
 var (
@@ -27,39 +24,40 @@ const (
 
 // A platformifier handles the business logic of a given runtime to platformify.
 //
-//go:generate mockgen -destination=mocks.go -package=platformifier -source=platformifier.go
+//go:generate mockgen -destination=mock_platformifier_test.go -package=platformifier -source=platformifier.go
 type platformifier interface {
 	// Platformify loads and writes the templates to the user's system.
 	Platformify(ctx context.Context, input *UserInput) error
 }
 
-type fileCreator interface {
-	Create(filePath string) (io.WriteCloser, error)
-}
-
 // New creates Platformifier with the appropriate platformifier stack based on UserInput.
-func New(input *UserInput) *Platformifier {
-	creator := utils.NewFileCreator()
+func New(input *UserInput, fileSystems ...FS) *Platformifier {
+	var fileSystem FS
+	if len(fileSystems) > 0 {
+		fileSystem = fileSystems[0]
+	} else {
+		fileSystem = &OSFileSystem{}
+	}
 
 	// fs.Sub(...) returns an error only if the given path name is invalid.
 	// Since we determine the path name ourselves in advance,
 	// there is no need to check for errors in this path name.
 	templates, _ := fs.Sub(templatesFS, genericDir)
-	stacks := []platformifier{newGenericPlatformifier(templates, creator)}
+	stacks := []platformifier{newGenericPlatformifier(templates, fileSystem)}
 
 	switch input.Stack {
 	case Django:
 		// No need to check for errors (see the comment above)
 		templates, _ = fs.Sub(templatesFS, djangoDir)
-		stacks = append(stacks, newDjangoPlatformifier(templates, creator))
+		stacks = append(stacks, newDjangoPlatformifier(templates, fileSystem))
 	case Laravel:
 		// No need to check for errors (see the comment above)
 		templates, _ = fs.Sub(templatesFS, laravelDir)
-		stacks = append(stacks, newLaravelPlatformifier(templates, creator))
+		stacks = append(stacks, newLaravelPlatformifier(templates))
 	case NextJS:
 		// No need to check for errors (see the comment above)
 		templates, _ = fs.Sub(templatesFS, nextjsDir)
-		stacks = append(stacks, newNextJSPlatformifier(templates, creator))
+		stacks = append(stacks, newNextJSPlatformifier(templates))
 	}
 
 	return &Platformifier{
