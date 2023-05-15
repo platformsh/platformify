@@ -12,6 +12,7 @@ lint: ## Run linter
 
 .PHONY: generate
 generate: ## Generate mock data
+	command -v mockgen >/dev/null || go install github.com/golang/mock/mockgen@latest
 	go generate ./...
 
 .PHONY: clean
