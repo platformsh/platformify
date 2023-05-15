@@ -1,7 +1,7 @@
 PROJECT_NAME = platformify
 
 .PHONY: test
-test: ## Run unit tests
+test: generate ## Run unit tests
 	go clean -testcache
 	go test -v -race -mod=readonly -cover ./...
 
