@@ -16,6 +16,7 @@ var skipDirs = []string{
 	"vendor",
 	"node_modules",
 	".next",
+	".git",
 }
 
 // FileExists checks if the file exists
@@ -119,13 +120,7 @@ func GetJSONKey(jsonPath []string, filePath string) (value interface{}, ok bool)
 }
 
 // ContainsStringInFile checks if the given file contains the given string
-func ContainsStringInFile(filename, target string) (bool, error) {
-	file, err := os.Open(filename)
-	if err != nil {
-		return false, err
-	}
-	defer file.Close()
-
+func ContainsStringInFile(file io.Reader, target string) (bool, error) {
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		if strings.Contains(scanner.Text(), target) {

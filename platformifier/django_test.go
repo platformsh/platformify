@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io/fs"
 	"os"
-	"path"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -49,34 +48,32 @@ func (s *PlatformifyDjangoSuiteTester) SetupTest() {
 }
 
 func (s *PlatformifyDjangoSuiteTester) TestSuccessfulFileCreation() {
-	// GIVEN fake settings.py file
-	settingsFilePath := path.Join(s.cwd, settingsPyFile)
-	f, err := os.Create(settingsFilePath)
-	require.NoError(s.T(), err)
-	defer func() {
-		f.Close()
-		err = os.Remove(settingsFilePath)
-		require.NoError(s.T(), err)
-	}()
-	// AND mock buffers to store PSH settings file
-	buff := &MockBuffer{}
+	// GIVEN mock buffers to store settings and PSH settings files
+	settingsBuff, settingsPSHBuff := &MockBuffer{}, &MockBuffer{}
 	// AND working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
+	// AND the settings.py file exists
+	s.fileSystem.EXPECT().
+		Find("", settingsPyFile, true).
+		Return([]string{settingsPyFile}).Times(2)
+	s.fileSystem.EXPECT().
+		Open(gomock.Eq(settingsPyFile), gomock.Any(), gomock.Any()).
+		Return(settingsBuff, nil).Times(1)
 	// AND creation of the PSH settings file returns no errors
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
-		Return(buff, nil).Times(1)
+		Create(gomock.Eq(settingsPshPyFile)).
+		Return(settingsPSHBuff, nil).Times(1)
 
 	// WHEN run config files creation
 	p := newDjangoPlatformifier(s.templates, s.fileSystem)
-	err = p.Platformify(context.Background(), input)
+	err := p.Platformify(context.Background(), input)
 	// THEN it doesn't return any errors
 	assert.NoError(s.T(), err)
 	// AND the buffer contains settings file
-	assert.NotEmpty(s.T(), buff)
+	assert.NotEmpty(s.T(), settingsPSHBuff)
 
 	// WHEN check if settings file contains the line that imported psh settings file
-	found, err := utils.ContainsStringInFile(settingsFilePath, importSettingsPshLine)
+	found, err := utils.ContainsStringInFile(settingsBuff, importSettingsPshLine)
 	// THEN it doesn't return any errors
 	assert.NoError(s.T(), err)
 	// AND the line is found
@@ -84,14 +81,18 @@ func (s *PlatformifyDjangoSuiteTester) TestSuccessfulFileCreation() {
 }
 
 func (s *PlatformifyDjangoSuiteTester) TestSettingsFileNotFound() {
-	// GIVEN mock buffers to store PSH settings file
+	// GIVEN mock buffer to store PSH settings file
 	buff := &MockBuffer{}
+	// AND working directory is a current directory
+	input := &UserInput{WorkingDirectory: s.cwd}
+	// AND the settings.py file doesn't exist
+	s.fileSystem.EXPECT().
+		Find("", settingsPyFile, true).
+		Return([]string{}).Times(2)
 	// AND creation of the PSH settings file returns no errors
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(s.cwd, settingsPshPyFile))).
+		Create(gomock.Eq(settingsPshPyFile)).
 		Return(buff, nil).Times(1)
-	// AND user input is empty (because it doesn't matter if it's empty or not)
-	input := &UserInput{}
 
 	// WHEN run config files creation
 	p := newDjangoPlatformifier(s.templates, s.fileSystem)
@@ -103,25 +104,20 @@ func (s *PlatformifyDjangoSuiteTester) TestSettingsFileNotFound() {
 }
 
 func (s *PlatformifyDjangoSuiteTester) TestPSHSettingsFileCreationError() {
-	// GIVEN fake settings.py file
-	settingsFilePath := path.Join(s.cwd, settingsPyFile)
-	f, err := os.Create(settingsFilePath)
-	require.NoError(s.T(), err)
-	defer func() {
-		f.Close()
-		err = os.Remove(settingsFilePath)
-		require.NoError(s.T(), err)
-	}()
-	// AND working directory is a current directory
+	// GIVEN working directory is a current directory
 	input := &UserInput{WorkingDirectory: s.cwd}
+	// AND the settings.py file exists
+	s.fileSystem.EXPECT().
+		Find("", settingsPyFile, true).
+		Return([]string{settingsPyFile}).Times(2)
 	// AND creating PSH settings file fails
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, settingsPshPyFile))).
+		Create(gomock.Eq(settingsPshPyFile)).
 		Return(nil, errors.New("")).Times(1)
 
 	// WHEN run config files creation
 	p := newDjangoPlatformifier(s.templates, s.fileSystem)
-	err = p.Platformify(context.Background(), input)
+	err := p.Platformify(context.Background(), input)
 	// THEN it fails
 	assert.Error(s.T(), err)
 }

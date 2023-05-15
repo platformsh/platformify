@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"path"
+	"path/filepath"
 
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/utils"
@@ -14,20 +14,22 @@ const (
 	composerJSONFile = "composer.json"
 )
 
-func newLaravelPlatformifier(templates fs.FS) *laravelPlatformifier {
+func newLaravelPlatformifier(templates fs.FS, fileSystem FS) *laravelPlatformifier {
 	return &laravelPlatformifier{
-		templates: templates,
+		templates:  templates,
+		fileSystem: fileSystem,
 	}
 }
 
 type laravelPlatformifier struct {
-	templates fs.FS
+	templates  fs.FS
+	fileSystem FS
 }
 
 func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
 	// Check for the Laravel Bridge.
-	appRoot := path.Join(input.WorkingDirectory, input.Root, input.ApplicationRoot)
-	composerJSONPaths := utils.FindAllFiles(appRoot, composerJSONFile)
+	appRoot := filepath.Join(input.Root, input.ApplicationRoot)
+	composerJSONPaths := p.fileSystem.Find(appRoot, composerJSONFile, false)
 	for _, composerJSONPath := range composerJSONPaths {
 		_, required := utils.GetJSONKey([]string{"require", "platformsh/laravel-bridge"}, composerJSONPath)
 		if !required {

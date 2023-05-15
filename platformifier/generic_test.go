@@ -7,7 +7,6 @@ import (
 	"errors"
 	"io/fs"
 	"os"
-	"path"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -66,19 +65,19 @@ func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creation of the environment file returns no errors
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
+		Create(gomock.Eq(environmentFile)).
 		Return(envBuff, nil).Times(1)
 	// AND creation of the app config file returns no errors
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
+		Create(gomock.Eq(appConfigFile)).
 		Return(appBuff, nil).Times(1)
 	// AND creation of the routes config file returns no errors
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
+		Create(gomock.Eq(routesConfigFile)).
 		Return(routesBuff, nil).Times(1)
 	// AND creation of the services config file returns no errors
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
+		Create(gomock.Eq(servicesConfigFile)).
 		Return(servicesBuff, nil).Times(1)
 
 	// WHEN run config files creation
@@ -98,11 +97,11 @@ func (s *PlatformifyGenericSuiteTester) TestEnvironmentCreationError() {
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating environment file fails
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, environmentFile))).
+		Create(gomock.Eq(environmentFile)).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Any()).
+		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation
@@ -117,11 +116,11 @@ func (s *PlatformifyGenericSuiteTester) TestAppConfigCreationError() {
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating app config file fails
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, appConfigFile))).
+		Create(gomock.Eq(appConfigFile)).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Any()).
+		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation
@@ -136,11 +135,11 @@ func (s *PlatformifyGenericSuiteTester) TestRoutesConfigCreationError() {
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating routes config file fails
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, routesConfigFile))).
+		Create(gomock.Eq(routesConfigFile)).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Any()).
+		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation
@@ -155,11 +154,11 @@ func (s *PlatformifyGenericSuiteTester) TestServicesConfigCreationError() {
 	input := &UserInput{WorkingDirectory: s.cwd}
 	// AND creating services config file fails
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Eq(path.Join(input.WorkingDirectory, servicesConfigFile))).
+		Create(gomock.Eq(servicesConfigFile)).
 		Return(nil, errors.New("")).Times(1)
 	// AND creating other config files work fine
 	s.fileSystem.EXPECT().
-		CreateFile(gomock.Any()).
+		Create(gomock.Any()).
 		Return(&MockBuffer{}, nil).AnyTimes()
 
 	// WHEN run config files creation

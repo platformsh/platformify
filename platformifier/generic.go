@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"path"
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
@@ -25,14 +24,13 @@ type genericPlatformifier struct {
 
 // Platformify will generate the .platformifiers.app.yaml and .platformifiers/ directory
 func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) error {
-	err := fs.WalkDir(p.templates, ".", func(filePath string, d fs.DirEntry, walkErr error) error {
+	err := fs.WalkDir(p.templates, ".", func(name string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
 		}
-		tpl := template.Must(template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(p.templates, filePath))
+		tpl := template.Must(template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(p.templates, name))
 
-		filePath = path.Join(input.WorkingDirectory, filePath)
-		f, writeErr := p.fileSystem.CreateFile(filePath)
+		f, writeErr := p.fileSystem.Create(name)
 		if writeErr != nil {
 			return fmt.Errorf("could not write template: %w", writeErr)
 		}

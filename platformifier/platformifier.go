@@ -24,7 +24,7 @@ const (
 
 // A platformifier handles the business logic of a given runtime to platformify.
 //
-//go:generate mockgen -destination=mock_platformifier_test.go -package=platformifier -source=platformifier.go
+//go:generate mockgen -destination=platformifier_mock_test.go -package=platformifier -source=platformifier.go
 type platformifier interface {
 	// Platformify loads and writes the templates to the user's system.
 	Platformify(ctx context.Context, input *UserInput) error
@@ -36,7 +36,7 @@ func New(input *UserInput, fileSystems ...FS) *Platformifier {
 	if len(fileSystems) > 0 {
 		fileSystem = fileSystems[0]
 	} else {
-		fileSystem = &OSFileSystem{}
+		fileSystem = NewOSFileSystem(input.WorkingDirectory)
 	}
 
 	// fs.Sub(...) returns an error only if the given path name is invalid.
@@ -53,7 +53,7 @@ func New(input *UserInput, fileSystems ...FS) *Platformifier {
 	case Laravel:
 		// No need to check for errors (see the comment above)
 		templates, _ = fs.Sub(templatesFS, laravelDir)
-		stacks = append(stacks, newLaravelPlatformifier(templates))
+		stacks = append(stacks, newLaravelPlatformifier(templates, fileSystem))
 	case NextJS:
 		// No need to check for errors (see the comment above)
 		templates, _ = fs.Sub(templatesFS, nextjsDir)

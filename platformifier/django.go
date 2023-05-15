@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"path"
 	"path/filepath"
 	"text/template"
 
@@ -34,42 +33,42 @@ type djangoPlatformifier struct {
 }
 
 func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
-	appRoot := path.Join(input.WorkingDirectory, input.Root, input.ApplicationRoot)
-	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
-		pshSettingsPath := filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile)
+	appRoot := filepath.Join(input.Root, input.ApplicationRoot)
+	if settingsPath := p.fileSystem.Find(appRoot, settingsPyFile, true); len(settingsPath) > 0 {
+		pshSettingsPath := filepath.Join(filepath.Dir(settingsPath[0]), settingsPshPyFile)
 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).
 			ParseFS(p.templates, settingsPshPyFile)
 		if parseErr != nil {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
-		f, err := p.fileSystem.CreateFile(pshSettingsPath)
+		file, err := p.fileSystem.Create(pshSettingsPath)
 		if err != nil {
 			return err
 		}
-		defer f.Close()
+		defer file.Close()
 
-		err = tpl.Execute(f, input)
+		err = tpl.Execute(file, input)
 		if err != nil {
 			return err
 		}
 	}
 
 	// append from settings_psh import * to the bottom of settings.py
-	if settingsPath := utils.FindFile(appRoot, settingsPyFile); settingsPath != "" {
-		f, err := os.OpenFile(settingsPath, os.O_APPEND|os.O_WRONLY, 0o644)
+	if settingsPath := p.fileSystem.Find(appRoot, settingsPyFile, true); len(settingsPath) > 0 {
+		file, err := p.fileSystem.Open(settingsPath[0], os.O_APPEND|os.O_RDWR, 0o644)
 		if err != nil {
 			return nil
 		}
-		defer f.Close()
+		defer file.Close()
 
 		// Check if there is an import line in the file
-		found, err := utils.ContainsStringInFile(settingsPath, importSettingsPshLine)
+		found, err := utils.ContainsStringInFile(file, importSettingsPshLine)
 		if err != nil {
 			return err
 		}
 
 		if !found {
-			if _, err = f.WriteString("\n\n" + importSettingsPshLine + "\n"); err != nil {
+			if _, err = file.Write([]byte("\n\n" + importSettingsPshLine + "\n")); err != nil {
 				out, _, ok := colors.FromContext(ctx)
 				if !ok {
 					return nil

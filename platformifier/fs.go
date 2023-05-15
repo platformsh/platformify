@@ -1,22 +1,86 @@
 package platformifier
 
 import (
+	"errors"
 	"io"
+	"io/fs"
 	"os"
 	"path"
+	"path/filepath"
+
+	"golang.org/x/exp/slices"
 )
 
-//go:generate mockgen -destination=mock_fs_test.go -package=platformifier -source=fs.go
-type FS interface {
-	CreateFile(name string) (io.WriteCloser, error)
+var skipDirs = []string{
+	"vendor",
+	"node_modules",
+	".next",
+	".git",
 }
 
-type OSFileSystem struct{}
+//go:generate mockgen -destination=fs_mock_test.go -package=platformifier -source=fs.go
+type FS interface {
+	Create(name string) (io.WriteCloser, error)
+	Find(root, name string, firstMatch bool) []string
+	Open(name string, flag int, perm os.FileMode) (io.ReadWriteCloser, error)
+}
 
-func (fs *OSFileSystem) CreateFile(filePath string) (io.WriteCloser, error) {
-	if err := os.MkdirAll(path.Dir(filePath), os.ModeDir|os.ModePerm); err != nil {
+func NewOSFileSystem(root string) *OSFileSystem {
+	return &OSFileSystem{
+		root: root,
+	}
+}
+
+type OSFileSystem struct {
+	root string
+}
+
+func (f *OSFileSystem) Open(name string, flag int, perm os.FileMode) (io.ReadWriteCloser, error) {
+	name = filepath.Join(f.root, name)
+	return os.OpenFile(name, flag, perm)
+}
+
+func (f *OSFileSystem) Create(name string) (io.WriteCloser, error) {
+	name = filepath.Join(f.root, name)
+	if err := os.MkdirAll(path.Dir(name), os.ModeDir|os.ModePerm); err != nil {
 		return nil, err
 	}
 
-	return os.Create(filePath)
+	return os.Create(name)
+}
+
+// Find searches for the file inside the path recursively and returns all matches
+func (f *OSFileSystem) Find(root, name string, firstMatch bool) []string {
+	if root == "" {
+		root = "."
+	}
+	found := make([]string, 0)
+	_ = fs.WalkDir(f.readonly(), root, func(p string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if d.IsDir() {
+			// Skip vendor directories
+			if slices.Contains(skipDirs, d.Name()) {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		if d.Name() == name {
+			found = append(found, p)
+			if firstMatch {
+				return errors.New("found")
+			}
+		}
+
+		return nil
+	})
+
+	return found
+}
+
+func (f *OSFileSystem) readonly() fs.FS {
+	return os.DirFS(f.root)
 }
