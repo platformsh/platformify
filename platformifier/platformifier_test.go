@@ -3,6 +3,8 @@ package platformifier
 import (
 	"context"
 	"errors"
+	"io/fs"
+	"reflect"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -12,30 +14,50 @@ import (
 )
 
 func TestNewPlatformifier(t *testing.T) {
+	genericTemplates, err := fs.Sub(templatesFS, genericDir)
+	require.NoError(t, err)
+	djangoTemplates, err := fs.Sub(templatesFS, djangoDir)
+	require.NoError(t, err)
+	laravelTemplates, err := fs.Sub(templatesFS, laravelDir)
+	require.NoError(t, err)
+	nextjsTemplates, err := fs.Sub(templatesFS, nextjsDir)
+	require.NoError(t, err)
+	fileSystem := NewOSFileSystem("")
 	tests := []struct {
 		name           string
 		stack          Stack
 		platformifiers []platformifier
 	}{
 		{
-			name:           "generic",
-			stack:          Generic,
-			platformifiers: []platformifier{&genericPlatformifier{}},
+			name:  "generic",
+			stack: Generic,
+			platformifiers: []platformifier{
+				&genericPlatformifier{templates: genericTemplates, fileSystem: fileSystem},
+			},
 		},
 		{
-			name:           "django",
-			stack:          Django,
-			platformifiers: []platformifier{&genericPlatformifier{}, &djangoPlatformifier{}},
+			name:  "django",
+			stack: Django,
+			platformifiers: []platformifier{
+				&genericPlatformifier{templates: genericTemplates, fileSystem: fileSystem},
+				&djangoPlatformifier{templates: djangoTemplates, fileSystem: fileSystem},
+			},
 		},
 		{
-			name:           "laravel",
-			stack:          Laravel,
-			platformifiers: []platformifier{&genericPlatformifier{}, &laravelPlatformifier{}},
+			name:  "laravel",
+			stack: Laravel,
+			platformifiers: []platformifier{
+				&genericPlatformifier{templates: genericTemplates, fileSystem: fileSystem},
+				&laravelPlatformifier{templates: laravelTemplates, fileSystem: fileSystem},
+			},
 		},
 		{
-			name:           "nextjs",
-			stack:          NextJS,
-			platformifiers: []platformifier{&genericPlatformifier{}, &nextJSPlatformifier{}},
+			name:  "nextjs",
+			stack: NextJS,
+			platformifiers: []platformifier{
+				&genericPlatformifier{templates: genericTemplates, fileSystem: fileSystem},
+				&nextJSPlatformifier{templates: nextjsTemplates},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -52,6 +74,7 @@ func TestNewPlatformifier(t *testing.T) {
 			for i := range pfier.stacks {
 				// AND the type of each stack should be the same as expected
 				assert.IsType(t, tt.platformifiers[i], pfier.stacks[i])
+				assert.True(t, reflect.DeepEqual(tt.platformifiers[i], pfier.stacks[i]))
 			}
 		})
 	}
