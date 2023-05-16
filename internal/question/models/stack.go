@@ -42,7 +42,7 @@ func (s Stack) Title() string {
 func (s *Stack) WriteAnswer(_ string, value interface{}) error {
 	switch answer := value.(type) {
 	case survey.OptionAnswer: // Select
-		stack, err := Stacks.stackByTitle(answer.Value)
+		stack, err := Stacks.StackByTitle(answer.Value)
 		if err != nil {
 			return err
 		}
@@ -63,7 +63,7 @@ func (s StackList) AllTitles() []string {
 	return titles
 }
 
-func (s StackList) stackByTitle(title string) (Stack, error) {
+func (s StackList) StackByTitle(title string) (Stack, error) {
 	for _, stack := range s {
 		if stack.Title() == title {
 			return stack, nil

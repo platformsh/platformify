@@ -87,13 +87,8 @@ func GetJSONKey(jsonPath []string, filePath string) (value interface{}, ok bool)
 	}
 	defer fin.Close()
 
-	input, err := io.ReadAll(fin)
-	if err != nil {
-		return nil, false
-	}
-
 	var data map[string]interface{}
-	err = json.Unmarshal(input, &data)
+	err = json.NewDecoder(fin).Decode(&data)
 	if err != nil {
 		return nil, false
 	}

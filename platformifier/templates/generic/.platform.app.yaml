@@ -19,15 +19,22 @@ dependencies:
     {{- $key }}: "{{ $value }}"
     {{- end }}
   {{- end }}
-{{ else }}
+{{ else -}}
 # dependencies:
+  {{- if eq "python" .Runtime }}
 #   python3: # Specify one Python 3 package per line.
 #     numpy: '*'
+  {{- else if eq "php" .Runtime }}
 #   php: # Specify one Composer package per line.
 #     drush/drush: '8.0.0'
 #     composer/composer: '^2'
+  {{- else if eq "nodejs" .Runtime }}
 #   nodejs: # Specify one NPM package per line.
 #     pm2: '^4.5.0'
+  {{- else }}
+#   runtime: # Specify one package per line.
+#     package: 'version'
+  {{- end }}
 {{- end }}
 
 {{ if .BuildFlavor -}}
@@ -47,16 +54,20 @@ variables:
   env:
     {{ range $key, $value := .Environment }}
     {{- $key }}: "{{ $value }}"
-    {{ else }}
-    # Add environment variables here that are static.
-    # NODE_ENV: development
-    # PYTHONUNBUFFERED: "1"
-    # XDEBUG_MODE: off
-    {{ end }}
-{{ else }}
+    {{ end -}}
+{{ else -}}
 # variables:
 #   env:
-#     KEY: "value"
+#     # Add environment variables here that are static.
+{{- if eq "python" .Runtime }}
+#     PYTHONUNBUFFERED: "1"
+{{- else if eq "php" .Runtime }}
+#     XDEBUG_MODE: off
+{{- else if eq "nodejs" .Runtime }}
+#     NODE_ENV: development
+{{- else }}
+#     ENV_VARIABLE_NAME: "value"
+{{- end }}
 {{- end }}
 
 # The hooks that will be triggered when the package is deployed.
@@ -89,7 +100,7 @@ hooks:
 # The configuration of the application when it is exposed to the web.
 web:
   # You can listen to a UNIX socket (unix) or a TCP port (tcp, default).
-  {{- if hasPrefix "php:" .Type }}
+  {{- if eq "php" .Runtime }}
   # For PHP, the defaults are configured for PHP-FPM and shouldn't need adjustment.
   {{- end }}
   # Read more about upstream here: https://docs.platform.sh/create-apps/app-reference.html#upstream
@@ -110,7 +121,7 @@ web:
   # commands:
   #   The command to start your application.
   #   You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
-  {{- if hasPrefix "php:" .Type }}
+  {{- if eq "php" .Runtime }}
   #   PHP applications run PHP-fpm by default
   #   Read about alternative commands here: https://docs.platform.sh/languages/php.html#alternate-start-commands
   {{- end }}

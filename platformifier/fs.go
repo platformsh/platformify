@@ -36,17 +36,16 @@ type OSFileSystem struct {
 }
 
 func (f *OSFileSystem) Open(name string, flag int, perm os.FileMode) (io.ReadWriteCloser, error) {
-	name = filepath.Join(f.root, name)
-	return os.OpenFile(name, flag, perm)
+	return os.OpenFile(f.fullPath(name), flag, perm)
 }
 
 func (f *OSFileSystem) Create(name string) (io.WriteCloser, error) {
-	name = filepath.Join(f.root, name)
-	if err := os.MkdirAll(path.Dir(name), os.ModeDir|os.ModePerm); err != nil {
+	filePath := f.fullPath(name)
+	if err := os.MkdirAll(path.Dir(filePath), os.ModeDir|os.ModePerm); err != nil {
 		return nil, err
 	}
 
-	return os.Create(name)
+	return os.Create(filePath)
 }
 
 // Find searches for the file inside the path recursively and returns all matches
@@ -83,4 +82,8 @@ func (f *OSFileSystem) Find(root, name string, firstMatch bool) []string {
 
 func (f *OSFileSystem) readonly() fs.FS {
 	return os.DirFS(f.root)
+}
+
+func (f *OSFileSystem) fullPath(name string) string {
+	return filepath.Join(f.root, name)
 }

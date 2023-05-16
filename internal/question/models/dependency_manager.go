@@ -1,9 +1,5 @@
 package models
 
-import (
-	"fmt"
-)
-
 const (
 	GenericDepManager DepManager = "generic"
 	Pip               DepManager = "pip"
@@ -12,30 +8,6 @@ const (
 	Composer          DepManager = "composer"
 	Yarn              DepManager = "yarn"
 	Npm               DepManager = "npm"
-)
-
-var (
-	DepManagers = DepManagerList{
-		Pip,
-		Poetry,
-		Pipenv,
-		Composer,
-		Yarn,
-		Npm,
-		GenericDepManager,
-	}
-
-	DepManagersMap = DepManagerMap{
-		Python: {
-			Pip, Poetry, Pipenv, GenericDepManager,
-		},
-		PHP: {
-			Composer, GenericDepManager,
-		},
-		NodeJS: {
-			Yarn, Npm, GenericDepManager,
-		},
-	}
 )
 
 type DepManager string
@@ -63,29 +35,4 @@ func (m DepManager) Title() string {
 	default:
 		return ""
 	}
-}
-
-type DepManagerList []DepManager
-
-func (m DepManagerList) DepManagerByTitle(title string) (DepManager, error) {
-	for _, manager := range m {
-		if manager.Title() == title {
-			return manager, nil
-		}
-	}
-	return "", fmt.Errorf("dependency manager by title is not found")
-}
-
-type DepManagerMap map[Runtime][]DepManager
-
-func (m DepManagerMap) Titles(runtime Runtime) []string {
-	managers, ok := m[runtime]
-	if !ok {
-		return nil
-	}
-	titles := make([]string, 0, len(managers))
-	for _, manager := range managers {
-		titles = append(titles, manager.Title())
-	}
-	return titles
 }
