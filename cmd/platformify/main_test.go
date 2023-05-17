@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/platformsh/platformify/platformifier"
@@ -31,7 +30,7 @@ func TestYAMLOutput(t *testing.T) {
 	}
 
 	// Check the .platform.app.yaml file was created and contains valid YAML
-	yamlFile := filepath.Join(tempDir, ".platform.app.yaml")
+	yamlFile := ".platform.app.yaml"
 	yamlData, err := os.ReadFile(yamlFile)
 	if err != nil {
 		t.Fatalf("Failed to read .platform.app.yaml file: %v", err)
