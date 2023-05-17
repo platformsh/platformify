@@ -3,8 +3,6 @@ package main
 import (
 	"os"
 
-	_ "github.com/golang/mock/mockgen/model"
-
 	"github.com/platformsh/platformify/commands"
 )
 
