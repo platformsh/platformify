@@ -3,7 +3,7 @@ package question
 import (
 	"context"
 
-	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
 

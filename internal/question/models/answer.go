@@ -2,6 +2,10 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
+	"strings"
+
+	"github.com/platformsh/platformify/platformifier"
 )
 
 type Answers struct {
@@ -71,4 +75,72 @@ func NewAnswers() *Answers {
 		BuildSteps:  make([]string, 0),
 		Services:    make([]Service, 0),
 	}
+}
+
+func (a *Answers) ToUserInput() *platformifier.UserInput {
+	services := make([]platformifier.Service, 0, len(a.Services))
+	for _, service := range a.Services {
+		diskSizes := make([]string, 0, len(service.DiskSizes))
+		for _, size := range service.DiskSizes {
+			diskSizes = append(diskSizes, size.String())
+		}
+		services = append(services, platformifier.Service{
+			Name:         service.Name,
+			Type:         service.Type.String(),
+			TypeVersions: service.TypeVersions,
+			Disk:         service.Disk.String(),
+			DiskSizes:    diskSizes,
+		})
+	}
+
+	return &platformifier.UserInput{
+		Stack:             getStack(a.Stack),
+		Root:              "",
+		ApplicationRoot:   a.ApplicationRoot,
+		Name:              a.Name,
+		Type:              a.Type.String(),
+		Runtime:           a.Type.Runtime.String(),
+		Environment:       a.Environment,
+		BuildSteps:        a.BuildSteps,
+		WebCommand:        a.WebCommand,
+		SocketFamily:      a.SocketFamily.String(),
+		DependencyManager: a.DependencyManager.String(),
+		DeployCommand:     a.DeployCommand,
+		Locations: map[string]map[string]interface{}{
+			"/": {
+				"passthru": true,
+			},
+		},
+		Dependencies:     a.Dependencies,
+		BuildFlavor:      a.BuildFlavor,
+		Disk:             a.Disk,
+		Mounts:           a.Mounts,
+		Services:         services,
+		Relationships:    getRelationships(a.Services),
+		WorkingDirectory: a.WorkingDirectory,
+		HasGit:           a.HasGit,
+	}
+}
+
+func getStack(answersStack Stack) platformifier.Stack {
+	switch answersStack {
+	case Django:
+		return platformifier.Django
+	case Laravel:
+		return platformifier.Laravel
+	case NextJS:
+		return platformifier.NextJS
+	default:
+		return platformifier.Generic
+	}
+}
+
+// getRelationships returns a map of service names to their relationship names.
+func getRelationships(services []Service) map[string]string {
+	relationships := make(map[string]string)
+	for _, service := range services {
+		endpoint := strings.Split(service.Type.Name, ":")[0]
+		relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
+	}
+	return relationships
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 
 	"github.com/platformsh/platformify/internal/colors"
-	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/question/models"
 )
 
 type Services struct{}

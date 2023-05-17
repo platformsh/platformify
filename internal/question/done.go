@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/platformsh/platformify/internal/colors"
-	"github.com/platformsh/platformify/internal/models"
+	"github.com/platformsh/platformify/internal/question/models"
 )
 
 type Done struct{}

@@ -2,13 +2,15 @@ package models
 
 import (
 	"fmt"
+
+	"github.com/AlecAivazis/survey/v2"
 )
 
 const (
-	GenericStack Stack = "generic"
-	Django       Stack = "django"
-	Laravel      Stack = "laravel"
-	NextJS       Stack = "next-js"
+	GenericStack Stack = iota
+	Django
+	Laravel
+	NextJS
 )
 
 var (
@@ -20,11 +22,7 @@ var (
 	}
 )
 
-type Stack string
-
-func (s Stack) String() string {
-	return string(s)
-}
+type Stack int
 
 func (s Stack) Title() string {
 	switch s {
@@ -39,6 +37,20 @@ func (s Stack) Title() string {
 	default:
 		return ""
 	}
+}
+
+func (s *Stack) WriteAnswer(_ string, value interface{}) error {
+	switch answer := value.(type) {
+	case survey.OptionAnswer: // Select
+		stack, err := Stacks.StackByTitle(answer.Value)
+		if err != nil {
+			return err
+		}
+		*s = stack
+	default:
+		return fmt.Errorf("unsupported type")
+	}
+	return nil
 }
 
 type StackList []Stack
@@ -57,5 +69,5 @@ func (s StackList) StackByTitle(title string) (Stack, error) {
 			return stack, nil
 		}
 	}
-	return "", fmt.Errorf("stack by title is not found")
+	return GenericStack, fmt.Errorf("stack by title is not found")
 }

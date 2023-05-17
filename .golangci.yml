@@ -150,6 +150,12 @@ run:
   skip-dirs:
     - vendor
 
+issues:
+  exclude-rules:
+    - linters:
+        - lll
+      source: "^//go:generate "
+
 # golangci.com configuration
 # https://github.com/golangci/golangci/wiki/Configuration
 service:

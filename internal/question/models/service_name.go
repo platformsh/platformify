@@ -106,7 +106,7 @@ func (s *ServiceNameList) WriteAnswer(_ string, value interface{}) error {
 	switch answer := value.(type) {
 	case []survey.OptionAnswer: // MultiSelect
 		for _, item := range answer {
-			service, err := ServiceNames.serviceByTitle(item.Value)
+			service, err := ServiceNames.ServiceByTitle(item.Value)
 			if err != nil {
 				return err
 			}
@@ -126,7 +126,7 @@ func (s *ServiceNameList) AllTitles() []string {
 	return titles
 }
 
-func (s *ServiceNameList) serviceByTitle(title string) (ServiceName, error) {
+func (s *ServiceNameList) ServiceByTitle(title string) (ServiceName, error) {
 	for _, service := range *s {
 		if service.Title() == title {
 			return service, nil

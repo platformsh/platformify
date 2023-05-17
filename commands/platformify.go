@@ -6,10 +6,10 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/platformsh/platformify/internal/colors"
-	"github.com/platformsh/platformify/internal/models"
 	"github.com/platformsh/platformify/internal/question"
+	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/questionnaire"
-	"github.com/platformsh/platformify/platformifiers"
+	"github.com/platformsh/platformify/platformifier"
 )
 
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
@@ -55,13 +55,11 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			return err
 		}
 
-		pfier, err := platformifiers.NewPlatformifier(answers)
-		if err != nil {
-			fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
-			return fmt.Errorf("creating platformifier failed: %s", err)
-		}
+		input := answers.ToUserInput()
 
-		if err := pfier.Platformify(ctx); err != nil {
+		pfier := platformifier.New(input)
+		err = pfier.Platformify(ctx)
+		if err != nil {
 			fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
 			return fmt.Errorf("could not platformify project: %w", err)
 		}

@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
 	github.com/Masterminds/sprig/v3 v3.2.3
+	github.com/golang/mock v1.4.4
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0

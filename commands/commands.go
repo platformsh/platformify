@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"os"
+	"context"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -9,11 +9,8 @@ import (
 
 // Execute executes the Platformify command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the PlatformifyCmd.
-func Execute() {
-	err := PlatformifyCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
+func Execute() error {
+	return PlatformifyCmd.ExecuteContext(context.Background())
 }
 
 func init() {
