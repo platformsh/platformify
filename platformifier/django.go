@@ -41,34 +41,32 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 		if parseErr != nil {
 			return fmt.Errorf("could not parse template: %w", parseErr)
 		}
-		file, err := p.fileSystem.Create(pshSettingsPath)
+		pshSettingsFile, err := p.fileSystem.Create(pshSettingsPath)
 		if err != nil {
 			return err
 		}
-		defer file.Close()
+		defer pshSettingsFile.Close()
 
-		err = tpl.Execute(file, input)
+		err = tpl.Execute(pshSettingsFile, input)
 		if err != nil {
 			return err
 		}
-	}
 
-	// append from settings_psh import * to the bottom of settings.py
-	if settingsPath := p.fileSystem.Find(appRoot, settingsPyFile, true); len(settingsPath) > 0 {
-		file, err := p.fileSystem.Open(settingsPath[0], os.O_APPEND|os.O_RDWR, 0o644)
+		// append from settings_psh import * to the bottom of settings.py
+		settingsFile, err := p.fileSystem.Open(settingsPath[0], os.O_APPEND|os.O_RDWR, 0o644)
 		if err != nil {
 			return nil
 		}
-		defer file.Close()
+		defer settingsFile.Close()
 
 		// Check if there is an import line in the file
-		found, err := utils.ContainsStringInFile(file, importSettingsPshLine)
+		found, err := utils.ContainsStringInFile(settingsFile, importSettingsPshLine)
 		if err != nil {
 			return err
 		}
 
 		if !found {
-			if _, err = file.Write([]byte("\n\n" + importSettingsPshLine + "\n")); err != nil {
+			if _, err = settingsFile.Write([]byte("\n\n" + importSettingsPshLine + "\n")); err != nil {
 				out, _, ok := colors.FromContext(ctx)
 				if !ok {
 					return nil
