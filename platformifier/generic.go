@@ -22,7 +22,7 @@ type genericPlatformifier struct {
 	fileSystem FS
 }
 
-// Platformify will generate the .platformifiers.app.yaml and .platformifiers/ directory
+// Platformify will generate the .platform.app.yaml and .platform/ directory.
 func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) error {
 	err := fs.WalkDir(p.templates, ".", func(name string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
