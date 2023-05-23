@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/platformsh/platformify/internal/validator"
 	"github.com/platformsh/platformify/platformifier"
+	"github.com/platformsh/platformify/validator"
 
 	"github.com/stretchr/testify/assert"
 )

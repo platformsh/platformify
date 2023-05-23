@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/platformsh/platformify/platformifier"
 
 	"github.com/spf13/cobra"
 
@@ -9,7 +10,6 @@ import (
 	"github.com/platformsh/platformify/internal/question"
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/questionnaire"
-	"github.com/platformsh/platformify/platformifier"
 )
 
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
