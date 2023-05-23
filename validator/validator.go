@@ -7,6 +7,8 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var Version string = "1.0"
+
 // ValidateFile checks the file exists and is valid yaml, then returns the unmarshalled data.
 func ValidateFile(path string) (interface{}, error) {
 	// Does the file exist?
