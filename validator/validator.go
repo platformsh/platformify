@@ -3,6 +3,7 @@ package validator
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
@@ -27,9 +28,27 @@ func ValidateFile(path string) (interface{}, error) {
 }
 
 // ValidateData checks to see if the unmarshalled data is valid config.
-func ValidateData(data interface{}) error {
+func ValidateData(data interface{}, _ string) error {
 	if data == nil {
 		return fmt.Errorf("data should not be nil")
 	}
+	return nil
+}
+
+// ValidateConfig uses ValidateFile and ValidateData to check config for a given directory is valid Platform.sh config.
+func ValidateConfig(path string) error {
+	files := []string{".platform.app.yaml", ".platform/services.yaml", ".platform/relationships.yaml"}
+	for _, file := range files {
+		data, fileErr := ValidateFile(filepath.Join(path, file))
+		if fileErr != nil {
+			return fmt.Errorf("problem with %v: %v", file, fileErr)
+		}
+		dataErr := ValidateData(data, file)
+		if dataErr != nil {
+			// @todo Should we return, or should we aggregate all the errors so folks can correct them
+			return fmt.Errorf("configuration directive in %v is invalid: %v", file, dataErr)
+		}
+	}
+
 	return nil
 }

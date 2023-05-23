@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/platformsh/platformify/platformifier"
@@ -30,11 +29,9 @@ func TestYAMLOutput(t *testing.T) {
 		t.Fatalf("App failed with error: %v", err)
 	}
 
-	// Check the .platform.app.yaml file was created and contains valid YAML
-	yamlFile := filepath.Join(tempDir, ".platform.app.yaml")
-	yamlData, err := validator.ValidateFile(yamlFile)
-	assert.NoError(t, err, "error while validating .platform.app.yaml")
-	assert.NoError(t, validator.ValidateData(yamlData))
+	// Validate the config.
+	invalid := validator.ValidateConfig(tempDir)
+	assert.NoError(t, err, "error while validating config: %v", invalid)
 }
 
 func runApp(ctx context.Context, ui *platformifier.UserInput) error {
