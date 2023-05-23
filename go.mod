@@ -11,6 +11,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -31,7 +32,6 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
-	github.com/platformsh/platformify/validator v1.0.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
 	github.com/spf13/afero v1.9.3 // indirect
@@ -44,7 +44,4 @@ require (
 	golang.org/x/term v0.2.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/platformsh/platformify/validator => ./validator
