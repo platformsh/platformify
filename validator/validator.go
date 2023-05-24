@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/hashicorp/go-multierror"
 	"gopkg.in/yaml.v3"
 )
 
@@ -37,18 +38,18 @@ func ValidateData(data interface{}, _ string) error {
 
 // ValidateConfig uses ValidateFile and ValidateData to check config for a given directory is valid Platform.sh config.
 func ValidateConfig(path string) error {
+	var errs error
 	files := []string{".platform.app.yaml", ".platform/services.yaml", ".platform/relationships.yaml"}
 	for _, file := range files {
 		data, fileErr := ValidateFile(filepath.Join(path, file))
 		if fileErr != nil {
-			return fmt.Errorf("problem with %v: %v", file, fileErr)
+			errs = multierror.Append(errs, fmt.Errorf("problem with %v: %v", file, fileErr))
 		}
 		dataErr := ValidateData(data, file)
 		if dataErr != nil {
-			// @todo Should we return, or should we aggregate all the errors so folks can correct them
-			return fmt.Errorf("configuration directive in %v is invalid: %v", file, dataErr)
+			errs = multierror.Append(errs, fmt.Errorf("configuration directive in %v is invalid: %v", file, dataErr))
 		}
 	}
 
-	return nil
+	return errs
 }
