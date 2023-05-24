@@ -1,0 +1,401 @@
+{
+  "title": "Platform.sh routes configuration file", 
+  "$schema": "http://json-schema.org/draft-07/schema#", 
+  "type": "object", 
+  "additionalProperties": {
+    "oneOf": [
+      {
+        "type": "object", 
+        "properties": {
+          "primary": {
+            "type": "boolean", 
+            "title": "This route is the primary route of the environment", 
+            "default": null
+          }, 
+          "id": {
+            "type": "string", 
+            "title": "Route Identifier", 
+            "default": null
+          }, 
+          "attributes": {
+            "type": "object", 
+            "additionalProperties": {
+              "type": "string"
+            }, 
+            "title": "Arbitrary attributes attached to this resource", 
+            "default": {}
+          }, 
+          "type": {
+            "type": "string", 
+            "title": "Route type."
+          }, 
+          "redirects": {
+            "type": "object", 
+            "properties": {
+              "expires": {
+                "type": "string", 
+                "title": "The amount of time, in seconds, to cache the redirects.", 
+                "default": -1
+              }, 
+              "paths": {
+                "type": "object", 
+                "additionalProperties": {
+                  "type": "object", 
+                  "properties": {
+                    "regexp": {
+                      "type": "boolean", 
+                      "title": "Whether the path is a regular expression.", 
+                      "default": false
+                    }, 
+                    "to": {
+                      "type": "string", 
+                      "title": "The URL to redirect to."
+                    }, 
+                    "prefix": {
+                      "type": "boolean", 
+                      "title": "Whether to redirect all the paths that start with the path.", 
+                      "default": null
+                    }, 
+                    "append_suffix": {
+                      "type": "boolean", 
+                      "title": "Whether to append the incoming suffix to the redirected URL.", 
+                      "default": null
+                    }, 
+                    "code": {
+                      "type": "integer", 
+                      "title": "The redirect code to use.", 
+                      "default": 302
+                    }, 
+                    "expires": {
+                      "type": "string", 
+                      "title": "The amount of time, in seconds, to cache the redirects.", 
+                      "default": null
+                    }
+                  }, 
+                  "required": [
+                    "to"
+                  ], 
+                  "additionalProperties": false
+                }, 
+                "title": "The paths to redirect"
+              }
+            }, 
+            "required": [
+              "paths"
+            ], 
+            "additionalProperties": false, 
+            "title": "The configuration of the redirects.", 
+            "default": {}
+          }, 
+          "tls": {
+            "type": "object", 
+            "properties": {
+              "strict_transport_security": {
+                "type": "object", 
+                "properties": {
+                  "enabled": {
+                    "type": "boolean", 
+                    "title": "Whether strict transport security is enabled or not.", 
+                    "default": null
+                  }, 
+                  "include_subdomains": {
+                    "type": "boolean", 
+                    "title": "Whether the strict transport security policy should include all subdomains.", 
+                    "default": null
+                  }, 
+                  "preload": {
+                    "type": "boolean", 
+                    "title": "Whether the strict transport security policy should be preloaded in browsers.", 
+                    "default": null
+                  }
+                }, 
+                "additionalProperties": false, 
+                "title": "Strict-Transport-Security options.", 
+                "default": {
+                  "preload": null, 
+                  "include_subdomains": null, 
+                  "enabled": null
+                }
+              }, 
+              "min_version": {
+                "type": "string", 
+                "enum": [
+                  "TLSv1.1", 
+                  "TLSv1.0", 
+                  "TLSv1.3", 
+                  "TLSv1.2"
+                ], 
+                "title": "The minimum TLS version to support.", 
+                "default": null
+              }, 
+              "client_authentication": {
+                "type": "string", 
+                "title": "The type of client authentication to request.", 
+                "default": null
+              }, 
+              "client_certificate_authorities": {
+                "type": "array", 
+                "items": {
+                  "type": "string"
+                }, 
+                "title": "Certificate authorities to validate the client certificate against. If not specified, a default set of trusted CAs will be used.", 
+                "default": []
+              }
+            }, 
+            "additionalProperties": false, 
+            "title": "TLS settings for the route.", 
+            "default": {
+              "client_authentication": null, 
+              "min_version": null, 
+              "client_certificate_authorities": [], 
+              "strict_transport_security": {
+                "preload": null, 
+                "include_subdomains": null, 
+                "enabled": null
+              }
+            }
+          }, 
+          "to": {
+            "type": "string", 
+            "title": "Redirect destination"
+          }
+        }, 
+        "required": [
+          "type", 
+          "to"
+        ], 
+        "additionalProperties": false
+      }, 
+      {
+        "type": "object", 
+        "properties": {
+          "primary": {
+            "type": "boolean", 
+            "title": "This route is the primary route of the environment", 
+            "default": null
+          }, 
+          "id": {
+            "type": "string", 
+            "title": "Route Identifier", 
+            "default": null
+          }, 
+          "attributes": {
+            "type": "object", 
+            "additionalProperties": {
+              "type": "string"
+            }, 
+            "title": "Arbitrary attributes attached to this resource", 
+            "default": {}
+          }, 
+          "type": {
+            "type": "string", 
+            "title": "Route type."
+          }, 
+          "redirects": {
+            "type": "object", 
+            "properties": {
+              "expires": {
+                "type": "string", 
+                "title": "The amount of time, in seconds, to cache the redirects.", 
+                "default": -1
+              }, 
+              "paths": {
+                "type": "object", 
+                "additionalProperties": {
+                  "type": "object", 
+                  "properties": {
+                    "regexp": {
+                      "type": "boolean", 
+                      "title": "Whether the path is a regular expression.", 
+                      "default": false
+                    }, 
+                    "to": {
+                      "type": "string", 
+                      "title": "The URL to redirect to."
+                    }, 
+                    "prefix": {
+                      "type": "boolean", 
+                      "title": "Whether to redirect all the paths that start with the path.", 
+                      "default": null
+                    }, 
+                    "append_suffix": {
+                      "type": "boolean", 
+                      "title": "Whether to append the incoming suffix to the redirected URL.", 
+                      "default": null
+                    }, 
+                    "code": {
+                      "type": "integer", 
+                      "title": "The redirect code to use.", 
+                      "default": 302
+                    }, 
+                    "expires": {
+                      "type": "string", 
+                      "title": "The amount of time, in seconds, to cache the redirects.", 
+                      "default": null
+                    }
+                  }, 
+                  "required": [
+                    "to"
+                  ], 
+                  "additionalProperties": false
+                }, 
+                "title": "The paths to redirect"
+              }
+            }, 
+            "required": [
+              "paths"
+            ], 
+            "additionalProperties": false, 
+            "title": "The configuration of the redirects.", 
+            "default": {}
+          }, 
+          "tls": {
+            "type": "object", 
+            "properties": {
+              "strict_transport_security": {
+                "type": "object", 
+                "properties": {
+                  "enabled": {
+                    "type": "boolean", 
+                    "title": "Whether strict transport security is enabled or not.", 
+                    "default": null
+                  }, 
+                  "include_subdomains": {
+                    "type": "boolean", 
+                    "title": "Whether the strict transport security policy should include all subdomains.", 
+                    "default": null
+                  }, 
+                  "preload": {
+                    "type": "boolean", 
+                    "title": "Whether the strict transport security policy should be preloaded in browsers.", 
+                    "default": null
+                  }
+                }, 
+                "additionalProperties": false, 
+                "title": "Strict-Transport-Security options.", 
+                "default": {
+                  "preload": null, 
+                  "include_subdomains": null, 
+                  "enabled": null
+                }
+              }, 
+              "min_version": {
+                "type": "string", 
+                "enum": [
+                  "TLSv1.1", 
+                  "TLSv1.0", 
+                  "TLSv1.3", 
+                  "TLSv1.2"
+                ], 
+                "title": "The minimum TLS version to support.", 
+                "default": null
+              }, 
+              "client_authentication": {
+                "type": "string", 
+                "title": "The type of client authentication to request.", 
+                "default": null
+              }, 
+              "client_certificate_authorities": {
+                "type": "array", 
+                "items": {
+                  "type": "string"
+                }, 
+                "title": "Certificate authorities to validate the client certificate against. If not specified, a default set of trusted CAs will be used.", 
+                "default": []
+              }
+            }, 
+            "additionalProperties": false, 
+            "title": "TLS settings for the route.", 
+            "default": {
+              "client_authentication": null, 
+              "min_version": null, 
+              "client_certificate_authorities": [], 
+              "strict_transport_security": {
+                "preload": null, 
+                "include_subdomains": null, 
+                "enabled": null
+              }
+            }
+          }, 
+          "cache": {
+            "type": "object", 
+            "properties": {
+              "enabled": {
+                "type": "boolean", 
+                "title": "Whether the cache is enabled."
+              }, 
+              "default_ttl": {
+                "type": "integer", 
+                "title": "The TTL to apply when the response doesn't specify one. Only applies to static files.", 
+                "default": 0
+              }, 
+              "cookies": {
+                "type": "array", 
+                "items": {
+                  "type": "string"
+                }, 
+                "title": "The cookies to take into account for the cache key.", 
+                "default": [
+                  "*"
+                ]
+              }, 
+              "headers": {
+                "type": "array", 
+                "items": {
+                  "type": "string"
+                }, 
+                "title": "The headers to take into account for the cache key.", 
+                "default": [
+                  "Accept", 
+                  "Accept-Language"
+                ]
+              }
+            }, 
+            "required": [
+              "enabled"
+            ], 
+            "additionalProperties": false, 
+            "title": "Cache configuration.", 
+            "default": {
+              "default_ttl": 0, 
+              "cookies": [
+                "*"
+              ], 
+              "enabled": true, 
+              "headers": [
+                "Accept", 
+                "Accept-Language"
+              ]
+            }
+          }, 
+          "ssi": {
+            "type": "object", 
+            "properties": {
+              "enabled": {
+                "type": "boolean", 
+                "title": "Whether SSI include is enabled."
+              }
+            }, 
+            "required": [
+              "enabled"
+            ], 
+            "additionalProperties": false, 
+            "title": "Server-Side Include configuration.", 
+            "default": {
+              "enabled": false
+            }
+          }, 
+          "upstream": {
+            "type": "string", 
+            "title": "The upstream to use for this route."
+          }
+        }, 
+        "required": [
+          "type", 
+          "upstream"
+        ], 
+        "additionalProperties": false
+      }
+    ]
+  }
+}
