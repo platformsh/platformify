@@ -26,7 +26,7 @@ func (q *Type) Ask(ctx context.Context) error {
 		runtime = models.Python
 	case models.Laravel:
 		runtime = models.PHP
-	case models.NextJS:
+	case models.NextJS, models.Strapi:
 		runtime = models.NodeJS
 	default:
 		question := &survey.Select{

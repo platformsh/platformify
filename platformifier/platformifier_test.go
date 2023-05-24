@@ -59,6 +59,13 @@ func TestNewPlatformifier(t *testing.T) {
 				&nextJSPlatformifier{templates: nextjsTemplates},
 			},
 		},
+		{
+			name:  "strapi",
+			stack: Strapi,
+			platformifiers: []platformifier{
+				&genericPlatformifier{templates: genericTemplates, fileSystem: fileSystem},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

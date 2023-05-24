@@ -11,6 +11,7 @@ const (
 	Django
 	Laravel
 	NextJS
+	Strapi
 )
 
 var (
@@ -18,6 +19,7 @@ var (
 		Django,
 		Laravel,
 		NextJS,
+		Strapi,
 		GenericStack,
 	}
 )
@@ -34,6 +36,8 @@ func (s Stack) Title() string {
 		return "Laravel"
 	case NextJS:
 		return "Next.js"
+	case Strapi:
+		return "Strapi"
 	default:
 		return ""
 	}
