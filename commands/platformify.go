@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -33,9 +34,9 @@ services, choosing from a variety of stacks or simple runtimes.`,
 		)
 		q := questionnaire.New(
 			&question.WorkingDirectory{},
+			&question.Stack{},
 			&question.FilesOverwrite{},
 			&question.Welcome{},
-			&question.Stack{},
 			&question.Type{},
 			&question.DependencyManager{},
 			&question.Mounts{},
@@ -50,6 +51,10 @@ services, choosing from a variety of stacks or simple runtimes.`,
 			&question.Services{},
 		)
 		err := q.AskQuestions(ctx)
+		if errors.Is(err, questionnaire.ErrSilent) {
+			return nil
+		}
+
 		if err != nil {
 			fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
 			return err

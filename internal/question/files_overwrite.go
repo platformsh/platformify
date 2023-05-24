@@ -10,6 +10,7 @@ import (
 
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
+	"github.com/platformsh/platformify/internal/questionnaire"
 )
 
 var proprietaryFiles = []string{
@@ -67,7 +68,7 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 		}
 
 		if !proceed {
-			return fmt.Errorf("user aborted")
+			return questionnaire.ErrUserAborted
 		}
 	}
 

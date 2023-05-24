@@ -2,8 +2,14 @@ package question
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
+	"golang.org/x/exp/slices"
+
+	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
+	"github.com/platformsh/platformify/internal/questionnaire"
 	"github.com/platformsh/platformify/internal/utils"
 )
 
@@ -12,6 +18,7 @@ const (
 	managePyFile     = "manage.py"
 	composerJSONFile = "composer.json"
 	packageJSONFile  = "package.json"
+	symfonyLockFile  = "symfony.lock"
 )
 
 type Stack struct{}
@@ -50,6 +57,61 @@ func (q *Stack) Ask(ctx context.Context) error {
 			answers.Stack = models.Strapi
 			return nil
 		}
+	}
+
+	hasSymfonyLock := utils.FileExists(answers.WorkingDirectory, symfonyLockFile)
+	hasSymfonyBundle := false
+	hasIbexaDependencies := false
+	hasShopwareDependencies := false
+	for _, composerJSONPath := range composerJSONPaths {
+		if _, ok := utils.GetJSONKey([]string{"autoload", "psr-0", "Shopware"}, composerJSONPath); ok {
+			hasShopwareDependencies = true
+		}
+		if keywords, ok := utils.GetJSONKey([]string{"keywords"}, composerJSONPath); ok {
+			if keywordsVal, ok := keywords.([]string); ok && slices.Contains(keywordsVal, "shopware") {
+				hasShopwareDependencies = true
+			}
+		}
+		if requirements, ok := utils.GetJSONKey([]string{"require"}, composerJSONPath); ok {
+			if requirementsVal, requirementsOK := requirements.(map[string]interface{}); requirementsOK {
+				if _, hasSymfonyFrameworkBundle := requirementsVal["symfony/framework-bundle"]; hasSymfonyFrameworkBundle {
+					hasSymfonyBundle = true
+				}
+
+				for requirement := range requirementsVal {
+					if strings.HasPrefix(requirement, "ibexa/") {
+						hasIbexaDependencies = true
+					}
+					if strings.HasPrefix(requirement, "ezsystems/") {
+						hasIbexaDependencies = true
+					}
+				}
+			}
+		}
+	}
+
+	isSymfony := hasSymfonyBundle || hasSymfonyLock
+	if isSymfony && !hasIbexaDependencies && !hasShopwareDependencies {
+		_, stderr, ok := colors.FromContext(ctx)
+		if !ok {
+			return questionnaire.ErrSilent
+		}
+
+		fmt.Fprintln(
+			stderr,
+			colors.Colorize(
+				colors.WarningCode,
+				"It seems like this is a Symfony project, use the Symfony CLI to deploy your project instead.",
+			),
+		)
+		fmt.Fprintln(
+			stderr,
+			colors.Colorize(
+				colors.WarningCode,
+				"https://docs.platform.sh/guides/symfony/get-started.html",
+			),
+		)
+		return questionnaire.ErrSilent
 	}
 
 	return nil
