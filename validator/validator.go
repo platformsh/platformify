@@ -34,7 +34,8 @@ func ValidateData(data interface{}, schemaFile string) error {
 	if data == nil {
 		return fmt.Errorf("data should not be nil")
 	}
-
+	println(schemaFile)
+	return nil
 }
 
 // ValidateConfig uses ValidateFile and ValidateData to check config for a given directory is valid Platform.sh config.
@@ -59,8 +60,8 @@ func schemaMap() map[string]string {
 	schemaPath := getSchemaDir()
 	var schemaMap = map[string]string{
 		".platform.app.yaml":      filepath.Join(schemaPath, "platformsh.application.json"),
-		".platform/services.yaml": filepath.Join(schemaPath, "platformsh.services.json"),
 		".platform/routes.yaml":   filepath.Join(schemaPath, "platformsh.routes.json"),
+		".platform/services.yaml": filepath.Join(schemaPath, "platformsh.services.json"),
 	}
 	return schemaMap
 }
