@@ -119,7 +119,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 		confirm := true
 		err := survey.AskOne(
 			&survey.Confirm{
-				Message: "It seems like this is a Symfony project, would you like to use the Symfony CLI to deploy your project instead?", //nolint:lll
+				Message: "It seems like this project uses Symfony full-stack. For a better experience, you should use Symfony CLI. Would you like to use it to deploy your project instead?", //nolint:lll
 				Default: confirm,
 			},
 			&confirm,
