@@ -68,10 +68,21 @@ func (q *Stack) Ask(ctx context.Context) error {
 	for _, composerJSONPath := range composerJSONPaths {
 		if _, ok := utils.GetJSONKey([]string{"autoload", "psr-0", "Shopware"}, composerJSONPath); ok {
 			hasShopwareDependencies = true
+			break
 		}
+		if _, ok := utils.GetJSONKey([]string{"autoload", "psr-4", "Shopware\\Core\\"}, composerJSONPath); ok {
+			hasShopwareDependencies = true
+			break
+		}
+		if _, ok := utils.GetJSONKey([]string{"autoload", "psr-4", "Shopware\\AppBundle\\"}, composerJSONPath); ok {
+			hasShopwareDependencies = true
+			break
+		}
+
 		if keywords, ok := utils.GetJSONKey([]string{"keywords"}, composerJSONPath); ok {
 			if keywordsVal, ok := keywords.([]string); ok && slices.Contains(keywordsVal, "shopware") {
 				hasShopwareDependencies = true
+				break
 			}
 		}
 		if requirements, ok := utils.GetJSONKey([]string{"require"}, composerJSONPath); ok {
@@ -81,11 +92,17 @@ func (q *Stack) Ask(ctx context.Context) error {
 				}
 
 				for requirement := range requirementsVal {
+					if strings.HasPrefix(requirement, "shopware/") {
+						hasShopwareDependencies = true
+						break
+					}
 					if strings.HasPrefix(requirement, "ibexa/") {
 						hasIbexaDependencies = true
+						break
 					}
 					if strings.HasPrefix(requirement, "ezsystems/") {
 						hasIbexaDependencies = true
+						break
 					}
 				}
 			}
