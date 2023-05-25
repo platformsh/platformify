@@ -1,17 +1,17 @@
 package validator
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 
-	"github.com/hashicorp/go-multierror"
+	"github.com/xeipuuv/gojsonschema"
 	"gopkg.in/yaml.v3"
 )
 
 // ValidateFile checks the file exists and is valid yaml, then returns the unmarshalled data.
-func ValidateFile(path string) (interface{}, error) {
+func ValidateFile(path string) ([]byte, error) {
 	// Does the file exist?
 	yamlData, err := os.ReadFile(path)
 	if err != nil {
@@ -19,7 +19,7 @@ func ValidateFile(path string) (interface{}, error) {
 	}
 
 	// Does the yaml unmarshal properly?
-	var data interface{}
+	var data []byte
 	err = yaml.Unmarshal(yamlData, &data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal YAML data: %v", err)
@@ -30,12 +30,11 @@ func ValidateFile(path string) (interface{}, error) {
 }
 
 // ValidateData checks to see if the unmarshalled data is valid config.
-func ValidateData(data interface{}, schemaFile string) error {
+func ValidateData(data []byte, schemaFile string) error {
 	if data == nil {
 		return fmt.Errorf("data should not be nil")
 	}
-	println(schemaFile)
-	return nil
+	return validateWithSchema(data, schemaFile)
 }
 
 // ValidateConfig uses ValidateFile and ValidateData to check config for a given directory is valid Platform.sh config.
@@ -44,11 +43,11 @@ func ValidateConfig(path string) error {
 	for yamlFile, schemaFile := range schemaMap() {
 		data, fileErr := ValidateFile(filepath.Join(path, yamlFile))
 		if fileErr != nil {
-			errs = multierror.Append(errs, fmt.Errorf("problem with %v: %v", yamlFile, fileErr))
+			errs = errors.Join(errs, fmt.Errorf("problem with %v: %v", yamlFile, fileErr))
 		}
 		dataErr := ValidateData(data, schemaFile)
 		if dataErr != nil {
-			errs = multierror.Append(errs, fmt.Errorf("configuration directive in %v is invalid: %v", yamlFile, dataErr))
+			errs = errors.Join(errs, fmt.Errorf("configuration directive in %v is invalid: %v", yamlFile, dataErr))
 		}
 	}
 
@@ -67,6 +66,30 @@ func schemaMap() map[string]string {
 }
 
 func getSchemaDir() string {
-	_, filename, _, _ := runtime.Caller(1)
-	return filepath.Join(filepath.Dir(filename), "schema")
+	dir, _ := os.Getwd()
+	return filepath.Join(filepath.Dir(dir), "schema")
+}
+
+func validateWithSchema(data []byte, schemaFile string) error {
+	var errs error
+	// Load and compile the JSON schema
+	schemaLoader := gojsonschema.NewReferenceLoader("file://" + schemaFile)
+	documentLoader := gojsonschema.NewBytesLoader(data)
+
+	// Perform the validation
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		errs = errors.Join(errs, fmt.Errorf("failed to validate file: %w", err))
+	}
+
+	if !result.Valid() {
+		// Collect and format the validation errors
+		for _, err := range result.Errors() {
+			errs = errors.Join(errs, errors.New(err.String()))
+		}
+
+		return fmt.Errorf("%s file is invalid:\n%s", schemaFile, errs)
+	}
+
+	return errs
 }
