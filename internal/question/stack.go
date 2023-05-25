@@ -45,6 +45,11 @@ func (q *Stack) Ask(ctx context.Context) error {
 			answers.Stack = models.NextJS
 			return nil
 		}
+
+		if _, ok := utils.GetJSONKey([]string{"dependencies", "@strapi/strapi"}, packageJSONPath); ok {
+			answers.Stack = models.Strapi
+			return nil
+		}
 	}
 
 	return nil

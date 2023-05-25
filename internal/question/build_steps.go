@@ -62,7 +62,7 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				fmt.Sprintf("%spython %s collectstatic --noinput", prefix, managePyPath),
 			)
 		}
-	case models.NextJS:
+	case models.NextJS, models.Strapi:
 		switch answers.DependencyManager {
 		case models.Yarn:
 			answers.BuildSteps = append(

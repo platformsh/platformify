@@ -64,6 +64,14 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 	case models.NextJS:
 		answers.WebCommand = "npx next start -p $PORT"
 		return nil
+	case models.Strapi:
+		switch answers.DependencyManager {
+		case models.Yarn:
+			answers.WebCommand = "NODE_ENV=production yarn start"
+		default:
+			answers.WebCommand = "NODE_ENV=production npm start"
+		}
+		return nil
 	default:
 		//nolint:lll
 		answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"

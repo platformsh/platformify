@@ -39,6 +39,30 @@ func (q *Mounts) Ask(ctx context.Context) error {
 				"source_path": "npm",
 			},
 		}
+	case models.Strapi:
+		answers.Disk = "1024" // in MB
+		answers.Mounts = map[string]map[string]string{
+			"/.cache": {
+				"source":      "local",
+				"source_path": "cache",
+			},
+			"/.tmp": {
+				"source":      "local",
+				"source_path": "app",
+			},
+			"database": {
+				"source":      "local",
+				"source_path": "database",
+			},
+			"extensions": {
+				"source":      "local",
+				"source_path": "extensions",
+			},
+			"public/uploads": {
+				"source":      "local",
+				"source_path": "uploads",
+			},
+		}
 	}
 
 	return nil

@@ -130,6 +130,8 @@ func getStack(answersStack Stack) platformifier.Stack {
 		return platformifier.Laravel
 	case NextJS:
 		return platformifier.NextJS
+	case Strapi:
+		return platformifier.Strapi
 	default:
 		return platformifier.Generic
 	}

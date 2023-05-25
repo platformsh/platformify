@@ -23,9 +23,27 @@ const (
 	Django
 	Laravel
 	NextJS
+	Strapi
 )
 
 type Stack int
+
+func (s Stack) Name() string {
+	switch s {
+	case Generic:
+		return "generic"
+	case Django:
+		return "django"
+	case Laravel:
+		return "laravel"
+	case NextJS:
+		return "nextjs"
+	case Strapi:
+		return "strapi"
+	default:
+		return ""
+	}
+}
 
 // UserInput contains the configuration from user input.
 type UserInput struct {
