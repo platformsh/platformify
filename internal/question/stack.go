@@ -7,6 +7,8 @@ import (
 
 	"golang.org/x/exp/slices"
 
+	"github.com/AlecAivazis/survey/v2"
+
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/questionnaire"
@@ -97,21 +99,24 @@ func (q *Stack) Ask(ctx context.Context) error {
 			return questionnaire.ErrSilent
 		}
 
-		fmt.Fprintln(
-			stderr,
-			colors.Colorize(
-				colors.WarningCode,
-				"It seems like this is a Symfony project, use the Symfony CLI to deploy your project instead.",
-			),
+		confirm := true
+		survey.AskOne(
+			&survey.Confirm{
+				Message: "It seems like this is a Symfony project, would you like to use the Symfony CLI to deploy your project instead?",
+				Default: confirm,
+			},
+			&confirm,
 		)
-		fmt.Fprintln(
-			stderr,
-			colors.Colorize(
-				colors.WarningCode,
-				"https://docs.platform.sh/guides/symfony/get-started.html",
-			),
-		)
-		return questionnaire.ErrSilent
+		if confirm {
+			fmt.Fprintln(
+				stderr,
+				colors.Colorize(
+					colors.WarningCode,
+					"Check out the Symfony CLI documentation here: https://docs.platform.sh/guides/symfony/get-started.html",
+				),
+			)
+			return questionnaire.ErrSilent
+		}
 	}
 
 	return nil
