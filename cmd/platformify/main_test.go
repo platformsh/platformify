@@ -36,8 +36,8 @@ func TestYAMLOutput(t *testing.T) {
 		}
 
 		// Validate the config.
-		invalid := validator.ValidateConfig(tempDir)
-		assert.NoError(t, err, "error while validating config: %v", invalid)
+		invalid := validator.ValidateConfig(dir)
+		assert.NoError(t, invalid, "error while validating config: %v", invalid)
 	}
 }
 
