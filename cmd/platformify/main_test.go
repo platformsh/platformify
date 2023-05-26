@@ -13,17 +13,21 @@ import (
 )
 
 func TestYAMLOutput(t *testing.T) {
+	// Create a temporary directory to use as the output directory.
+	tempDir, err := os.MkdirTemp("", "yaml_tests")
+	if err != nil {
+		t.Fatalf("Failed to create temporary directory: %v", err)
+	}
+	defer os.RemoveAll(tempDir)
 	for _, stack := range models.Stacks {
-		// Create a temporary directory to use as the output directory.
-		tempDir, err := os.MkdirTemp("", stack.Title())
-		if err != nil {
-			t.Fatalf("Failed to create temporary directory: %v", err)
+		dir, err1 := os.MkdirTemp(tempDir, stack.Title())
+		if err1 != nil {
+			t.Fatalf("Failed to create temporary %v directory: %v", stack.Title(), err1)
 		}
-
 		// Run the command.
 		ui := &platformifier.UserInput{
 			Stack:            platformifier.Stack(stack),
-			WorkingDirectory: tempDir,
+			WorkingDirectory: dir,
 		}
 		ctx := context.Background()
 		err = runApp(ctx, ui)
@@ -34,11 +38,6 @@ func TestYAMLOutput(t *testing.T) {
 		// Validate the config.
 		invalid := validator.ValidateConfig(tempDir)
 		assert.NoError(t, err, "error while validating config: %v", invalid)
-
-		rmErr := os.RemoveAll(tempDir)
-		if rmErr != nil {
-			t.Fatalf("Could not remove temporary directory: %v", tempDir)
-		}
 	}
 }
 
