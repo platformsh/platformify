@@ -59,6 +59,10 @@ func (q *Stack) Ask(ctx context.Context) error {
 			answers.Stack = models.Strapi
 			return nil
 		}
+		if _, ok := utils.GetJSONKey([]string{"dependencies", "strapi"}, packageJSONPath); ok {
+			answers.Stack = models.Strapi
+			return nil
+		}
 	}
 
 	hasSymfonyLock := utils.FileExists(answers.WorkingDirectory, symfonyLockFile)
