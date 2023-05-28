@@ -24,6 +24,7 @@ const (
 	Laravel
 	NextJS
 	Strapi
+	Flask
 )
 
 type Stack int
@@ -40,6 +41,8 @@ func (s Stack) Name() string {
 		return "nextjs"
 	case Strapi:
 		return "strapi"
+	case Flask:
+		return "flask"
 	default:
 		return ""
 	}

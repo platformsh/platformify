@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/pelletier/go-toml/v2"
 	"golang.org/x/exp/slices"
 )
 
@@ -79,8 +80,30 @@ func FindAllFiles(searchPath, name string) []string {
 	return found
 }
 
+func GetMapKey(keyPath []string, data map[string]interface{}) (value interface{}, ok bool) {
+	if len(keyPath) == 0 {
+		return data, true
+	}
+
+	for _, key := range keyPath[:len(keyPath)-1] {
+		if value, ok = data[key]; !ok {
+			return nil, false
+		}
+
+		if data, ok = value.(map[string]interface{}); !ok {
+			return nil, false
+		}
+	}
+
+	if value, ok = data[keyPath[len(keyPath)-1]]; !ok {
+		return nil, false
+	}
+
+	return value, true
+}
+
 // GetJSONKey gets a value from a JSON file, by traversing the path given
-func GetJSONKey(jsonPath []string, filePath string) (value interface{}, ok bool) {
+func GetJSONKey(keyPath []string, filePath string) (value interface{}, ok bool) {
 	fin, err := os.Open(filePath)
 	if err != nil {
 		return nil, false
@@ -93,25 +116,7 @@ func GetJSONKey(jsonPath []string, filePath string) (value interface{}, ok bool)
 		return nil, false
 	}
 
-	if len(jsonPath) == 0 {
-		return data, true
-	}
-
-	for _, key := range jsonPath[:len(jsonPath)-1] {
-		if value, ok = data[key]; !ok {
-			return nil, false
-		}
-
-		if data, ok = value.(map[string]interface{}); !ok {
-			return nil, false
-		}
-	}
-
-	if value, ok = data[jsonPath[len(jsonPath)-1]]; !ok {
-		return nil, false
-	}
-
-	return value, true
+	return GetMapKey(keyPath, data)
 }
 
 // ContainsStringInFile checks if the given file contains the given string
@@ -128,4 +133,21 @@ func ContainsStringInFile(file io.Reader, target string) (bool, error) {
 	}
 
 	return false, nil
+}
+
+// GetTOMLKey gets a value from a TOML file, by traversing the path given
+func GetTOMLKey(keyPath []string, filePath string) (value interface{}, ok bool) {
+	fin, err := os.Open(filePath)
+	if err != nil {
+		return nil, false
+	}
+	defer fin.Close()
+
+	var data map[string]interface{}
+	err = toml.NewDecoder(fin).Decode(&data)
+	if err != nil {
+		return nil, false
+	}
+
+	return GetMapKey(keyPath, data)
 }

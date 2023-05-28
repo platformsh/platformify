@@ -3,8 +3,10 @@ package question
 import (
 	"context"
 	"fmt"
+	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
@@ -25,6 +27,13 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 	// Do not ask the command for PHP applications
 	if answers.Type.Runtime == models.PHP {
 		return nil
+	}
+
+	//nolint:lll
+	answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
+	if answers.SocketFamily == models.TCP {
+		//nolint:lll
+		answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$PORT\" port. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
 	}
 
 	switch answers.Stack {
@@ -71,14 +80,35 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		default:
 			answers.WebCommand = "NODE_ENV=production npm start"
 		}
-		return nil
-	default:
-		//nolint:lll
-		answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
-		if answers.SocketFamily == models.TCP {
-			//nolint:lll
-			answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$PORT\" port. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
+	case models.Flask:
+		appPath := ""
+		// try to find the app.py, api.py or server.py files
+		for _, name := range []string{"app.py", "server.py", "api.py"} {
+			if _, err := os.Stat(path.Join(answers.WorkingDirectory, name)); err == nil {
+				appPath = fmt.Sprintf("'%s:app'", strings.TrimSuffix(name, ".py"))
+				break
+			}
 		}
+		if appPath == "" {
+			return nil
+		}
+
+		prefix := ""
+		switch answers.DependencyManager {
+		case models.Pipenv:
+			prefix = "pipenv run "
+		case models.Poetry:
+			prefix = "poetry run "
+		}
+
+		if answers.SocketFamily == models.TCP {
+			answers.WebCommand = fmt.Sprintf("%sgunicorn -b 0.0.0.0:$PORT %s --log-file -", prefix, appPath)
+			return nil
+		}
+
+		answers.WebCommand = fmt.Sprintf("%sgunicorn -b unix:$UNIX %s --log-file -", prefix, appPath)
 		return nil
 	}
+
+	return nil
 }

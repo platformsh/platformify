@@ -3,6 +3,7 @@ package question
 import (
 	"context"
 	"fmt"
+	"os"
 	"strings"
 
 	"golang.org/x/exp/slices"
@@ -38,6 +39,48 @@ func (q *Stack) Ask(ctx context.Context) error {
 	if hasSettingsPy && hasManagePy {
 		answers.Stack = models.Django
 		return nil
+	}
+
+	requirementsPath := utils.FindFile(answers.WorkingDirectory, "requirements.txt")
+	if requirementsPath != "" {
+		f, err := os.Open(requirementsPath)
+		if err == nil {
+			defer f.Close()
+			if ok, _ := utils.ContainsStringInFile(f, "Flask"); ok {
+				answers.Stack = models.Flask
+				return nil
+			}
+
+			_, _ = f.Seek(0, 0)
+			if ok, _ := utils.ContainsStringInFile(f, "flask"); ok {
+				answers.Stack = models.Flask
+				return nil
+			}
+		}
+	}
+
+	pyProjectPath := utils.FindFile(answers.WorkingDirectory, "pyproject.toml")
+	if pyProjectPath != "" {
+		if _, ok := utils.GetTOMLKey([]string{"tool", "poetry", "dependencies", "Flask"}, pyProjectPath); ok {
+			answers.Stack = models.Flask
+			return nil
+		}
+		if _, ok := utils.GetTOMLKey([]string{"tool", "poetry", "dependencies", "flask"}, pyProjectPath); ok {
+			answers.Stack = models.Flask
+			return nil
+		}
+	}
+
+	pipfilePath := utils.FindFile(answers.WorkingDirectory, "Pipfile")
+	if pipfilePath != "" {
+		if _, ok := utils.GetTOMLKey([]string{"packages", "Flask"}, pipfilePath); ok {
+			answers.Stack = models.Flask
+			return nil
+		}
+		if _, ok := utils.GetTOMLKey([]string{"packages", "flask"}, pipfilePath); ok {
+			answers.Stack = models.Flask
+			return nil
+		}
 	}
 
 	composerJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, composerJSONFile)

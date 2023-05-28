@@ -69,6 +69,13 @@ func TestNewPlatformifier(t *testing.T) {
 				&genericPlatformifier{templates: genericTemplates, fileSystem: fileSystem},
 			},
 		},
+		{
+			name:  "flask",
+			stack: Flask,
+			platformifiers: []platformifier{
+				&genericPlatformifier{templates: genericTemplates, fileSystem: fileSystem},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -311,6 +318,14 @@ func TestPlatformifier_Platformify(t *testing.T) {
 				Name:  "Strapi",
 				Type:  "node",
 				Stack: Strapi,
+			}},
+		},
+		{
+			name: "Flask",
+			fields: fields{ui: &UserInput{
+				Name:  "Flask",
+				Type:  "python",
+				Stack: Flask,
 			}},
 		},
 	}
