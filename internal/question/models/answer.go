@@ -9,24 +9,25 @@ import (
 )
 
 type Answers struct {
-	Stack             Stack                        `json:"stack"`
-	Type              RuntimeType                  `json:"type"`
-	Name              string                       `json:"name"`
-	ApplicationRoot   string                       `json:"application_root"`
-	Environment       map[string]string            `json:"environment"`
-	BuildSteps        []string                     `json:"build_steps"`
-	WebCommand        string                       `json:"web_command"`
-	SocketFamily      SocketFamily                 `json:"socket_family"`
-	DeployCommand     []string                     `json:"deploy_command"`
-	DependencyManager DepManager                   `json:"dependency_manager"`
-	Dependencies      map[string]map[string]string `json:"dependencies"`
-	BuildFlavor       string                       `json:"build_flavor"`
-	Disk              string                       `json:"disk"`
-	Mounts            map[string]map[string]string `json:"mounts"`
-	Services          []Service                    `json:"services"`
-	WorkingDirectory  string                       `json:"working_directory"`
-	HasGit            bool                         `json:"has_git"`
-	FilesCreated      []string                     `json:"files_created"`
+	Stack             Stack                             `json:"stack"`
+	Type              RuntimeType                       `json:"type"`
+	Name              string                            `json:"name"`
+	ApplicationRoot   string                            `json:"application_root"`
+	Environment       map[string]string                 `json:"environment"`
+	BuildSteps        []string                          `json:"build_steps"`
+	WebCommand        string                            `json:"web_command"`
+	SocketFamily      SocketFamily                      `json:"socket_family"`
+	DeployCommand     []string                          `json:"deploy_command"`
+	DependencyManager DepManager                        `json:"dependency_manager"`
+	Dependencies      map[string]map[string]string      `json:"dependencies"`
+	BuildFlavor       string                            `json:"build_flavor"`
+	Disk              string                            `json:"disk"`
+	Mounts            map[string]map[string]string      `json:"mounts"`
+	Services          []Service                         `json:"services"`
+	WorkingDirectory  string                            `json:"working_directory"`
+	HasGit            bool                              `json:"has_git"`
+	FilesCreated      []string                          `json:"files_created"`
+	Locations         map[string]map[string]interface{} `json:"locations"`
 }
 
 type Service struct {
@@ -93,6 +94,15 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 		})
 	}
 
+	locations := map[string]map[string]interface{}{
+		"/": {
+			"passthru": true,
+		},
+	}
+	for key, value := range a.Locations {
+		locations[key] = value
+	}
+
 	return &platformifier.UserInput{
 		Stack:             getStack(a.Stack),
 		Root:              "",
@@ -106,19 +116,15 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 		SocketFamily:      a.SocketFamily.String(),
 		DependencyManager: a.DependencyManager.String(),
 		DeployCommand:     a.DeployCommand,
-		Locations: map[string]map[string]interface{}{
-			"/": {
-				"passthru": true,
-			},
-		},
-		Dependencies:     a.Dependencies,
-		BuildFlavor:      a.BuildFlavor,
-		Disk:             a.Disk,
-		Mounts:           a.Mounts,
-		Services:         services,
-		Relationships:    getRelationships(a.Services),
-		WorkingDirectory: a.WorkingDirectory,
-		HasGit:           a.HasGit,
+		Locations:         locations,
+		Dependencies:      a.Dependencies,
+		BuildFlavor:       a.BuildFlavor,
+		Disk:              a.Disk,
+		Mounts:            a.Mounts,
+		Services:          services,
+		Relationships:     getRelationships(a.Services),
+		WorkingDirectory:  a.WorkingDirectory,
+		HasGit:            a.HasGit,
 	}
 }
 
