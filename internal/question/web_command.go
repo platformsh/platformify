@@ -43,7 +43,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 				path.Join(answers.WorkingDirectory, answers.ApplicationRoot),
 				path.Dir(path.Dir(wsgiPath)),
 			)
-			if wsgiRel != "" {
+			if wsgiRel != "." {
 				pythonPath = "--pythonpath=" + path.Base(path.Dir(path.Dir(wsgiPath)))
 			}
 		}
@@ -59,7 +59,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			return nil
 		}
 
-		answers.WebCommand = fmt.Sprintf("%sgunicorn %s -b unix:$UNIX %s --log-file -", prefix, pythonPath, wsgi)
+		answers.WebCommand = fmt.Sprintf("%sgunicorn %s -b unix:$SOCKET %s --log-file -", prefix, pythonPath, wsgi)
 		return nil
 	case models.NextJS:
 		answers.WebCommand = "npx next start -p $PORT"
