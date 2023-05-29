@@ -52,7 +52,7 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 			return err
 		}
 
-		// append .from settings_psh import * to the bottom of settings.py
+		// append from .settings_psh import * to the bottom of settings.py
 		settingsFile, err := p.fileSystem.Open(settingsPath[0], os.O_APPEND|os.O_RDWR, 0o644)
 		if err != nil {
 			return nil
