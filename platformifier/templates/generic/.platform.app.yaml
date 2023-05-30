@@ -136,8 +136,8 @@ web:
   locations:
     {{ range $key, $value := .Locations -}}
     "{{ $key }}":
-      {{- range $key, $value := $value }}
-      {{ $key }}: {{ $value -}}
+      {{ range $key, $value := $value }}
+      {{- $key }}: {{ if typeIs "string" $value }}{{ quote $value }}{{ else }}{{ $value }}{{ end }}
       {{ end }}
     {{ end -}}
   {{ else }}
@@ -166,9 +166,9 @@ disk: {{ .Disk }}
 mounts:
   {{ range $key, $value := .Mounts -}}
   "{{ $key }}":
-    {{- range $key, $value := $value }}
-    {{ $key }}: "{{ $value -}}"
-    {{- end }}
+    {{ range $key, $value := $value }}
+    {{- $key }}: "{{ $value }}"
+    {{ end }}
   {{ end -}}
 {{- else -}}
 # mounts:
@@ -189,7 +189,7 @@ mounts:
 relationships:
   {{ range $key, $value := .Relationships }}
   {{- $key }}: "{{ $value }}"
-  {{ end }}
+  {{ end -}}
 {{ else }}
 # relationships:
 #   database: "db:postgresql"
