@@ -82,9 +82,7 @@ func RuntimeForStack(stack Stack) Runtime {
 		return Python
 	case Laravel:
 		return PHP
-	case Strapi:
-		return NodeJS
-	case NextJS:
+	case NextJS, Strapi:
 		return NodeJS
 	default:
 		return ""
