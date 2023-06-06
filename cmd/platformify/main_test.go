@@ -24,10 +24,12 @@ func TestYAMLOutput(t *testing.T) {
 		if err1 != nil {
 			t.Fatalf("Failed to create temporary %v directory: %v", stack.Title(), err1)
 		}
+
 		// Run the command.
+
 		ui := &platformifier.UserInput{
 			Name:             stack.Title() + "Test",
-			Type:             "python: \"3.11\"",
+			Type:             getTypeForStack(stack).String(),
 			Stack:            platformifier.Stack(stack),
 			WorkingDirectory: dir,
 		}
@@ -45,4 +47,12 @@ func TestYAMLOutput(t *testing.T) {
 
 func runApp(ctx context.Context, ui *platformifier.UserInput) error {
 	return platformifier.New(ui).Platformify(ctx)
+}
+
+func getTypeForStack(s models.Stack) models.RuntimeType {
+	runtime := models.RuntimeForStack(s)
+	return models.RuntimeType{
+		Runtime: runtime,
+		Version: models.DefaultVersionForRuntime(runtime),
+	}
 }

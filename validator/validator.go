@@ -12,20 +12,20 @@ import (
 // ValidateFile checks the file exists and is valid yaml, then returns the unmarshalled data.
 func ValidateFile(path string) (map[string]interface{}, error) {
 	// Does the file exist?
-	yamlData, err := os.ReadFile(path)
+	rawData, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read %v file: %v", path, err)
 	}
 
-	// Does the data unmarshal as yaml?
-	var data map[string]interface{}
-	err = yaml.Unmarshal(yamlData, &data)
+	// Does the yamlData unmarshal as yaml?
+	var yamlData map[string]interface{}
+	err = yaml.Unmarshal(rawData, &yamlData)
 	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal YAML data for %v: %v", path, err)
+		return nil, fmt.Errorf("failed to unmarshal YAML yamlData for %v: %v", path, err)
 	}
 
-	// Return the unmarshalled yaml data.
-	return data, nil
+	// Return the unmarshalled yaml yamlData.
+	return yamlData, nil
 }
 
 // ValidateConfig uses ValidateFile and to check config for a given directory is valid Platform.sh config.

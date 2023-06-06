@@ -20,15 +20,8 @@ func (q *Type) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	var runtime models.Runtime
-	switch answers.Stack {
-	case models.Django:
-		runtime = models.Python
-	case models.Laravel:
-		runtime = models.PHP
-	case models.NextJS, models.Strapi:
-		runtime = models.NodeJS
-	default:
+	runtime := models.RuntimeForStack(answers.Stack)
+	if runtime == "" {
 		question := &survey.Select{
 			Message: "What language is your project using? We support the following:",
 			Options: models.Runtimes.AllTitles(),
@@ -47,11 +40,8 @@ func (q *Type) Ask(ctx context.Context) error {
 	}
 	answers.Type.Runtime = runtime
 
-	versions, ok := models.LanguageTypeVersions[runtime]
-	if !ok || len(versions) == 0 {
-		return nil
-	}
-	answers.Type.Version = versions[0]
+	// @todo The user may want a specific version. Should we ask instead of assuming?
+	answers.Type.Version = models.DefaultVersionForRuntime(runtime)
 
 	return nil
 }

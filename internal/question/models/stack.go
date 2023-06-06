@@ -75,3 +75,18 @@ func (s StackList) StackByTitle(title string) (Stack, error) {
 	}
 	return GenericStack, fmt.Errorf("stack by title is not found")
 }
+
+func RuntimeForStack(stack Stack) Runtime {
+	switch stack {
+	case Django:
+		return Python
+	case Laravel:
+		return PHP
+	case Strapi:
+		return NodeJS
+	case NextJS:
+		return NodeJS
+	default:
+		return ""
+	}
+}
