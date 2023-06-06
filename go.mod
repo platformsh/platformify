@@ -1,6 +1,6 @@
 module github.com/platformsh/platformify
 
-go 1.19
+go 1.20
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.6
@@ -11,6 +11,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.1
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -43,5 +44,4 @@ require (
 	golang.org/x/term v0.2.0 // indirect
 	golang.org/x/text v0.5.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
