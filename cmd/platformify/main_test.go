@@ -26,6 +26,8 @@ func TestYAMLOutput(t *testing.T) {
 		}
 		// Run the command.
 		ui := &platformifier.UserInput{
+			Name:             stack.Title() + "Test",
+			Type:             "python: \"3.11\"",
 			Stack:            platformifier.Stack(stack),
 			WorkingDirectory: dir,
 		}

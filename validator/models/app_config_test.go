@@ -44,7 +44,7 @@ func getAppConfig() *AppConfig {
 	appType, _ := NewAppType("golang", "1.20")
 	// Create an AppConfig object with ALL THE THINGS!
 	return &AppConfig{
-		Name: "Test App Config",
+		Name: "TestAppConfig",
 		Type: appType,
 		Size: "XL",
 		Disk: 128,
