@@ -80,6 +80,19 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		default:
 			answers.WebCommand = "NODE_ENV=production npm start"
 		}
+	case models.Express:
+		if indexFile := utils.FindFile(answers.WorkingDirectory, "index.js"); indexFile != "" {
+			indexFile, _ = filepath.Rel(answers.WorkingDirectory, indexFile)
+			answers.WebCommand = fmt.Sprintf("node %s", indexFile)
+			return nil
+		}
+
+		switch answers.DependencyManager {
+		case models.Yarn:
+			answers.WebCommand = "NODE_ENV=production yarn start"
+		default:
+			answers.WebCommand = "NODE_ENV=production npm start"
+		}
 	case models.Flask:
 		appPath := ""
 		// try to find the app.py, api.py or server.py files

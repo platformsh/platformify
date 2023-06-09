@@ -25,6 +25,7 @@ const (
 	NextJS
 	Strapi
 	Flask
+	Express
 )
 
 type Stack int
@@ -43,6 +44,8 @@ func (s Stack) Name() string {
 		return "strapi"
 	case Flask:
 		return "flask"
+	case Express:
+		return "express"
 	default:
 		return ""
 	}

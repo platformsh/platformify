@@ -13,16 +13,18 @@ const (
 	NextJS
 	Strapi
 	Flask
+	Express
 )
 
 var (
 	Stacks = StackList{
+		GenericStack,
 		Django,
 		Laravel,
 		NextJS,
 		Strapi,
 		Flask,
-		GenericStack,
+		Express,
 	}
 )
 
@@ -42,6 +44,8 @@ func (s Stack) Title() string {
 		return "Strapi"
 	case Flask:
 		return "Flask"
+	case Express:
+		return "Express"
 	default:
 		return ""
 	}
@@ -86,7 +90,7 @@ func RuntimeForStack(stack Stack) Runtime {
 		return Python
 	case Laravel:
 		return PHP
-	case NextJS, Strapi:
+	case NextJS, Strapi, Express:
 		return NodeJS
 	default:
 		return ""
