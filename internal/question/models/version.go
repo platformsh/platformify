@@ -32,3 +32,11 @@ var (
 		VaultKMS:        {"1.12"},
 	}
 )
+
+func DefaultVersionForRuntime(r Runtime) string {
+	versions := LanguageTypeVersions[r]
+	if len(versions) == 0 {
+		return ""
+	}
+	return versions[0]
+}
