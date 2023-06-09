@@ -9,25 +9,25 @@ import (
 )
 
 type Answers struct {
-	Stack             Stack                             `json:"stack"`
-	Type              RuntimeType                       `json:"type"`
-	Name              string                            `json:"name"`
-	ApplicationRoot   string                            `json:"application_root"`
-	Environment       map[string]string                 `json:"environment"`
-	BuildSteps        []string                          `json:"build_steps"`
-	WebCommand        string                            `json:"web_command"`
-	SocketFamily      SocketFamily                      `json:"socket_family"`
-	DeployCommand     []string                          `json:"deploy_command"`
-	DependencyManager DepManager                        `json:"dependency_manager"`
-	Dependencies      map[string]map[string]string      `json:"dependencies"`
-	BuildFlavor       string                            `json:"build_flavor"`
-	Disk              string                            `json:"disk"`
-	Mounts            map[string]map[string]string      `json:"mounts"`
-	Services          []Service                         `json:"services"`
-	WorkingDirectory  string                            `json:"working_directory"`
-	HasGit            bool                              `json:"has_git"`
-	FilesCreated      []string                          `json:"files_created"`
-	Locations         map[string]map[string]interface{} `json:"locations"`
+	Stack              Stack                             `json:"stack"`
+	Type               RuntimeType                       `json:"type"`
+	Name               string                            `json:"name"`
+	ApplicationRoot    string                            `json:"application_root"`
+	Environment        map[string]string                 `json:"environment"`
+	BuildSteps         []string                          `json:"build_steps"`
+	WebCommand         string                            `json:"web_command"`
+	SocketFamily       SocketFamily                      `json:"socket_family"`
+	DeployCommand      []string                          `json:"deploy_command"`
+	DependencyManagers []DepManager                      `json:"dependency_managers"`
+	Dependencies       map[string]map[string]string      `json:"dependencies"`
+	BuildFlavor        string                            `json:"build_flavor"`
+	Disk               string                            `json:"disk"`
+	Mounts             map[string]map[string]string      `json:"mounts"`
+	Services           []Service                         `json:"services"`
+	WorkingDirectory   string                            `json:"working_directory"`
+	HasGit             bool                              `json:"has_git"`
+	FilesCreated       []string                          `json:"files_created"`
+	Locations          map[string]map[string]interface{} `json:"locations"`
 }
 
 type Service struct {
@@ -103,28 +103,33 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 		locations[key] = value
 	}
 
+	dependencyManagers := make([]string, len(a.DependencyManagers))
+	for _, dm := range a.DependencyManagers {
+		dependencyManagers = append(dependencyManagers, dm.String())
+	}
+
 	return &platformifier.UserInput{
-		Stack:             getStack(a.Stack),
-		Root:              "",
-		ApplicationRoot:   a.ApplicationRoot,
-		Name:              a.Name,
-		Type:              a.Type.String(),
-		Runtime:           a.Type.Runtime.String(),
-		Environment:       a.Environment,
-		BuildSteps:        a.BuildSteps,
-		WebCommand:        a.WebCommand,
-		SocketFamily:      a.SocketFamily.String(),
-		DependencyManager: a.DependencyManager.String(),
-		DeployCommand:     a.DeployCommand,
-		Locations:         locations,
-		Dependencies:      a.Dependencies,
-		BuildFlavor:       a.BuildFlavor,
-		Disk:              a.Disk,
-		Mounts:            a.Mounts,
-		Services:          services,
-		Relationships:     getRelationships(a.Services),
-		WorkingDirectory:  a.WorkingDirectory,
-		HasGit:            a.HasGit,
+		Stack:              getStack(a.Stack),
+		Root:               "",
+		ApplicationRoot:    a.ApplicationRoot,
+		Name:               a.Name,
+		Type:               a.Type.String(),
+		Runtime:            a.Type.Runtime.String(),
+		Environment:        a.Environment,
+		BuildSteps:         a.BuildSteps,
+		WebCommand:         a.WebCommand,
+		SocketFamily:       a.SocketFamily.String(),
+		DependencyManagers: dependencyManagers,
+		DeployCommand:      a.DeployCommand,
+		Locations:          locations,
+		Dependencies:       a.Dependencies,
+		BuildFlavor:        a.BuildFlavor,
+		Disk:               a.Disk,
+		Mounts:             a.Mounts,
+		Services:           services,
+		Relationships:      getRelationships(a.Services),
+		WorkingDirectory:   a.WorkingDirectory,
+		HasGit:             a.HasGit,
 	}
 }
 

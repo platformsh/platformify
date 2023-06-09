@@ -8,6 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -57,10 +59,9 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			}
 		}
 
-		switch answers.DependencyManager {
-		case models.Pipenv:
+		if slices.Contains(answers.DependencyManagers, models.Pipenv) {
 			prefix = "pipenv run "
-		case models.Poetry:
+		} else if slices.Contains(answers.DependencyManagers, models.Poetry) {
 			prefix = "poetry run "
 		}
 		if answers.SocketFamily == models.TCP {
@@ -79,10 +80,9 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			path.Join(answers.WorkingDirectory, "package.json"),
 			true,
 		); ok {
-			switch answers.DependencyManager {
-			case models.Yarn:
+			if slices.Contains(answers.DependencyManagers, models.Yarn) {
 				answers.WebCommand = "NODE_ENV=production yarn start"
-			default:
+			} else {
 				answers.WebCommand = "NODE_ENV=production npm start"
 			}
 		}
@@ -98,10 +98,9 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			path.Join(answers.WorkingDirectory, "package.json"),
 			true,
 		); ok {
-			switch answers.DependencyManager {
-			case models.Yarn:
+			if slices.Contains(answers.DependencyManagers, models.Yarn) {
 				answers.WebCommand = "NODE_ENV=production yarn start"
-			default:
+			} else {
 				answers.WebCommand = "NODE_ENV=production npm start"
 			}
 		}
@@ -119,10 +118,9 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		}
 
 		prefix := ""
-		switch answers.DependencyManager {
-		case models.Pipenv:
+		if slices.Contains(answers.DependencyManagers, models.Pipenv) {
 			prefix = "pipenv run "
-		case models.Poetry:
+		} else if slices.Contains(answers.DependencyManagers, models.Poetry) {
 			prefix = "poetry run "
 		}
 

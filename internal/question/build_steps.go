@@ -6,6 +6,8 @@ import (
 	"path"
 	"path/filepath"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -18,65 +20,64 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	switch answers.DependencyManager {
-	case models.Poetry:
-		answers.BuildSteps = append(
-			answers.BuildSteps,
-			"# Set PIP_USER to 0 so that Poetry does not complain",
-			"export PIP_USER=0",
-			"# Install poetry as a global tool",
-			"python -m venv /app/.global",
-			"pip install poetry==$POETRY_VERSION",
-			"poetry install",
-		)
-	case models.Pipenv:
-		answers.BuildSteps = append(
-			answers.BuildSteps,
-			"# Set PIP_USER to 0 so that Pipenv does not complain",
-			"export PIP_USER=0",
-			"# Install Pipenv as a global tool",
-			"python -m venv /app/.global",
-			"pip install pipenv==$PIPENV_VERSION",
-			"pipenv install",
-		)
-	case models.Pip:
-		answers.BuildSteps = append(
-			answers.BuildSteps,
-			"pip install -r requirements.txt",
-		)
+	for _, dm := range answers.DependencyManagers {
+		switch dm {
+		case models.Poetry:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"# Set PIP_USER to 0 so that Poetry does not complain",
+				"export PIP_USER=0",
+				"# Install poetry as a global tool",
+				"python -m venv /app/.global",
+				"pip install poetry==$POETRY_VERSION",
+				"poetry install",
+			)
+		case models.Pipenv:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"# Set PIP_USER to 0 so that Pipenv does not complain",
+				"export PIP_USER=0",
+				"# Install Pipenv as a global tool",
+				"python -m venv /app/.global",
+				"pip install pipenv==$PIPENV_VERSION",
+				"pipenv install",
+			)
+		case models.Pip:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"pip install -r requirements.txt",
+			)
 
-	case models.Yarn:
-		answers.BuildSteps = append(
-			answers.BuildSteps,
-			"yarn",
-		)
-		if _, ok := utils.GetJSONValue(
-			[]string{"scripts", "build"},
-			path.Join(answers.WorkingDirectory, "package.json"),
-			true,
-		); ok {
-			answers.BuildSteps = append(answers.BuildSteps, "yarn build")
+		case models.Yarn:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"yarn",
+			)
+			if _, ok := utils.GetJSONValue(
+				[]string{"scripts", "build"},
+				path.Join(answers.WorkingDirectory, "package.json"),
+				true,
+			); ok {
+				answers.BuildSteps = append(answers.BuildSteps, "yarn build")
+			}
+		case models.Npm:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"npm i",
+			)
+			if _, ok := utils.GetJSONValue(
+				[]string{"scripts", "build"},
+				path.Join(answers.WorkingDirectory, "package.json"),
+				true,
+			); ok {
+				answers.BuildSteps = append(answers.BuildSteps, "npm run build")
+			}
+		case models.Composer:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"composer --no-ansi --no-interaction install --no-progress --prefer-dist --optimize-autoloader --no-dev",
+			)
 		}
-	case models.Npm:
-		answers.BuildSteps = append(
-			answers.BuildSteps,
-			"npm i",
-		)
-		if _, ok := utils.GetJSONValue(
-			[]string{"scripts", "build"},
-			path.Join(answers.WorkingDirectory, "package.json"),
-			true,
-		); ok {
-			answers.BuildSteps = append(answers.BuildSteps, "npm run build")
-		}
-	case models.Composer:
-		answers.BuildSteps = append(
-			answers.BuildSteps,
-			"composer --no-ansi --no-interaction install --no-progress --prefer-dist --optimize-autoloader --no-dev",
-			"# Install a specific NodeJS version https://github.com/platformsh/snippets/",
-			"# uncomment next line to build assets deploying",
-			"# npm install && npm run production",
-		)
 	}
 
 	if answers.Stack == models.Django {
@@ -85,10 +86,9 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			managePyFile,
 		); managePyPath != "" {
 			prefix := ""
-			switch answers.DependencyManager {
-			case models.Pipenv:
+			if slices.Contains(answers.DependencyManagers, models.Pipenv) {
 				prefix = "pipenv run "
-			case models.Poetry:
+			} else if slices.Contains(answers.DependencyManagers, models.Poetry) {
 				prefix = "poetry run "
 			}
 
