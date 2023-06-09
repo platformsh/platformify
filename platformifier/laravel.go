@@ -31,7 +31,7 @@ func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput
 	appRoot := filepath.Join(input.Root, input.ApplicationRoot)
 	composerJSONPaths := p.fileSystem.Find(appRoot, composerJSONFile, false)
 	for _, composerJSONPath := range composerJSONPaths {
-		_, required := utils.GetJSONKey([]string{"require", "platformsh/laravel-bridge"}, composerJSONPath)
+		_, required := utils.GetJSONValue([]string{"require", "platformsh/laravel-bridge"}, composerJSONPath, true)
 		if !required {
 			out, _, ok := colors.FromContext(ctx)
 			if !ok {

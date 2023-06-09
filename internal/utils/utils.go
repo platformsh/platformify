@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"io"
@@ -80,7 +81,7 @@ func FindAllFiles(searchPath, name string) []string {
 	return found
 }
 
-func GetMapKey(keyPath []string, data map[string]interface{}) (value interface{}, ok bool) {
+func GetMapValue(keyPath []string, data map[string]interface{}) (value interface{}, ok bool) {
 	if len(keyPath) == 0 {
 		return data, true
 	}
@@ -102,29 +103,50 @@ func GetMapKey(keyPath []string, data map[string]interface{}) (value interface{}
 	return value, true
 }
 
-// GetJSONKey gets a value from a JSON file, by traversing the path given
-func GetJSONKey(keyPath []string, filePath string) (value interface{}, ok bool) {
+// GetJSONValue gets a value from a JSON file, by traversing the path given
+func GetJSONValue(keyPath []string, filePath string, caseInsensitive bool) (value interface{}, ok bool) {
 	fin, err := os.Open(filePath)
 	if err != nil {
 		return nil, false
 	}
 	defer fin.Close()
 
-	var data map[string]interface{}
-	err = json.NewDecoder(fin).Decode(&data)
+	rawData, err := io.ReadAll(fin)
 	if err != nil {
 		return nil, false
 	}
 
-	return GetMapKey(keyPath, data)
+	if caseInsensitive {
+		rawData = bytes.ToLower(rawData)
+		for i := range keyPath {
+			keyPath[i] = strings.ToLower(keyPath[i])
+		}
+	}
+
+	var data map[string]interface{}
+	err = json.Unmarshal(rawData, &data)
+	if err != nil {
+		return nil, false
+	}
+
+	return GetMapValue(keyPath, data)
 }
 
 // ContainsStringInFile checks if the given file contains the given string
-func ContainsStringInFile(file io.Reader, target string) (bool, error) {
+func ContainsStringInFile(file io.Reader, target string, caseInsensitive bool) (bool, error) {
+	if caseInsensitive {
+		target = strings.ToLower(target)
+	}
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		if strings.Contains(scanner.Text(), target) {
-			return true, nil
+		if caseInsensitive {
+			if strings.Contains(strings.ToLower(scanner.Text()), target) {
+				return true, nil
+			}
+		} else {
+			if strings.Contains(scanner.Text(), target) {
+				return true, nil
+			}
 		}
 	}
 
@@ -135,19 +157,31 @@ func ContainsStringInFile(file io.Reader, target string) (bool, error) {
 	return false, nil
 }
 
-// GetTOMLKey gets a value from a TOML file, by traversing the path given
-func GetTOMLKey(keyPath []string, filePath string) (value interface{}, ok bool) {
+// GetTOMLValue gets a value from a TOML file, by traversing the path given
+func GetTOMLValue(keyPath []string, filePath string, caseInsensitive bool) (value interface{}, ok bool) {
 	fin, err := os.Open(filePath)
 	if err != nil {
 		return nil, false
 	}
 	defer fin.Close()
 
-	var data map[string]interface{}
-	err = toml.NewDecoder(fin).Decode(&data)
+	rawData, err := io.ReadAll(fin)
 	if err != nil {
 		return nil, false
 	}
 
-	return GetMapKey(keyPath, data)
+	if caseInsensitive {
+		rawData = bytes.ToLower(rawData)
+		for i := range keyPath {
+			keyPath[i] = strings.ToLower(keyPath[i])
+		}
+	}
+
+	var data map[string]interface{}
+	err = toml.Unmarshal(rawData, data)
+	if err != nil {
+		return nil, false
+	}
+
+	return GetMapValue(keyPath, data)
 }

@@ -46,13 +46,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 		f, err := os.Open(requirementsPath)
 		if err == nil {
 			defer f.Close()
-			if ok, _ := utils.ContainsStringInFile(f, "Flask"); ok {
-				answers.Stack = models.Flask
-				return nil
-			}
-
-			_, _ = f.Seek(0, 0)
-			if ok, _ := utils.ContainsStringInFile(f, "flask"); ok {
+			if ok, _ := utils.ContainsStringInFile(f, "flask", true); ok {
 				answers.Stack = models.Flask
 				return nil
 			}
@@ -61,11 +55,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 
 	pyProjectPath := utils.FindFile(answers.WorkingDirectory, "pyproject.toml")
 	if pyProjectPath != "" {
-		if _, ok := utils.GetTOMLKey([]string{"tool", "poetry", "dependencies", "Flask"}, pyProjectPath); ok {
-			answers.Stack = models.Flask
-			return nil
-		}
-		if _, ok := utils.GetTOMLKey([]string{"tool", "poetry", "dependencies", "flask"}, pyProjectPath); ok {
+		if _, ok := utils.GetTOMLValue([]string{"tool", "poetry", "dependencies", "flask"}, pyProjectPath, true); ok {
 			answers.Stack = models.Flask
 			return nil
 		}
@@ -73,11 +63,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 
 	pipfilePath := utils.FindFile(answers.WorkingDirectory, "Pipfile")
 	if pipfilePath != "" {
-		if _, ok := utils.GetTOMLKey([]string{"packages", "Flask"}, pipfilePath); ok {
-			answers.Stack = models.Flask
-			return nil
-		}
-		if _, ok := utils.GetTOMLKey([]string{"packages", "flask"}, pipfilePath); ok {
+		if _, ok := utils.GetTOMLValue([]string{"packages", "flask"}, pipfilePath, true); ok {
 			answers.Stack = models.Flask
 			return nil
 		}
@@ -85,7 +71,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 
 	composerJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, composerJSONFile)
 	for _, composerJSONPath := range composerJSONPaths {
-		if _, ok := utils.GetJSONKey([]string{"require", "laravel/framework"}, composerJSONPath); ok {
+		if _, ok := utils.GetJSONValue([]string{"require", "laravel/framework"}, composerJSONPath, true); ok {
 			answers.Stack = models.Laravel
 			return nil
 		}
@@ -93,16 +79,16 @@ func (q *Stack) Ask(ctx context.Context) error {
 
 	packageJSONPaths := utils.FindAllFiles(answers.WorkingDirectory, packageJSONFile)
 	for _, packageJSONPath := range packageJSONPaths {
-		if _, ok := utils.GetJSONKey([]string{"dependencies", "next"}, packageJSONPath); ok {
+		if _, ok := utils.GetJSONValue([]string{"dependencies", "next"}, packageJSONPath, true); ok {
 			answers.Stack = models.NextJS
 			return nil
 		}
 
-		if _, ok := utils.GetJSONKey([]string{"dependencies", "@strapi/strapi"}, packageJSONPath); ok {
+		if _, ok := utils.GetJSONValue([]string{"dependencies", "@strapi/strapi"}, packageJSONPath, true); ok {
 			answers.Stack = models.Strapi
 			return nil
 		}
-		if _, ok := utils.GetJSONKey([]string{"dependencies", "strapi"}, packageJSONPath); ok {
+		if _, ok := utils.GetJSONValue([]string{"dependencies", "strapi"}, packageJSONPath, true); ok {
 			answers.Stack = models.Strapi
 			return nil
 		}
@@ -113,26 +99,26 @@ func (q *Stack) Ask(ctx context.Context) error {
 	hasIbexaDependencies := false
 	hasShopwareDependencies := false
 	for _, composerJSONPath := range composerJSONPaths {
-		if _, ok := utils.GetJSONKey([]string{"autoload", "psr-0", "Shopware"}, composerJSONPath); ok {
+		if _, ok := utils.GetJSONValue([]string{"autoload", "psr-0", "shopware"}, composerJSONPath, true); ok {
 			hasShopwareDependencies = true
 			break
 		}
-		if _, ok := utils.GetJSONKey([]string{"autoload", "psr-4", "Shopware\\Core\\"}, composerJSONPath); ok {
+		if _, ok := utils.GetJSONValue([]string{"autoload", "psr-4", "shopware\\core\\"}, composerJSONPath, true); ok {
 			hasShopwareDependencies = true
 			break
 		}
-		if _, ok := utils.GetJSONKey([]string{"autoload", "psr-4", "Shopware\\AppBundle\\"}, composerJSONPath); ok {
+		if _, ok := utils.GetJSONValue([]string{"autoload", "psr-4", "shopware\\appbundle\\"}, composerJSONPath, true); ok {
 			hasShopwareDependencies = true
 			break
 		}
 
-		if keywords, ok := utils.GetJSONKey([]string{"keywords"}, composerJSONPath); ok {
+		if keywords, ok := utils.GetJSONValue([]string{"keywords"}, composerJSONPath, true); ok {
 			if keywordsVal, ok := keywords.([]string); ok && slices.Contains(keywordsVal, "shopware") {
 				hasShopwareDependencies = true
 				break
 			}
 		}
-		if requirements, ok := utils.GetJSONKey([]string{"require"}, composerJSONPath); ok {
+		if requirements, ok := utils.GetJSONValue([]string{"require"}, composerJSONPath, true); ok {
 			if requirementsVal, requirementsOK := requirements.(map[string]interface{}); requirementsOK {
 				if _, hasSymfonyFrameworkBundle := requirementsVal["symfony/framework-bundle"]; hasSymfonyFrameworkBundle {
 					hasSymfonyBundle = true
