@@ -1,0 +1,114 @@
+{
+  "title": "Platform.sh services configuration file", 
+  "$schema": "http://json-schema.org/draft-07/schema#", 
+  "type": "object", 
+  "additionalProperties": {
+    "type": "object", 
+    "properties": {
+      "type": {
+        "type": "string", 
+        "title": "The service type."
+      }, 
+      "size": {
+        "type": "string", 
+        "title": "The service size.", 
+        "default": "AUTO"
+      }, 
+      "disk": {
+        "type": "integer", 
+        "title": "The size of the disk.", 
+        "default": null
+      }, 
+      "access": {
+        "type": "object", 
+        "title": "The configuration of the service.", 
+        "default": {}
+      }, 
+      "configuration": {
+        "type": "object", 
+        "title": "The configuration of the service.", 
+        "default": {}
+      }, 
+      "relationships": {
+        "type": "object", 
+        "additionalProperties": {
+          "type": "string"
+        }, 
+        "title": "The relationships of the service to other services.", 
+        "default": {}
+      }, 
+      "firewall": {
+        "type": "object", 
+        "properties": {
+          "outbound": {
+            "type": "array", 
+            "items": {
+              "type": "object", 
+              "properties": {
+                "protocol": {
+                  "type": "string", 
+                  "title": "The IP protocol to apply the restriction on.", 
+                  "default": "tcp"
+                }, 
+                "ips": {
+                  "type": "array", 
+                  "items": {
+                    "type": "string"
+                  }, 
+                  "title": "The IP range in CIDR notation to apply the restriction on.", 
+                  "default": []
+                }, 
+                "domains": {
+                  "type": "array", 
+                  "items": {
+                    "type": "string"
+                  }, 
+                  "title": "Domains of the restriction.", 
+                  "default": []
+                }, 
+                "ports": {
+                  "type": "array", 
+                  "items": {
+                    "type": "integer"
+                  }, 
+                  "title": "The port to apply the restriction on.", 
+                  "default": []
+                }
+              }, 
+              "additionalProperties": false
+            }, 
+            "title": "Outbound firewall restrictions", 
+            "default": []
+          }
+        }, 
+        "additionalProperties": false, 
+        "nullable": true, 
+        "title": "Firewall", 
+        "default": null
+      }, 
+      "resources": {
+        "type": "object", 
+        "properties": {
+          "base_memory": {
+            "type": "integer", 
+            "title": "The base memory for the container", 
+            "default": 64
+          }, 
+          "memory_ratio": {
+            "type": "integer", 
+            "title": "The amount of memory to allocate per units of CPU", 
+            "default": 128
+          }
+        }, 
+        "additionalProperties": false, 
+        "nullable": true, 
+        "title": "Resources", 
+        "default": null
+      }
+    }, 
+    "required": [
+      "type"
+    ], 
+    "additionalProperties": false
+  }
+}
