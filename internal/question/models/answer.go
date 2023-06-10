@@ -138,6 +138,8 @@ func getStack(answersStack Stack) platformifier.Stack {
 		return platformifier.NextJS
 	case Strapi:
 		return platformifier.Strapi
+	case Flask:
+		return platformifier.Flask
 	default:
 		return platformifier.Generic
 	}

@@ -73,7 +73,7 @@ func (s *PlatformifyDjangoSuiteTester) TestSuccessfulFileCreation() {
 	assert.NotEmpty(s.T(), settingsPSHBuff)
 
 	// WHEN check if settings file contains the line that imported psh settings file
-	found, err := utils.ContainsStringInFile(settingsBuff, importSettingsPshLine)
+	found, err := utils.ContainsStringInFile(settingsBuff, importSettingsPshLine, false)
 	// THEN it doesn't return any errors
 	assert.NoError(s.T(), err)
 	// AND the line is found
