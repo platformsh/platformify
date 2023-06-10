@@ -2,7 +2,7 @@ package commands
 
 import (
 	"fmt"
-	"path"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -16,12 +16,30 @@ var ValidateCmd = &cobra.Command{
 	Long: "Check the application yaml configuration files are valid for deploying an application to Platform.sh.\n\n" +
 		"This will check your git repository, and validate .platform.app.yaml, services.yaml and routes.yaml files.",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		_, err := validator.ValidateFile(path.Ext(".platform.app.yaml"))
+		cwd, err := os.Getwd()
 		if err != nil {
-			fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
-			return fmt.Errorf("validation failed: #{err}")
+			fmt.Fprintln(
+				cmd.ErrOrStderr(),
+				colors.Colorize(
+					colors.ErrorCode,
+					fmt.Sprintf("Platform.sh config validation failed: %s", err.Error()),
+				),
+			)
+			return err
 		}
 
+		if err = validator.ValidateConfig(cwd); err != nil {
+			fmt.Fprintln(
+				cmd.ErrOrStderr(),
+				colors.Colorize(
+					colors.ErrorCode,
+					fmt.Sprintf("Platform.sh config validation failed: %s", err.Error()),
+				),
+			)
+			return err
+		}
+
+		fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.BrandCode, "Your Platform.sh application config is valid!"))
 		return nil
 	},
 }
