@@ -49,14 +49,26 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 		answers.BuildSteps = append(
 			answers.BuildSteps,
 			"yarn",
-			"yarn build",
 		)
+		if _, ok := utils.GetJSONValue(
+			[]string{"scripts", "build"},
+			path.Join(answers.WorkingDirectory, "package.json"),
+			true,
+		); ok {
+			answers.BuildSteps = append(answers.BuildSteps, "yarn build")
+		}
 	case models.Npm:
 		answers.BuildSteps = append(
 			answers.BuildSteps,
 			"npm i",
-			"npm run build",
 		)
+		if _, ok := utils.GetJSONValue(
+			[]string{"scripts", "build"},
+			path.Join(answers.WorkingDirectory, "package.json"),
+			true,
+		); ok {
+			answers.BuildSteps = append(answers.BuildSteps, "npm run build")
+		}
 	case models.Composer:
 		answers.BuildSteps = append(
 			answers.BuildSteps,

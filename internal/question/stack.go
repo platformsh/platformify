@@ -88,8 +88,14 @@ func (q *Stack) Ask(ctx context.Context) error {
 			answers.Stack = models.Strapi
 			return nil
 		}
+
 		if _, ok := utils.GetJSONValue([]string{"dependencies", "strapi"}, packageJSONPath, true); ok {
 			answers.Stack = models.Strapi
+			return nil
+		}
+
+		if _, ok := utils.GetJSONValue([]string{"dependencies", "express"}, packageJSONPath, true); ok {
+			answers.Stack = models.Express
 			return nil
 		}
 	}

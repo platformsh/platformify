@@ -74,11 +74,36 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		answers.WebCommand = "npx next start -p $PORT"
 		return nil
 	case models.Strapi:
-		switch answers.DependencyManager {
-		case models.Yarn:
-			answers.WebCommand = "NODE_ENV=production yarn start"
-		default:
-			answers.WebCommand = "NODE_ENV=production npm start"
+		if _, ok := utils.GetJSONValue(
+			[]string{"scripts", "start"},
+			path.Join(answers.WorkingDirectory, "package.json"),
+			true,
+		); ok {
+			switch answers.DependencyManager {
+			case models.Yarn:
+				answers.WebCommand = "NODE_ENV=production yarn start"
+			default:
+				answers.WebCommand = "NODE_ENV=production npm start"
+			}
+		}
+	case models.Express:
+		if indexFile := utils.FindFile(answers.WorkingDirectory, "index.js"); indexFile != "" {
+			indexFile, _ = filepath.Rel(answers.WorkingDirectory, indexFile)
+			answers.WebCommand = fmt.Sprintf("node %s", indexFile)
+			return nil
+		}
+
+		if _, ok := utils.GetJSONValue(
+			[]string{"scripts", "start"},
+			path.Join(answers.WorkingDirectory, "package.json"),
+			true,
+		); ok {
+			switch answers.DependencyManager {
+			case models.Yarn:
+				answers.WebCommand = "NODE_ENV=production yarn start"
+			default:
+				answers.WebCommand = "NODE_ENV=production npm start"
+			}
 		}
 	case models.Flask:
 		appPath := ""
