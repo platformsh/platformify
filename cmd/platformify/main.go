@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	commands.PlatformifyCmd.AddCommand(commands.ValidateCmd)
 	err := commands.Execute()
 	if err != nil {
 		os.Exit(1)
