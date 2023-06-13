@@ -131,7 +131,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			return nil
 		}
 
-		answers.WebCommand = fmt.Sprintf("%sgunicorn -b unix:$UNIX %s --log-file -", prefix, appPath)
+		answers.WebCommand = fmt.Sprintf("%sgunicorn -b unix:$SOCKET %s --log-file -", prefix, appPath)
 		return nil
 	}
 
