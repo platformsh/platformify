@@ -178,7 +178,7 @@ func GetTOMLValue(keyPath []string, filePath string, caseInsensitive bool) (valu
 	}
 
 	var data map[string]interface{}
-	err = toml.Unmarshal(rawData, data)
+	err = toml.Unmarshal(rawData, &data)
 	if err != nil {
 		return nil, false
 	}
