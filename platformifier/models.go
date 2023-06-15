@@ -53,27 +53,27 @@ func (s Stack) Name() string {
 
 // UserInput contains the configuration from user input.
 type UserInput struct {
-	Stack             Stack
-	Root              string
-	ApplicationRoot   string
-	Name              string
-	Type              string
-	Runtime           string
-	Environment       map[string]string
-	BuildSteps        []string
-	WebCommand        string
-	SocketFamily      string
-	DeployCommand     []string
-	DependencyManager string
-	Locations         map[string]map[string]interface{}
-	Dependencies      map[string]map[string]string
-	BuildFlavor       string
-	Disk              string
-	Mounts            map[string]map[string]string
-	Services          []Service
-	Relationships     map[string]string
-	WorkingDirectory  string
-	HasGit            bool
+	Stack              Stack
+	Root               string
+	ApplicationRoot    string
+	Name               string
+	Type               string
+	Runtime            string
+	Environment        map[string]string
+	BuildSteps         []string
+	WebCommand         string
+	SocketFamily       string
+	DeployCommand      []string
+	DependencyManagers []string
+	Locations          map[string]map[string]interface{}
+	Dependencies       map[string]map[string]string
+	BuildFlavor        string
+	Disk               string
+	Mounts             map[string]map[string]string
+	Services           []Service
+	Relationships      map[string]string
+	WorkingDirectory   string
+	HasGit             bool
 }
 
 // Service contains the configuration for a service needed by the application.

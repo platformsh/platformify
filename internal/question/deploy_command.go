@@ -6,6 +6,8 @@ import (
 	"path"
 	"path/filepath"
 
+	"golang.org/x/exp/slices"
+
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -24,10 +26,9 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		if managePyPath != "" {
 			managePyPath, _ = filepath.Rel(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyPath)
 			prefix := ""
-			switch answers.DependencyManager {
-			case models.Pipenv:
+			if slices.Contains(answers.DependencyManagers, models.Pipenv) {
 				prefix = "pipenv run "
-			case models.Poetry:
+			} else if slices.Contains(answers.DependencyManagers, models.Poetry) {
 				prefix = "poetry run "
 			}
 			answers.DeployCommand = append(answers.DeployCommand,
