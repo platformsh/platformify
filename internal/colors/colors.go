@@ -12,6 +12,7 @@ var (
 	Brand     = "210"
 	Accent    = "33"
 	Secondary = "247"
+	Green     = "green"
 	Warning   = "yellow"
 	Error     = "red"
 	Default   = "default"
@@ -19,6 +20,7 @@ var (
 	BrandCode     = ansi.ColorCode(Brand)
 	AccentCode    = ansi.ColorCode(Accent)
 	SecondaryCode = ansi.ColorCode(Secondary)
+	GreenCode     = ansi.ColorCode(Green)
 	WarningCode   = ansi.ColorCode(Warning)
 	ErrorCode     = ansi.ColorCode(Error)
 	DefaultCode   = ansi.ColorCode(Default)
@@ -31,6 +33,7 @@ func init() {
 		BrandCode = ""
 		AccentCode = ""
 		SecondaryCode = ""
+		GreenCode = ""
 		WarningCode = ""
 		ErrorCode = ""
 		DefaultCode = ""
