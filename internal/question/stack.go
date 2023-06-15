@@ -32,6 +32,24 @@ func (q *Stack) Ask(ctx context.Context) error {
 		return nil
 	}
 
+	defer func() {
+		_, stderr, ok := colors.FromContext(ctx)
+		if !ok {
+			return
+		}
+		if answers.Stack != models.GenericStack {
+			fmt.Fprintf(
+				stderr,
+				"%s %s\n",
+				colors.Colorize(colors.GreenCode, "✓"),
+				colors.Colorize(
+					colors.BrandCode,
+					fmt.Sprintf("Detected stack: %s", answers.Stack.Title()),
+				),
+			)
+		}
+	}()
+
 	answers.Stack = models.GenericStack
 
 	hasSettingsPy := utils.FileExists(answers.WorkingDirectory, settingsPyFile)

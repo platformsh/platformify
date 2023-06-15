@@ -2,7 +2,9 @@ package question
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
 )
@@ -30,6 +32,30 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 
 	answers.Dependencies = map[string]map[string]string{}
 	answers.BuildFlavor = "none"
+
+	defer func() {
+		_, stderr, ok := colors.FromContext(ctx)
+		if !ok {
+			return
+		}
+
+		if len(answers.DependencyManagers) > 0 {
+			dependencyManagers := answers.DependencyManagers[0].Title()
+			for _, dm := range answers.DependencyManagers[1:] {
+				dependencyManagers = fmt.Sprintf("%s, %s", dependencyManagers, dm.Title())
+			}
+
+			fmt.Fprintf(
+				stderr,
+				"%s %s\n",
+				colors.Colorize(colors.GreenCode, "✓"),
+				colors.Colorize(
+					colors.BrandCode,
+					fmt.Sprintf("Detected dependency managers: %s", dependencyManagers),
+				),
+			)
+		}
+	}()
 
 	if exists := utils.FileExists(answers.WorkingDirectory, poetryLockFile); exists {
 		answers.DependencyManagers = append(answers.DependencyManagers, models.Poetry)

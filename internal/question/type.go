@@ -2,9 +2,11 @@ package question
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
 
+	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
 )
 
@@ -19,6 +21,25 @@ func (q *Type) Ask(ctx context.Context) error {
 		// Skip the step
 		return nil
 	}
+
+	defer func() {
+		_, stderr, ok := colors.FromContext(ctx)
+		if !ok {
+			return
+		}
+
+		if answers.Stack != models.GenericStack {
+			fmt.Fprintf(
+				stderr,
+				"%s %s\n",
+				colors.Colorize(colors.GreenCode, "✓"),
+				colors.Colorize(
+					colors.BrandCode,
+					fmt.Sprintf("Detected runtime: %s", answers.Type.Runtime.Title()),
+				),
+			)
+		}
+	}()
 
 	runtime := models.RuntimeForStack(answers.Stack)
 	if runtime == "" {
