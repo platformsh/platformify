@@ -13,6 +13,10 @@ import (
 	"github.com/platformsh/platformify/platformifier"
 )
 
+type contextKey string
+
+var FlavorKey contextKey = "flavor"
+
 // PlatformifyCmd represents the base Platformify command when called without any subcommands
 var PlatformifyCmd = &cobra.Command{
 	Use:   "platformify",
@@ -26,6 +30,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 	SilenceErrors: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		answers := models.NewAnswers()
+		answers.Flavor, _ = cmd.Context().Value(FlavorKey).(string)
 		ctx := models.ToContext(cmd.Context(), answers)
 		ctx = colors.ToContext(
 			ctx,
@@ -63,7 +68,7 @@ services, choosing from a variety of stacks or simple runtimes.`,
 
 		input := answers.ToUserInput()
 
-		pfier := platformifier.New(input)
+		pfier := platformifier.New(input, ctx.Value(FlavorKey).(string))
 		err = pfier.Platformify(ctx)
 		if err != nil {
 			fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))

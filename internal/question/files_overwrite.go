@@ -20,6 +20,10 @@ var proprietaryFiles = []string{
 	".platform/routes.yaml",
 	".platform/applications.yaml",
 }
+var upsunProprietaryFiles = []string{
+	".environment",
+	".upsun/config.yaml",
+}
 
 type FilesOverwrite struct{}
 
@@ -34,8 +38,12 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	existingFiles := make([]string, 0, len(proprietaryFiles))
-	for _, p := range proprietaryFiles {
+	searchFiles := proprietaryFiles
+	if answers.Flavor == "upsun" {
+		searchFiles = upsunProprietaryFiles
+	}
+	existingFiles := make([]string, 0, len(searchFiles))
+	for _, p := range searchFiles {
 		if st, err := os.Stat(filepath.Join(answers.WorkingDirectory, p)); err == nil && !st.IsDir() {
 			existingFiles = append(existingFiles, p)
 		}

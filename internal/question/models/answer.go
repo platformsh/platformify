@@ -10,6 +10,7 @@ import (
 
 type Answers struct {
 	Stack              Stack                             `json:"stack"`
+	Flavor             string                            `json:"flavor"`
 	Type               RuntimeType                       `json:"type"`
 	Name               string                            `json:"name"`
 	ApplicationRoot    string                            `json:"application_root"`

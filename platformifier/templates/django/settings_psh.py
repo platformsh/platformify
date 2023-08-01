@@ -7,8 +7,7 @@ import os
 import sys
 from urllib.parse import urlparse
 
-# This variable should always match the primary database relationship name,
-#   configured in .platform.app.yaml.
+# This variable should always match the primary database relationship name
 PLATFORMSH_DB_RELATIONSHIP = "{{ .Database }}"
 
 # Helper function for decoding base64-encoded JSON variables.

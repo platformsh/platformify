@@ -49,7 +49,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: build --snapshot --clean
+          args: build --config=.goreleaser.upsun.yaml --snapshot --clean
           workdir: .
 
       - name: Upload assets
@@ -57,5 +57,37 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: platformify
+          path: ./dist/*
+          retention-days: 14
+
+  build-upsun:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.20.x
+          cache: true
+
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v4
+        with:
+          distribution: goreleaser
+          version: latest
+          args: build --snapshot --clean
+          workdir: .
+
+      - name: Upload assets
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v3
+        with:
+          name: upsunify
           path: ./dist/*
           retention-days: 14
