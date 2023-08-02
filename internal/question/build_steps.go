@@ -47,30 +47,39 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				answers.BuildSteps,
 				"pip install -r requirements.txt",
 			)
-
-		case models.Yarn:
-			answers.BuildSteps = append(
-				answers.BuildSteps,
-				"yarn",
-			)
-			if _, ok := utils.GetJSONValue(
-				[]string{"scripts", "build"},
-				path.Join(answers.WorkingDirectory, "package.json"),
-				true,
-			); ok {
-				answers.BuildSteps = append(answers.BuildSteps, "yarn build")
+		case models.Yarn, models.Npm:
+			if answers.Type.Runtime != models.NodeJS {
+				answers.Dependencies["nodejs"]["n"] = "*"
+				answers.Dependencies["nodejs"]["npx"] = "*"
+				answers.Environment["N_PREFIX"] = "/app/.global"
+				answers.BuildSteps = append(
+					answers.BuildSteps,
+					"n auto",
+					"hash -r",
+				)
 			}
-		case models.Npm:
-			answers.BuildSteps = append(
-				answers.BuildSteps,
-				"npm i",
-			)
+
+			if dm == models.Yarn {
+				answers.BuildSteps = append(
+					answers.BuildSteps,
+					"yarn",
+				)
+			} else {
+				answers.BuildSteps = append(
+					answers.BuildSteps,
+					"npm i",
+				)
+			}
 			if _, ok := utils.GetJSONValue(
 				[]string{"scripts", "build"},
 				path.Join(answers.WorkingDirectory, "package.json"),
 				true,
 			); ok {
-				answers.BuildSteps = append(answers.BuildSteps, "npm run build")
+				if dm == models.Yarn {
+					answers.BuildSteps = append(answers.BuildSteps, "yarn build")
+				} else {
+					answers.BuildSteps = append(answers.BuildSteps, "npm run build")
+				}
 			}
 		case models.Composer:
 			answers.BuildSteps = append(
