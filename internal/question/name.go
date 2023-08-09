@@ -2,7 +2,10 @@ package question
 
 import (
 	"context"
+	"fmt"
 	"path"
+	"regexp"
+	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -10,6 +13,11 @@ import (
 )
 
 type Name struct{}
+
+var (
+	invalidChars      = regexp.MustCompile("[^a-z0-9_-]")
+	consecutiveDashes = regexp.MustCompile("-+")
+)
 
 func (q *Name) Ask(ctx context.Context) error {
 	answers, ok := models.FromContext(ctx)
@@ -21,15 +29,33 @@ func (q *Name) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	question := &survey.Input{Message: "Tell us your project name:", Default: path.Base(answers.WorkingDirectory)}
+	question := &survey.Input{Message: "Tell us your project name:", Default: slugify(path.Base(answers.WorkingDirectory))}
 
 	var name string
-	err := survey.AskOne(question, &name, survey.WithValidator(survey.Required))
+	err := survey.AskOne(question, &name, survey.WithValidator(survey.Required), survey.WithValidator(validSlug))
 	if err != nil {
 		return err
 	}
 
 	answers.Name = name
+
+	return nil
+}
+
+func slugify(s string) string {
+	return consecutiveDashes.ReplaceAllLiteralString(
+		invalidChars.ReplaceAllLiteralString(strings.ToLower(
+			strings.TrimSpace(s),
+		), "-"), "-")
+}
+
+func validSlug(val interface{}) error {
+	if val.(string) != slugify(val.(string)) {
+		return fmt.Errorf(
+			"%s: the name can only contain lowercase alphanumeric characters, dashes, or underscores",
+			val.(string),
+		)
+	}
 
 	return nil
 }
