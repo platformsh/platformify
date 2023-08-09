@@ -365,7 +365,101 @@ func TestPlatformifier_Platformify(t *testing.T) {
 			}
 
 			// Validate the config.
-			if err := validator.ValidateConfig(dir); (err != nil) != tt.wantErr {
+			if err := validator.ValidateConfig(dir, "platformsh"); (err != nil) != tt.wantErr {
+				t.Errorf("Platformifier.Platformify() validation error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestPlatformifier_Upsunify(t *testing.T) {
+	type fields struct {
+		ui *UserInput
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		wantErr bool
+	}{
+		{
+			name: "Django",
+			fields: fields{ui: &UserInput{
+				Name:  "Django",
+				Type:  "python",
+				Stack: Django,
+			}},
+		},
+		{
+			name: "Generic",
+			fields: fields{ui: &UserInput{
+				Name:  "Generic",
+				Type:  "java",
+				Stack: Generic,
+			}},
+		},
+		{
+			name: "Laravel",
+			fields: fields{ui: &UserInput{
+				Name:  "Laravel",
+				Type:  "php",
+				Stack: Laravel,
+			}},
+		},
+		{
+			name: "Next.js",
+			fields: fields{ui: &UserInput{
+				Name:  "Next.js",
+				Type:  "node",
+				Stack: NextJS,
+			}},
+		},
+		{
+			name: "Strapi",
+			fields: fields{ui: &UserInput{
+				Name:  "Strapi",
+				Type:  "node",
+				Stack: Strapi,
+			}},
+		},
+		{
+			name: "Flask",
+			fields: fields{ui: &UserInput{
+				Name:  "Flask",
+				Type:  "python",
+				Stack: Flask,
+			}},
+		},
+		{
+			name: "Express",
+			fields: fields{ui: &UserInput{
+				Name:  "Express",
+				Type:  "node",
+				Stack: Express,
+			}},
+		},
+	}
+
+	// Create a temporary directory to use as the output directory.
+	tempDir, err := os.MkdirTemp("", "yaml_tests")
+	if err != nil {
+		t.Fatalf("Failed to create temporary directory: %v", err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	ctx := context.Background()
+	for _, tt := range tests {
+		dir, err := os.MkdirTemp(tempDir, tt.name)
+		if err != nil {
+			t.Fatalf("Failed to create temporary %v directory: %v", tt.name, err)
+		}
+		tt.fields.ui.WorkingDirectory = dir
+		t.Run(tt.name, func(t *testing.T) {
+			if err := New(tt.fields.ui, "upsun").Platformify(ctx); (err != nil) != tt.wantErr {
+				t.Errorf("Platformifier.Platformify() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			// Validate the config.
+			if err := validator.ValidateConfig(dir, "upsun"); (err != nil) != tt.wantErr {
 				t.Errorf("Platformifier.Platformify() validation error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
