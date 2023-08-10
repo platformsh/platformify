@@ -93,7 +93,7 @@ func (s ServiceName) Title() string {
 
 func (s ServiceName) IsPersistent() bool {
 	switch s {
-	case ChromeHeadless, Memcached, Redis, RedisPersistent:
+	case ChromeHeadless, Memcached, Redis:
 		return false
 	default:
 		return true

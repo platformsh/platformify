@@ -805,6 +805,13 @@
       },
       "title": "Persistent worker containers created by this application.",
       "default": {}
+    },
+    "additional_hosts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Resolve additional IPs to domain names."
     }
   },
   "required": [

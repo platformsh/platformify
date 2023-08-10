@@ -28,7 +28,7 @@ var ValidateCmd = &cobra.Command{
 			return err
 		}
 
-		if err = validator.ValidateConfig(cwd); err != nil {
+		if err = validator.ValidateConfig(cwd, cmd.Context().Value(FlavorKey).(string)); err != nil {
 			fmt.Fprintln(
 				cmd.ErrOrStderr(),
 				colors.Colorize(

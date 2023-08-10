@@ -1,4 +1,5 @@
 PROJECT_NAME = platformify
+UPSUN_PROJECT_NAME = upsunify
 
 .PHONY: test
 test: generate ## Run unit tests
@@ -17,10 +18,15 @@ generate: ## Generate mock data
 
 .PHONY: clean
 clean: ## Remove the binary file from the root folder
-	rm -rf $(PROJECT_NAME)
+	rm -rf $(PROJECT_NAME) $(UPSUN_PROJECT_NAME)
 
 .PHONY: build
-build: clean ## Compile the app into the root folder
+build: clean build-upsun build-platform ## Compile the app into the root folder
+
+build-upsun:
+	go build -o $(UPSUN_PROJECT_NAME) ./cmd/upsunify/
+
+build-platform:
 	go build -o $(PROJECT_NAME) ./cmd/platformify/
 
 .PHONY: snapshot

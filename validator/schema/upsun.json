@@ -1,0 +1,1326 @@
+{
+  "title": "Upsun configuration file",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "applications": {
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "resources": {
+            "type": "object",
+            "properties": {
+              "base_memory": {
+                "type": "integer",
+                "title": "The base memory for the container",
+                "default": 64
+              },
+              "memory_ratio": {
+                "type": "integer",
+                "title": "The amount of memory to allocate per units of CPU",
+                "default": 128
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true,
+            "title": "Resources",
+            "default": null
+          },
+          "size": {
+            "type": "string",
+            "title": "The container size for this application in production. Leave blank to allow it to be set dynamically.",
+            "default": "AUTO"
+          },
+          "access": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Access information, a mapping between access type and roles.",
+            "default": {
+              "ssh": "contributor"
+            }
+          },
+          "relationships": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "The relationships of the application to defined services.",
+            "default": {}
+          },
+          "mounts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "title": "The type of mount that will provide the data."
+                },
+                "source_path": {
+                  "type": "string",
+                  "title": "The path to be mounted, relative to the root directory of the volume that's being mounted from."
+                },
+                "service": {
+                  "type": "string",
+                  "title": "The name of the service that the volume will be mounted from. Must be a service in `services.yaml` of type `network-storage`."
+                }
+              },
+              "required": [
+                "source",
+                "source_path"
+              ],
+              "additionalProperties": false
+            },
+            "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space.",
+            "default": {}
+          },
+          "timezone": {
+            "type": "string",
+            "title": "The timezone of the application.  This primarily affects the timezone in which cron tasks will run.  It will not affect the application itself. Defaults to UTC if not specified.",
+            "default": null
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment.",
+            "default": {}
+          },
+          "firewall": {
+            "type": "object",
+            "properties": {
+              "outbound": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "protocol": {
+                      "type": "string",
+                      "title": "The IP protocol to apply the restriction on.",
+                      "default": "tcp"
+                    },
+                    "ips": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "The IP range in CIDR notation to apply the restriction on.",
+                      "default": []
+                    },
+                    "domains": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "Domains of the restriction.",
+                      "default": []
+                    },
+                    "ports": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "title": "The port to apply the restriction on.",
+                      "default": []
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "title": "Outbound firewall restrictions",
+                "default": []
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true,
+            "title": "Firewall",
+            "default": null
+          },
+          "type": {
+            "type": "string",
+            "title": "The base runtime (language) and version to use for this application."
+          },
+          "runtime": {
+            "type": "object",
+            "title": "Runtime-specific configuration.",
+            "default": {}
+          },
+          "preflight": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "title": "Whether the preflight security blocks are enabled."
+              },
+              "ignored_rules": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Specific rules to ignore during preflight security checks. See the documentation for options.",
+                "default": []
+              }
+            },
+            "required": [
+              "enabled"
+            ],
+            "additionalProperties": false,
+            "title": "Configuration for pre-flight checks.",
+            "default": {
+              "enabled": true,
+              "ignored_rules": []
+            }
+          },
+          "dependencies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            },
+            "title": "External global dependencies of this application. They will be downloaded by the language's package manager.",
+            "default": {}
+          },
+          "build": {
+            "type": "object",
+            "properties": {
+              "flavor": {
+                "type": "string",
+                "title": "The pre-set build tasks to use for this application.",
+                "default": null
+              },
+              "caches": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "directory": {
+                      "type": "string",
+                      "title": "The directory, relative to the application root, that should be cached.",
+                      "default": null
+                    },
+                    "watch": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "The file or files whose hashed contents should be considered part of the cache key."
+                    },
+                    "allow_stale": {
+                      "type": "boolean",
+                      "title": "If true, on a cache miss the last cache version will be used and can be updated in place.",
+                      "default": false
+                    },
+                    "share_between_apps": {
+                      "type": "boolean",
+                      "title": "Whether multiple applications in the project should share cached directories.",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "watch"
+                  ],
+                  "additionalProperties": false
+                },
+                "title": "The configuration of paths managed by the build cache.",
+                "default": {}
+              }
+            },
+            "additionalProperties": false,
+            "title": "The build configuration of the application.",
+            "default": {
+              "flavor": null,
+              "caches": {}
+            }
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "root": {
+                "type": "string",
+                "title": "The root of the application relative to the repository root.",
+                "default": null
+              },
+              "operations": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "command": {
+                      "type": "string",
+                      "title": "The command to use to update this application."
+                    }
+                  },
+                  "required": [
+                    "command"
+                  ],
+                  "additionalProperties": false
+                },
+                "title": "Operations that can be applied to the source code.",
+                "default": {}
+              }
+            },
+            "additionalProperties": false,
+            "title": "Configuration related to the source code of the application.",
+            "default": {
+              "operations": {},
+              "root": null
+            }
+          },
+          "web": {
+            "type": "object",
+            "properties": {
+              "firewall": {
+                "type": "object",
+                "properties": {
+                  "outbound": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "protocol": {
+                          "type": "string",
+                          "title": "The IP protocol to apply the restriction on.",
+                          "default": "tcp"
+                        },
+                        "ips": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "title": "The IP range in CIDR notation to apply the restriction on.",
+                          "default": []
+                        },
+                        "domains": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "title": "Domains of the restriction.",
+                          "default": []
+                        },
+                        "ports": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer"
+                          },
+                          "title": "The port to apply the restriction on.",
+                          "default": []
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "title": "Outbound firewall restrictions",
+                    "default": []
+                  }
+                },
+                "additionalProperties": false,
+                "nullable": true,
+                "title": "Firewall"
+              },
+              "variables": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment."
+              },
+              "timezone": {
+                "type": "string",
+                "title": "The timezone of the application.  This primarily affects the timezone in which cron tasks will run.  It will not affect the application itself. Defaults to UTC if not specified."
+              },
+              "mounts": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string",
+                      "title": "The type of mount that will provide the data."
+                    },
+                    "source_path": {
+                      "type": "string",
+                      "title": "The path to be mounted, relative to the root directory of the volume that's being mounted from."
+                    },
+                    "service": {
+                      "type": "string",
+                      "title": "The name of the service that the volume will be mounted from. Must be a service in `services.yaml` of type `network-storage`."
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "source_path"
+                  ],
+                  "additionalProperties": false
+                },
+                "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space."
+              },
+              "relationships": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "The relationships of the application to defined services."
+              },
+              "access": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Access information, a mapping between access type and roles."
+              },
+              "size": {
+                "type": "string",
+                "title": "The container size for this application in production. Leave blank to allow it to be set dynamically."
+              },
+              "resources": {
+                "type": "object",
+                "properties": {
+                  "base_memory": {
+                    "type": "integer",
+                    "title": "The base memory for the container",
+                    "default": 64
+                  },
+                  "memory_ratio": {
+                    "type": "integer",
+                    "title": "The amount of memory to allocate per units of CPU",
+                    "default": 128
+                  }
+                },
+                "additionalProperties": false,
+                "nullable": true,
+                "title": "Resources"
+              },
+              "locations": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "root": {
+                      "type": "string",
+                      "title": "The folder from which to serve static assets for this location relative to the application root.",
+                      "default": null
+                    },
+                    "expires": {
+                      "type": "string",
+                      "title": "Amount of time to cache static assets.",
+                      "default": -1
+                    },
+                    "passthru": {
+                      "type": [
+                        "string",
+                        "boolean"
+                      ],
+                      "title": "Whether to forward disallowed and missing resources from this location to the application. On PHP, set to the PHP front controller script, as a URL fragment. Otherwise set to `true`/`false`.",
+                      "default": true
+                    },
+                    "scripts": {
+                      "type": "boolean",
+                      "title": "Whether to execute scripts in this location (for script based runtimes).",
+                      "default": true
+                    },
+                    "index": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "Files to look for to serve directories."
+                    },
+                    "allow": {
+                      "type": "boolean",
+                      "title": "Whether to allow access to this location by default.",
+                      "default": true
+                    },
+                    "headers": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "title": "A set of header fields set to the HTTP response. Applies only to static files, not responses from the application.",
+                      "default": {}
+                    },
+                    "rules": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                          "expires": {
+                            "type": "string",
+                            "title": "Amount of time to cache static assets."
+                          },
+                          "passthru": {
+                            "type": "string",
+                            "title": "Whether to forward disallowed and missing resources from this location to the application. On PHP, set to the PHP front controller script, as a URL fragment. Otherwise set to `true`/`false`."
+                          },
+                          "scripts": {
+                            "type": "boolean",
+                            "title": "Whether to execute scripts in this location (for script based runtimes)."
+                          },
+                          "allow": {
+                            "type": "boolean",
+                            "title": "Whether to allow access to this location by default."
+                          },
+                          "headers": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "title": "A set of header fields set to the HTTP response. Replaces headers set on the location block."
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "title": "Specific overrides.",
+                      "default": {}
+                    },
+                    "request_buffering": {
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean",
+                          "title": "Enable request buffering.",
+                          "default": true
+                        },
+                        "max_request_size": {
+                          "type": "string",
+                          "title": "The maximum size request that can be buffered. Supports K, M, and G suffixes.",
+                          "default": 262144000
+                        }
+                      },
+                      "additionalProperties": false,
+                      "title": "Configuration for supporting request buffering."
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "title": "The specification of the web locations served by this application.",
+                "default": {}
+              },
+              "commands": {
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "type": "string",
+                    "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
+                  }
+                },
+                "required": [
+                  "start"
+                ],
+                "additionalProperties": false,
+                "title": "Commands to manage the application's lifecycle."
+              },
+              "upstream": {
+                "type": "object",
+                "properties": {
+                  "socket_family": {
+                    "type": "string",
+                    "title": "If `tcp`, check the PORT environment variable on application startup. If `unix`, check SOCKET.",
+                    "default": "tcp"
+                  },
+                  "protocol": {
+                    "type": "string",
+                    "title": "Protocol",
+                    "default": null
+                  }
+                },
+                "additionalProperties": false,
+                "title": "Configuration on how the web server communicates with the application."
+              },
+              "document_root": {
+                "type": "string",
+                "title": "The document root of this application, relative to its root."
+              },
+              "passthru": {
+                "type": "string",
+                "title": "The URL to use as a passthru if a file doesn't match the whitelist."
+              },
+              "index_files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Files to look for to serve directories."
+              },
+              "whitelist": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Whitelisted entries."
+              },
+              "blacklist": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Blacklisted entries."
+              },
+              "expires": {
+                "type": "string",
+                "title": "Amount of time to cache static assets."
+              },
+              "move_to_root": {
+                "type": "boolean",
+                "title": "Whether to move the whole root of the app to the document root.",
+                "default": false
+              }
+            },
+            "additionalProperties": false,
+            "title": "Configuration for accessing this application via HTTP.",
+            "default": {
+              "locations": {}
+            }
+          },
+          "hooks": {
+            "type": "object",
+            "properties": {
+              "build": {
+                "type": "string",
+                "title": "Hook executed after the build process.",
+                "default": null
+              },
+              "deploy": {
+                "type": "string",
+                "title": "Hook executed after the deployment of new code.",
+                "default": null
+              },
+              "post_deploy": {
+                "type": "string",
+                "title": "Hook executed after an environment is fully deployed.",
+                "default": null
+              }
+            },
+            "additionalProperties": false,
+            "title": "Scripts executed at various points in the lifecycle of the application.",
+            "default": {}
+          },
+          "crons": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "spec": {
+                  "type": "string",
+                  "title": "The cron schedule specification."
+                },
+                "commands": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "string",
+                      "title": "The command used to start the cron job."
+                    },
+                    "stop": {
+                      "type": "string",
+                      "title": "The command used to stop the cron job.",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "start"
+                  ],
+                  "additionalProperties": false,
+                  "title": "The start and stop commands definition."
+                },
+                "shutdown_timeout": {
+                  "type": "integer",
+                  "title": "The timeout in seconds after which the cron job will be forcefully killed.",
+                  "default": null
+                },
+                "cmd": {
+                  "type": "string",
+                  "title": "The command to execute."
+                }
+              },
+              "required": [
+                "spec"
+              ],
+              "additionalProperties": false
+            },
+            "title": "Scheduled cron tasks executed by this application.",
+            "default": {}
+          },
+          "workers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "firewall": {
+                  "type": "object",
+                  "properties": {
+                    "outbound": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "protocol": {
+                            "type": "string",
+                            "title": "The IP protocol to apply the restriction on.",
+                            "default": "tcp"
+                          },
+                          "ips": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "The IP range in CIDR notation to apply the restriction on.",
+                            "default": []
+                          },
+                          "domains": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "title": "Domains of the restriction.",
+                            "default": []
+                          },
+                          "ports": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer"
+                            },
+                            "title": "The port to apply the restriction on.",
+                            "default": []
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "title": "Outbound firewall restrictions",
+                      "default": []
+                    }
+                  },
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "title": "Firewall"
+                },
+                "variables": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "additionalProperties": {}
+                  },
+                  "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment."
+                },
+                "timezone": {
+                  "type": "string",
+                  "title": "The timezone of the application.  This primarily affects the timezone in which cron tasks will run.  It will not affect the application itself. Defaults to UTC if not specified."
+                },
+                "mounts": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "title": "The type of mount that will provide the data."
+                      },
+                      "source_path": {
+                        "type": "string",
+                        "title": "The path to be mounted, relative to the root directory of the volume that's being mounted from."
+                      },
+                      "service": {
+                        "type": "string",
+                        "title": "The name of the service that the volume will be mounted from. Must be a service in `services.yaml` of type `network-storage`."
+                      }
+                    },
+                    "required": [
+                      "source",
+                      "source_path"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space."
+                },
+                "relationships": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "The relationships of the application to defined services."
+                },
+                "access": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Access information, a mapping between access type and roles."
+                },
+                "size": {
+                  "type": "string",
+                  "title": "The container size for this application in production. Leave blank to allow it to be set dynamically."
+                },
+                "resources": {
+                  "type": "object",
+                  "properties": {
+                    "base_memory": {
+                      "type": "integer",
+                      "title": "The base memory for the container",
+                      "default": 64
+                    },
+                    "memory_ratio": {
+                      "type": "integer",
+                      "title": "The amount of memory to allocate per units of CPU",
+                      "default": 128
+                    }
+                  },
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "title": "Resources"
+                },
+                "commands": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "string",
+                      "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
+                    }
+                  },
+                  "required": [
+                    "start"
+                  ],
+                  "additionalProperties": false,
+                  "title": "The commands to manage the worker."
+                }
+              },
+              "required": [
+                "commands"
+              ],
+              "additionalProperties": false
+            },
+            "title": "Persistent worker containers created by this application.",
+            "default": {}
+          },
+          "additional_hosts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Resolve additional IPs to domain names."
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "routes": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "primary": {
+                "type": "boolean",
+                "title": "This route is the primary route of the environment",
+                "default": null
+              },
+              "id": {
+                "type": "string",
+                "title": "Route Identifier",
+                "default": null
+              },
+              "attributes": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Arbitrary attributes attached to this resource",
+                "default": {}
+              },
+              "type": {
+                "type": "string",
+                "title": "Route type."
+              },
+              "redirects": {
+                "type": "object",
+                "properties": {
+                  "expires": {
+                    "type": "string",
+                    "title": "The amount of time, in seconds, to cache the redirects.",
+                    "default": -1
+                  },
+                  "paths": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "regexp": {
+                          "type": "boolean",
+                          "title": "Whether the path is a regular expression.",
+                          "default": false
+                        },
+                        "to": {
+                          "type": "string",
+                          "title": "The URL to redirect to."
+                        },
+                        "prefix": {
+                          "type": "boolean",
+                          "title": "Whether to redirect all the paths that start with the path.",
+                          "default": null
+                        },
+                        "append_suffix": {
+                          "type": "boolean",
+                          "title": "Whether to append the incoming suffix to the redirected URL.",
+                          "default": null
+                        },
+                        "code": {
+                          "type": "integer",
+                          "title": "The redirect code to use.",
+                          "default": 302
+                        },
+                        "expires": {
+                          "type": "string",
+                          "title": "The amount of time, in seconds, to cache the redirects.",
+                          "default": null
+                        }
+                      },
+                      "required": [
+                        "to"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "title": "The paths to redirect"
+                  }
+                },
+                "required": [
+                  "paths"
+                ],
+                "additionalProperties": false,
+                "title": "The configuration of the redirects.",
+                "default": {}
+              },
+              "tls": {
+                "type": "object",
+                "properties": {
+                  "strict_transport_security": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean",
+                        "title": "Whether strict transport security is enabled or not.",
+                        "default": null
+                      },
+                      "include_subdomains": {
+                        "type": "boolean",
+                        "title": "Whether the strict transport security policy should include all subdomains.",
+                        "default": null
+                      },
+                      "preload": {
+                        "type": "boolean",
+                        "title": "Whether the strict transport security policy should be preloaded in browsers.",
+                        "default": null
+                      }
+                    },
+                    "additionalProperties": false,
+                    "title": "Strict-Transport-Security options.",
+                    "default": {
+                      "preload": null,
+                      "include_subdomains": null,
+                      "enabled": null
+                    }
+                  },
+                  "min_version": {
+                    "type": "string",
+                    "enum": [
+                      "TLSv1.1",
+                      "TLSv1.0",
+                      "TLSv1.3",
+                      "TLSv1.2"
+                    ],
+                    "title": "The minimum TLS version to support.",
+                    "default": null
+                  },
+                  "client_authentication": {
+                    "type": "string",
+                    "title": "The type of client authentication to request.",
+                    "default": null
+                  },
+                  "client_certificate_authorities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "title": "Certificate authorities to validate the client certificate against. If not specified, a default set of trusted CAs will be used.",
+                    "default": []
+                  }
+                },
+                "additionalProperties": false,
+                "title": "TLS settings for the route.",
+                "default": {
+                  "client_authentication": null,
+                  "min_version": null,
+                  "client_certificate_authorities": [],
+                  "strict_transport_security": {
+                    "preload": null,
+                    "include_subdomains": null,
+                    "enabled": null
+                  }
+                }
+              },
+              "to": {
+                "type": "string",
+                "title": "Redirect destination"
+              }
+            },
+            "required": [
+              "type",
+              "to"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "primary": {
+                "type": "boolean",
+                "title": "This route is the primary route of the environment",
+                "default": null
+              },
+              "id": {
+                "type": "string",
+                "title": "Route Identifier",
+                "default": null
+              },
+              "attributes": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Arbitrary attributes attached to this resource",
+                "default": {}
+              },
+              "type": {
+                "type": "string",
+                "title": "Route type."
+              },
+              "redirects": {
+                "type": "object",
+                "properties": {
+                  "expires": {
+                    "type": "string",
+                    "title": "The amount of time, in seconds, to cache the redirects.",
+                    "default": -1
+                  },
+                  "paths": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "regexp": {
+                          "type": "boolean",
+                          "title": "Whether the path is a regular expression.",
+                          "default": false
+                        },
+                        "to": {
+                          "type": "string",
+                          "title": "The URL to redirect to."
+                        },
+                        "prefix": {
+                          "type": "boolean",
+                          "title": "Whether to redirect all the paths that start with the path.",
+                          "default": null
+                        },
+                        "append_suffix": {
+                          "type": "boolean",
+                          "title": "Whether to append the incoming suffix to the redirected URL.",
+                          "default": null
+                        },
+                        "code": {
+                          "type": "integer",
+                          "title": "The redirect code to use.",
+                          "default": 302
+                        },
+                        "expires": {
+                          "type": "string",
+                          "title": "The amount of time, in seconds, to cache the redirects.",
+                          "default": null
+                        }
+                      },
+                      "required": [
+                        "to"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "title": "The paths to redirect"
+                  }
+                },
+                "required": [
+                  "paths"
+                ],
+                "additionalProperties": false,
+                "title": "The configuration of the redirects.",
+                "default": {}
+              },
+              "tls": {
+                "type": "object",
+                "properties": {
+                  "strict_transport_security": {
+                    "type": "object",
+                    "properties": {
+                      "enabled": {
+                        "type": "boolean",
+                        "title": "Whether strict transport security is enabled or not.",
+                        "default": null
+                      },
+                      "include_subdomains": {
+                        "type": "boolean",
+                        "title": "Whether the strict transport security policy should include all subdomains.",
+                        "default": null
+                      },
+                      "preload": {
+                        "type": "boolean",
+                        "title": "Whether the strict transport security policy should be preloaded in browsers.",
+                        "default": null
+                      }
+                    },
+                    "additionalProperties": false,
+                    "title": "Strict-Transport-Security options.",
+                    "default": {
+                      "preload": null,
+                      "include_subdomains": null,
+                      "enabled": null
+                    }
+                  },
+                  "min_version": {
+                    "type": "string",
+                    "enum": [
+                      "TLSv1.1",
+                      "TLSv1.0",
+                      "TLSv1.3",
+                      "TLSv1.2"
+                    ],
+                    "title": "The minimum TLS version to support.",
+                    "default": null
+                  },
+                  "client_authentication": {
+                    "type": "string",
+                    "title": "The type of client authentication to request.",
+                    "default": null
+                  },
+                  "client_certificate_authorities": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "title": "Certificate authorities to validate the client certificate against. If not specified, a default set of trusted CAs will be used.",
+                    "default": []
+                  }
+                },
+                "additionalProperties": false,
+                "title": "TLS settings for the route.",
+                "default": {
+                  "client_authentication": null,
+                  "min_version": null,
+                  "client_certificate_authorities": [],
+                  "strict_transport_security": {
+                    "preload": null,
+                    "include_subdomains": null,
+                    "enabled": null
+                  }
+                }
+              },
+              "cache": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "title": "Whether the cache is enabled."
+                  },
+                  "default_ttl": {
+                    "type": "integer",
+                    "title": "The TTL to apply when the response doesn't specify one. Only applies to static files.",
+                    "default": 0
+                  },
+                  "cookies": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "title": "The cookies to take into account for the cache key.",
+                    "default": [
+                      "*"
+                    ]
+                  },
+                  "headers": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "title": "The headers to take into account for the cache key.",
+                    "default": [
+                      "Accept",
+                      "Accept-Language"
+                    ]
+                  }
+                },
+                "required": [
+                  "enabled"
+                ],
+                "additionalProperties": false,
+                "title": "Cache configuration.",
+                "default": {
+                  "default_ttl": 0,
+                  "cookies": [
+                    "*"
+                  ],
+                  "enabled": true,
+                  "headers": [
+                    "Accept",
+                    "Accept-Language"
+                  ]
+                }
+              },
+              "ssi": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean",
+                    "title": "Whether SSI include is enabled."
+                  }
+                },
+                "required": [
+                  "enabled"
+                ],
+                "additionalProperties": false,
+                "title": "Server-Side Include configuration.",
+                "default": {
+                  "enabled": false
+                }
+              },
+              "upstream": {
+                "type": "string",
+                "title": "The upstream to use for this route."
+              }
+            },
+            "required": [
+              "type",
+              "upstream"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "services": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "title": "The service type."
+          },
+          "size": {
+            "type": "string",
+            "title": "The service size.",
+            "default": "AUTO"
+          },
+          "access": {
+            "type": "object",
+            "title": "The configuration of the service.",
+            "default": {}
+          },
+          "configuration": {
+            "type": "object",
+            "title": "The configuration of the service.",
+            "default": {}
+          },
+          "relationships": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "The relationships of the service to other services.",
+            "default": {}
+          },
+          "firewall": {
+            "type": "object",
+            "properties": {
+              "outbound": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "protocol": {
+                      "type": "string",
+                      "title": "The IP protocol to apply the restriction on.",
+                      "default": "tcp"
+                    },
+                    "ips": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "The IP range in CIDR notation to apply the restriction on.",
+                      "default": []
+                    },
+                    "domains": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "Domains of the restriction.",
+                      "default": []
+                    },
+                    "ports": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer"
+                      },
+                      "title": "The port to apply the restriction on.",
+                      "default": []
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "title": "Outbound firewall restrictions",
+                "default": []
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true,
+            "title": "Firewall",
+            "default": null
+          },
+          "resources": {
+            "type": "object",
+            "properties": {
+              "base_memory": {
+                "type": "integer",
+                "title": "The base memory for the container",
+                "default": 64
+              },
+              "memory_ratio": {
+                "type": "integer",
+                "title": "The amount of memory to allocate per units of CPU",
+                "default": 128
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true,
+            "title": "Resources",
+            "default": null
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "applications"
+  ]
+}

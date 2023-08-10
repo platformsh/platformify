@@ -10,17 +10,18 @@ import (
 	"github.com/platformsh/platformify/commands"
 )
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	viper.SetEnvPrefix("PLATFORMIFY")
-	viper.AutomaticEnv() // read in environment variables that match
-}
-
 func main() {
 	cobra.OnInitialize(initConfig)
+
 	commands.PlatformifyCmd.AddCommand(commands.ValidateCmd)
-	err := commands.Execute("platformsh")
+	err := commands.Execute("upsun")
 	if err != nil {
 		os.Exit(1)
 	}
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+	viper.SetEnvPrefix("UPSUNIFY")
+	viper.AutomaticEnv() // read in environment variables that match
 }

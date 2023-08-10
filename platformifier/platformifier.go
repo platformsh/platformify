@@ -17,6 +17,7 @@ const (
 	// Path names MUST NOT contain an element that is "." or ".." or the empty string,
 	// Paths MUST NOT start or end with a slash: "/x" and "x/" are invalid.
 	genericDir = "templates/generic"
+	upsunDir   = "templates/upsun"
 	djangoDir  = "templates/django"
 	laravelDir = "templates/laravel"
 	nextjsDir  = "templates/nextjs"
@@ -31,7 +32,7 @@ type platformifier interface {
 }
 
 // New creates Platformifier with the appropriate platformifier stack based on UserInput.
-func New(input *UserInput, fileSystems ...FS) *Platformifier {
+func New(input *UserInput, flavor string, fileSystems ...FS) *Platformifier {
 	var fileSystem FS
 	if len(fileSystems) > 0 {
 		fileSystem = fileSystems[0]
@@ -42,21 +43,27 @@ func New(input *UserInput, fileSystems ...FS) *Platformifier {
 	// fs.Sub(...) returns an error only if the given path name is invalid.
 	// Since we determine the path name ourselves in advance,
 	// there is no need to check for errors in this path name.
-	templates, _ := fs.Sub(templatesFS, genericDir)
-	stacks := []platformifier{newGenericPlatformifier(templates, fileSystem)}
+	stacks := []platformifier{}
+	templatesDir := genericDir
+	if flavor == "upsun" {
+		templatesDir = upsunDir
+	}
+
+	templates, _ := fs.Sub(templatesFS, templatesDir)
+	stacks = append(stacks, newGenericPlatformifier(templates, fileSystem))
 
 	switch input.Stack {
 	case Django:
 		// No need to check for errors (see the comment above)
-		templates, _ = fs.Sub(templatesFS, djangoDir)
+		templates, _ := fs.Sub(templatesFS, djangoDir)
 		stacks = append(stacks, newDjangoPlatformifier(templates, fileSystem))
 	case Laravel:
 		// No need to check for errors (see the comment above)
-		templates, _ = fs.Sub(templatesFS, laravelDir)
+		templates, _ := fs.Sub(templatesFS, laravelDir)
 		stacks = append(stacks, newLaravelPlatformifier(templates, fileSystem))
 	case NextJS:
 		// No need to check for errors (see the comment above)
-		templates, _ = fs.Sub(templatesFS, nextjsDir)
+		templates, _ := fs.Sub(templatesFS, nextjsDir)
 		stacks = append(stacks, newNextJSPlatformifier(templates))
 	}
 
