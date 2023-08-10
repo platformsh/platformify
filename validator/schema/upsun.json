@@ -31,11 +31,6 @@
             "title": "The container size for this application in production. Leave blank to allow it to be set dynamically.",
             "default": "AUTO"
           },
-          "disk": {
-            "type": "integer",
-            "title": "The writeable disk size to reserve on this application container.",
-            "default": null
-          },
           "access": {
             "type": "object",
             "additionalProperties": {
@@ -375,10 +370,6 @@
                   "type": "string"
                 },
                 "title": "Access information, a mapping between access type and roles."
-              },
-              "disk": {
-                "type": "integer",
-                "title": "The writeable disk size to reserve on this application container."
               },
               "size": {
                 "type": "string",
@@ -756,10 +747,6 @@
                     "type": "string"
                   },
                   "title": "Access information, a mapping between access type and roles."
-                },
-                "disk": {
-                  "type": "integer",
-                  "title": "The writeable disk size to reserve on this application container."
                 },
                 "size": {
                   "type": "string",
@@ -1238,11 +1225,6 @@
             "type": "string",
             "title": "The service size.",
             "default": "AUTO"
-          },
-          "disk": {
-            "type": "integer",
-            "title": "The size of the disk.",
-            "default": null
           },
           "access": {
             "type": "object",

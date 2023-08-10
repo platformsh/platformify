@@ -28,14 +28,7 @@ applications:
     #   database: "db:postgresql"
     {{ end }}
 
-    # The size of the persistent disk of the application (in MB). Minimum value is 128.
-    {{ if .Disk -}}
-    disk: {{ .Disk }}
-    {{- else -}}
-    # disk: 512
-    {{- end }}
-
-    # Mounts define directories that are writable after the build is complete. If set as a local source, disk property is required.
+    # Mounts define directories that are writable after the build is complete.
     # More information: https://docs.platform.sh/create-apps/app-reference.html#mounts
     {{ if .Mounts -}}
     mounts:
@@ -238,15 +231,11 @@ services:
   {{ range $value := .Services }}
   {{- $value.Name }}:
     type: {{ $value.Type }} # All available versions are: {{ $value.TypeVersions | join ", "}}
-    {{- if $value.Disk }}
-    disk: {{ $value.Disk }} # All available sizes are: {{ $value.DiskSizes | join ", "}}
-    {{- end }}
 
   {{ end }}
   {{- else }}
   # db:
   #     type: postgresql:14
-  #     disk: 1024
   {{ end }}
 
 # The routes of the project.
