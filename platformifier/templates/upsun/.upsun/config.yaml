@@ -3,7 +3,7 @@ applications:
   {{ .Name }}:
     # Application source code directory
     source:
-      root: "/{{ .ApplicationRoot }}"
+      root: "{{ .ApplicationRoot }}"
 
     # The runtime the application uses.
     # Complete list of available runtimes: https://docs.platform.sh/create-apps/app-reference.html#types

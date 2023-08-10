@@ -3,6 +3,8 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/platformsh/platformify/platformifier"
@@ -112,7 +114,7 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 	return &platformifier.UserInput{
 		Stack:              getStack(a.Stack),
 		Root:               "",
-		ApplicationRoot:    a.ApplicationRoot,
+		ApplicationRoot:    filepath.Join(string(os.PathSeparator), a.ApplicationRoot),
 		Name:               a.Name,
 		Type:               a.Type.String(),
 		Runtime:            a.Type.Runtime.String(),
