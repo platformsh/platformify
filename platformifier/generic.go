@@ -25,8 +25,8 @@ type genericPlatformifier struct {
 }
 
 // Platformify will generate the needed configuration files in the current directory.
-func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) error {
-	assets, _ := vendorization.FromContext(context.Background())
+func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
+	assets, _ := vendorization.FromContext(ctx)
 	err := fs.WalkDir(p.templates, ".", func(name string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
