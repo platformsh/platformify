@@ -6,6 +6,8 @@ import (
 	"io/fs"
 	"text/template"
 
+	"github.com/platformsh/platformify/vendorization"
+
 	"github.com/Masterminds/sprig/v3"
 )
 
@@ -22,8 +24,9 @@ type genericPlatformifier struct {
 	fileSystem FS
 }
 
-// Platformify will generate the .platform.app.yaml and .platform/ directory.
+// Platformify will generate the needed configuration files in the current directory.
 func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) error {
+	assets, _ := vendorization.FromContext(context.Background())
 	err := fs.WalkDir(p.templates, ".", func(name string, d fs.DirEntry, walkErr error) error {
 		if d.IsDir() {
 			return nil
@@ -36,7 +39,7 @@ func (p *genericPlatformifier) Platformify(_ context.Context, input *UserInput) 
 		}
 		defer f.Close()
 
-		return tpl.Execute(f, input)
+		return tpl.Execute(f, templateData{input, assets})
 	})
 	if err != nil {
 		return err

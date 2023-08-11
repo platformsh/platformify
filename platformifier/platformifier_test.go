@@ -90,7 +90,7 @@ func TestNewPlatformifier(t *testing.T) {
 			input := &UserInput{Stack: tt.stack}
 
 			// WHEN create new platformifier
-			pfier := New(input, "platformsh")
+			pfier := New(input, "platform")
 			// THEN user input inside platformifier should be the same as given
 			assert.Equal(t, input, pfier.input)
 			// AND length of the platformifier's stack must be equal to the length of expected stacks
@@ -360,12 +360,12 @@ func TestPlatformifier_Platformify(t *testing.T) {
 		}
 		tt.fields.ui.WorkingDirectory = dir
 		t.Run(tt.name, func(t *testing.T) {
-			if err := New(tt.fields.ui, "platformsh").Platformify(ctx); (err != nil) != tt.wantErr {
+			if err := New(tt.fields.ui, "platform").Platformify(ctx); (err != nil) != tt.wantErr {
 				t.Errorf("Platformifier.Platformify() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
 			// Validate the config.
-			if err := validator.ValidateConfig(dir, "platformsh"); (err != nil) != tt.wantErr {
+			if err := validator.ValidateConfig(dir, "platform"); (err != nil) != tt.wantErr {
 				t.Errorf("Platformifier.Platformify() validation error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

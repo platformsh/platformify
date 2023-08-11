@@ -12,6 +12,7 @@ import (
 
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
+	"github.com/platformsh/platformify/vendorization"
 )
 
 type WorkingDirectory struct{}
@@ -46,11 +47,15 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 				"It seems like you're not inside a Git repository.",
 			),
 		)
+		assets, _ := vendorization.FromContext(ctx)
 		fmt.Fprintln(
 			stderr,
 			colors.Colorize(
 				colors.WarningCode,
-				"You'll need to create a Git repository to deploy your application to Platform.sh",
+				fmt.Sprintf(
+					"You'll need to create a Git repository to deploy your application to %s",
+					assets.ServiceName,
+				),
 			),
 		)
 		return nil
@@ -63,7 +68,7 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 			stderr,
 			colors.Colorize(
 				colors.WarningCode,
-				"Platformify should be run at the root of a Git repository.",
+				"Project configuration should be run at the root of a Git repository.",
 			),
 		)
 		msg := fmt.Sprintf(

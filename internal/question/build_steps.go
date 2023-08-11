@@ -10,6 +10,7 @@ import (
 
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
+	"github.com/platformsh/platformify/vendorization"
 )
 
 type BuildSteps struct{}
@@ -102,9 +103,13 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			}
 
 			managePyPath, _ = filepath.Rel(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyPath)
+			assets, _ := vendorization.FromContext(ctx)
 			answers.BuildSteps = append(
 				answers.BuildSteps,
-				"# Collect static files so that they can be served by Platform.sh",
+				fmt.Sprintf(
+					"# Collect static files so that they can be served by %s",
+					assets.ServiceName,
+				),
 				fmt.Sprintf("%spython %s collectstatic --noinput", prefix, managePyPath),
 			)
 		}

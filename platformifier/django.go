@@ -12,6 +12,7 @@ import (
 
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/utils"
+	"github.com/platformsh/platformify/vendorization"
 )
 
 const (
@@ -47,7 +48,8 @@ func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput)
 		}
 		defer pshSettingsFile.Close()
 
-		err = tpl.Execute(pshSettingsFile, input)
+		assets, _ := vendorization.FromContext(ctx)
+		err = tpl.Execute(pshSettingsFile, templateData{input, assets})
 		if err != nil {
 			return err
 		}

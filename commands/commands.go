@@ -2,10 +2,11 @@ package commands
 
 import (
 	"context"
+
+	"github.com/platformsh/platformify/vendorization"
 )
 
-// Execute executes the Platformify command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the PlatformifyCmd.
-func Execute(flavor string) error {
-	return PlatformifyCmd.ExecuteContext(context.WithValue(context.Background(), FlavorKey, flavor))
+// Execute executes the ify command and sets flags appropriately.
+func Execute(assets *vendorization.VendorAssets) error {
+	return newPlatformifyCmd(assets).ExecuteContext(vendorization.WithVendorAssets(context.Background(), assets))
 }

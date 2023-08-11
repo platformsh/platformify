@@ -14,6 +14,7 @@ import (
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/questionnaire"
 	"github.com/platformsh/platformify/internal/utils"
+	"github.com/platformsh/platformify/vendorization"
 )
 
 const (
@@ -185,12 +186,16 @@ func (q *Stack) Ask(ctx context.Context) error {
 			return err
 		}
 
+		assets, _ := vendorization.FromContext(ctx)
 		if confirm {
 			fmt.Fprintln(
 				stderr,
 				colors.Colorize(
 					colors.WarningCode,
-					"Check out the Symfony CLI documentation here: https://docs.platform.sh/guides/symfony/get-started.html",
+					fmt.Sprintf(
+						"Check out the Symfony CLI documentation here: %s",
+						assets.Docs.SymfonyCLI,
+					),
 				),
 			)
 			return questionnaire.ErrSilent
