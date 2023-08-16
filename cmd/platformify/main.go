@@ -37,7 +37,7 @@ func main() {
 			PHP:            "https://docs.platform.sh/languages/php.html",
 			Routes:         "https://docs.platform.sh/define-routes.html",
 			Services:       "https://docs.platform.sh/add-services.html",
-			SymfonyCLI:     "https://docs.platform.sh/guides/symfony/symfony-cli.html",
+			SymfonyCLI:     "https://docs.platform.sh/guides/symfony/get-started.html#symfony-cli-tips",
 			TimeZone:       "https://docs.platform.sh/create-apps/timezone.html",
 			Variables:      "https://docs.platform.sh/development/variables/use-variables.html#use-platformsh-provided-variables",
 		},
