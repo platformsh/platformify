@@ -17,6 +17,7 @@ func main() {
 		viper.AutomaticEnv() // read in environment variables that match
 	})
 
+	//nolint:lll
 	assets := &vendorization.VendorAssets{
 		Binary:       "upsun",
 		ConfigFlavor: "upsun",
