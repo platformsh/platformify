@@ -4,6 +4,8 @@ import (
 	"context"
 	"embed"
 	"io/fs"
+
+	"github.com/platformsh/platformify/vendorization"
 )
 
 var (
@@ -29,6 +31,11 @@ const (
 type platformifier interface {
 	// Platformify loads and writes the templates to the user's system.
 	Platformify(ctx context.Context, input *UserInput) error
+}
+
+type templateData struct {
+	*UserInput
+	Assets *vendorization.VendorAssets
 }
 
 // New creates Platformifier with the appropriate platformifier stack based on UserInput.

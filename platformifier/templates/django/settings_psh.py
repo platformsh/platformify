@@ -1,5 +1,5 @@
 #################################################################################
-# Platform.sh-specific configuration
+# {{ .Assets.ServiceName }}-specific configuration
 
 import base64
 import json
@@ -8,11 +8,11 @@ import sys
 from urllib.parse import urlparse
 
 # This variable should always match the primary database relationship name
-PLATFORMSH_DB_RELATIONSHIP = "{{ .Database }}"
+{{ .Assets.EnvPrefix }}_DB_RELATIONSHIP = "{{ .Database }}"
 
 # Helper function for decoding base64-encoded JSON variables.
 def decode(variable):
-    """Decodes a Platform.sh environment variable.
+    """Decodes a {{ .Assets.ServiceName }} environment variable.
     Args:
         variable (string):
             Base64-encoded JSON (the content of an environment variable).
@@ -30,29 +30,29 @@ def decode(variable):
         print("Error decoding JSON, code %d", json.decoder.JSONDecodeError)
 
 
-# Import some Platform.sh settings from the environment.
-# Read more on Platform.sh variables at https://docs.platform.sh/development/variables/use-variables.html#use-platformsh-provided-variables
-if os.getenv("PLATFORM_APPLICATION_NAME"):
+# Import some {{ .Assets.ServiceName }} settings from the environment.
+# Read more on {{ .Assets.ServiceName }} variables at {{ .Assets.Docs.Variables }}
+if os.getenv("{{ .Assets.EnvPrefix }}_APPLICATION_NAME"):
     DEBUG = False
 
-    if os.getenv("PLATFORM_APP_DIR"):
-        STATIC_ROOT = os.path.join(os.getenv("PLATFORM_APP_DIR"), "static")
+    if os.getenv("{{ .Assets.EnvPrefix }}_APP_DIR"):
+        STATIC_ROOT = os.path.join(os.getenv("{{ .Assets.EnvPrefix }}_APP_DIR"), "static")
 
-    if os.getenv("PLATFORM_PROJECT_ENTROPY"):
-        SECRET_KEY = os.getenv("PLATFORM_PROJECT_ENTROPY")
+    if os.getenv("{{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"):
+        SECRET_KEY = os.getenv("{{ .Assets.EnvPrefix }}_PROJECT_ENTROPY")
 
-    if os.getenv("PLATFORM_ROUTES"):
-        platform_routes = decode(os.getenv("PLATFORM_ROUTES"))
+    if os.getenv("{{ .Assets.EnvPrefix }}_ROUTES"):
+        {{ lower .Assets.EnvPrefix }}_routes = decode(os.getenv("{{ .Assets.EnvPrefix }}_ROUTES"))
         ALLOWED_HOSTS = list(map(
             lambda key: urlparse(key).hostname,
-            platform_routes.keys(),
+            {{ lower .Assets.EnvPrefix }}_routes.keys(),
         ))
 
     # Database service configuration, post-build only.
-    if os.getenv("PLATFORM_RELATIONSHIPS") and PLATFORMSH_DB_RELATIONSHIP:
-        platform_relationships = decode(os.getenv("PLATFORM_RELATIONSHIPS"))
-        if PLATFORMSH_DB_RELATIONSHIP in platform_relationships:
-            db_settings = platform_relationships[PLATFORMSH_DB_RELATIONSHIP][0]
+    if os.getenv("{{ .Assets.EnvPrefix }}_RELATIONSHIPS") and {{ .Assets.EnvPrefix }}_DB_RELATIONSHIP:
+        {{ lower .Assets.EnvPrefix }}_relationships = decode(os.getenv("{{ .Assets.EnvPrefix }}_RELATIONSHIPS"))
+        if {{ .Assets.EnvPrefix }}_DB_RELATIONSHIP in {{ .Assets.EnvPrefix }}_relationships:
+            db_settings = {{ lower .Assets.EnvPrefix }}_relationships[{{ .Assets.EnvPrefix }}_DB_RELATIONSHIP][0]
             engine = None
             if (
                 "mariadb" in db_settings["type"]

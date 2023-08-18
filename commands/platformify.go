@@ -11,71 +11,83 @@ import (
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/questionnaire"
 	"github.com/platformsh/platformify/platformifier"
+	"github.com/platformsh/platformify/vendorization"
 )
 
 type contextKey string
 
 var FlavorKey contextKey = "flavor"
 
-// PlatformifyCmd represents the base Platformify command when called without any subcommands
-var PlatformifyCmd = &cobra.Command{
-	Use:   "platformify",
-	Short: "Platformify your application, and deploy it to the Platform.sh",
-	Long: `Platformify your application, creating all the needed files
-for it to be deployed to Platform.sh.
+func newPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
+	validateCommand := newValidateCommand(assets)
+	cmd := &cobra.Command{
+		Use: assets.Binary + "ify",
+		Short: fmt.Sprintf(
+			"Create the configuration files needed deploy your project to %s",
+			assets.ServiceName,
+		),
+		//nolint:lll
+		Long: fmt.Sprintf(
+			`Create the configuration files needed deploy your project to %s
 
-This will create the needed YAML files for both your application and your
-services, choosing from a variety of stacks or simple runtimes.`,
-	SilenceUsage:  true,
-	SilenceErrors: true,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		answers := models.NewAnswers()
-		answers.Flavor, _ = cmd.Context().Value(FlavorKey).(string)
-		ctx := models.ToContext(cmd.Context(), answers)
-		ctx = colors.ToContext(
-			ctx,
-			cmd.OutOrStderr(),
-			cmd.ErrOrStderr(),
-		)
-		q := questionnaire.New(
-			&question.WorkingDirectory{},
-			&question.FilesOverwrite{},
-			&question.Welcome{},
-			&question.Stack{},
-			&question.Type{},
-			&question.DependencyManager{},
-			&question.Locations{},
-			&question.Mounts{},
-			&question.Name{},
-			&question.ApplicationRoot{},
-			&question.Environment{},
-			&question.BuildSteps{},
-			&question.DeployCommand{},
-			&question.SocketFamily{},
-			&question.WebCommand{},
-			&question.AlmostDone{},
-			&question.Services{},
-		)
-		err := q.AskQuestions(ctx)
-		if errors.Is(err, questionnaire.ErrSilent) {
-			return nil
-		}
+This command will try to detect your project type and create the configuration files needed to deploy your project to %s.`,
+			assets.ServiceName,
+			assets.ServiceName,
+		),
+		SilenceUsage:  true,
+		SilenceErrors: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			answers := models.NewAnswers()
+			answers.Flavor, _ = cmd.Context().Value(FlavorKey).(string)
+			ctx := models.ToContext(cmd.Context(), answers)
+			ctx = colors.ToContext(
+				ctx,
+				cmd.OutOrStderr(),
+				cmd.ErrOrStderr(),
+			)
+			q := questionnaire.New(
+				&question.WorkingDirectory{},
+				&question.FilesOverwrite{},
+				&question.Welcome{},
+				&question.Stack{},
+				&question.Type{},
+				&question.DependencyManager{},
+				&question.Locations{},
+				&question.Mounts{},
+				&question.Name{},
+				&question.ApplicationRoot{},
+				&question.Environment{},
+				&question.BuildSteps{},
+				&question.DeployCommand{},
+				&question.SocketFamily{},
+				&question.WebCommand{},
+				&question.AlmostDone{},
+				&question.Services{},
+			)
+			err := q.AskQuestions(ctx)
+			if errors.Is(err, questionnaire.ErrSilent) {
+				return nil
+			}
 
-		if err != nil {
-			fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
-			return err
-		}
+			if err != nil {
+				fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
+				return err
+			}
 
-		input := answers.ToUserInput()
+			input := answers.ToUserInput()
 
-		pfier := platformifier.New(input, ctx.Value(FlavorKey).(string))
-		err = pfier.Platformify(ctx)
-		if err != nil {
-			fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
-			return fmt.Errorf("could not platformify project: %w", err)
-		}
+			pfier := platformifier.New(input, assets.ConfigFlavor)
+			err = pfier.Platformify(ctx)
+			if err != nil {
+				fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
+				return fmt.Errorf("could not configure project: %w", err)
+			}
 
-		done := question.Done{}
-		return done.Ask(ctx)
-	},
+			done := question.Done{}
+			return done.Ask(ctx)
+		},
+	}
+	cmd.AddCommand(validateCommand)
+
+	return cmd
 }

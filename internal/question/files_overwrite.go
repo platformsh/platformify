@@ -11,19 +11,8 @@ import (
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/questionnaire"
+	"github.com/platformsh/platformify/vendorization"
 )
-
-var proprietaryFiles = []string{
-	".environment",
-	".platform.app.yaml",
-	".platform/services.yaml",
-	".platform/routes.yaml",
-	".platform/applications.yaml",
-}
-var upsunProprietaryFiles = []string{
-	".environment",
-	".upsun/config.yaml",
-}
 
 type FilesOverwrite struct{}
 
@@ -38,12 +27,9 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	searchFiles := proprietaryFiles
-	if answers.Flavor == "upsun" {
-		searchFiles = upsunProprietaryFiles
-	}
-	existingFiles := make([]string, 0, len(searchFiles))
-	for _, p := range searchFiles {
+	assets, _ := vendorization.FromContext(ctx)
+	existingFiles := make([]string, 0, len(assets.ProprietaryFiles))
+	for _, p := range assets.ProprietaryFiles {
 		if st, err := os.Stat(filepath.Join(answers.WorkingDirectory, p)); err == nil && !st.IsDir() {
 			existingFiles = append(existingFiles, p)
 		}
@@ -61,7 +47,10 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 			stderr,
 			colors.Colorize(
 				colors.WarningCode,
-				"The following Platform.sh files already exist in this directory:",
+				fmt.Sprintf(
+					"The following %s files already exist in this directory:",
+					assets.ServiceName,
+				),
 			),
 		)
 		for _, p := range existingFiles {

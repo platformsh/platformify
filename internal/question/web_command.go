@@ -12,6 +12,7 @@ import (
 
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
+	"github.com/platformsh/platformify/vendorization"
 )
 
 type WebCommand struct{}
@@ -31,11 +32,21 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		return nil
 	}
 
+	assets, _ := vendorization.FromContext(ctx)
+
 	//nolint:lll
-	answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
+	answers.WebCommand = fmt.Sprintf(
+		"echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: %s#web-commands'; sleep 60",
+		assets.Docs.AppReference,
+	)
+
 	if answers.SocketFamily == models.TCP {
 		//nolint:lll
-		answers.WebCommand = "echo 'Put your web server command in here! You need to listen to \"$PORT\" port. Read more about it here: https://docs.platform.sh/create-apps/app-reference.html#web-commands'; sleep 60"
+		answers.WebCommand = fmt.Sprintf(
+			"echo 'Put your web server command in here! You need to listen to \"$PORT\" port. Read more about it here: %s#web-commands'; sleep 60",
+
+			assets.Docs.AppReference,
+		)
 	}
 
 	switch answers.Stack {

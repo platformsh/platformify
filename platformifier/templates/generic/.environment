@@ -1,4 +1,4 @@
-export RELATIONSHIPS_JSON="$(echo $PLATFORM_RELATIONSHIPS | base64 --decode)"
+export RELATIONSHIPS_JSON="$(echo ${{ .Assets.EnvPrefix }}_RELATIONSHIPS | base64 --decode)"
 {{- if .Database }}
 
 # Set database environment variables
@@ -27,6 +27,6 @@ export REDIS_URL="$CACHE_URL"
 {{- if eq .Stack.Name "strapi" }}
 
 # Strapi-specific environment variables
-export JWT_SECRET="$PLATFORM_PROJECT_ENTROPY"
-export API_TOKEN_SALT="$PLATFORM_PROJECT_ENTROPY"
+export JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
+export API_TOKEN_SALT="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 {{- end -}}

@@ -50,16 +50,16 @@ func ValidateFile(path string, schema *gojsonschema.Schema) (map[string]interfac
 	return data, nil
 }
 
-// ValidateConfig uses ValidateFile and to check config for a given directory is valid Platform.sh config.
+// ValidateConfig uses ValidateFile and to check config for a given directory is valid config.
 func ValidateConfig(path, flavor string) error {
 	switch flavor {
-	case "platformsh":
+	case "platform":
 		return validatePlatformConfig(path)
 	case "upsun":
 		return validateUpsunConfig(path)
+	default:
+		return fmt.Errorf("unknown flavor: %s", flavor)
 	}
-
-	return fmt.Errorf("unknown flavor: %s", flavor)
 }
 
 func validatePlatformConfig(path string) error {

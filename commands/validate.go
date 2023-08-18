@@ -8,38 +8,53 @@ import (
 
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/validator"
+	"github.com/platformsh/platformify/vendorization"
 )
 
-var ValidateCmd = &cobra.Command{
-	Use:   "validate",
-	Short: "Validate your Platform.sh application config.",
-	Long: "Check the application yaml configuration files are valid for deploying an application to Platform.sh.\n\n" +
-		"This will check your git repository, and validate .platform.app.yaml, services.yaml and routes.yaml files.",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		cwd, err := os.Getwd()
-		if err != nil {
-			fmt.Fprintln(
-				cmd.ErrOrStderr(),
-				colors.Colorize(
-					colors.ErrorCode,
-					fmt.Sprintf("Platform.sh config validation failed: %s", err.Error()),
-				),
-			)
-			return err
-		}
+func newValidateCommand(assets *vendorization.VendorAssets) *cobra.Command {
+	return &cobra.Command{
+		Use: "validate",
+		Short: fmt.Sprintf(
+			"Validate your %s config.",
+			assets.ServiceName,
+		),
+		Long: fmt.Sprintf(
+			"Check the application yaml configuration files are valid for deploying an application to %s.\n\n"+
+				"This will check your git repository and validate your files.",
+			assets.ServiceName,
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cwd, err := os.Getwd()
+			if err != nil {
+				fmt.Fprintln(
+					cmd.ErrOrStderr(),
+					colors.Colorize(
+						colors.ErrorCode,
+						fmt.Sprintf("%s config validation failed: %s", assets.ServiceName, err.Error()),
+					),
+				)
+				return err
+			}
 
-		if err = validator.ValidateConfig(cwd, cmd.Context().Value(FlavorKey).(string)); err != nil {
-			fmt.Fprintln(
-				cmd.ErrOrStderr(),
-				colors.Colorize(
-					colors.ErrorCode,
-					fmt.Sprintf("Platform.sh config validation failed: %s", err.Error()),
-				),
-			)
-			return err
-		}
+			if err = validator.ValidateConfig(cwd, assets.ConfigFlavor); err != nil {
+				fmt.Fprintf(
+					cmd.ErrOrStderr(),
+					colors.Colorize(
+						colors.ErrorCode,
+						"%s config validation failed: %s",
+					),
+					assets.ServiceName,
+					err.Error(),
+				)
+				return err
+			}
 
-		fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.BrandCode, "Your Platform.sh application config is valid!"))
-		return nil
-	},
+			fmt.Fprintf(
+				cmd.ErrOrStderr(),
+				colors.Colorize(colors.BrandCode, "Your %s application config is valid!\n"),
+				assets.ServiceName,
+			)
+			return nil
+		},
+	}
 }
