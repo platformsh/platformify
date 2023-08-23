@@ -32,7 +32,7 @@ func Test_getRelationships(t *testing.T) {
 			},
 		},
 		{
-			name: "MariaDB and Oracle",
+			name: "Remapped",
 			args: args{
 				services: []Service{
 					{
@@ -49,36 +49,19 @@ func Test_getRelationships(t *testing.T) {
 							Version: "14",
 						},
 					},
-				},
-			},
-			want: map[string]string{
-				"mariadb":      "mariadb:mysql",
-				"oracle-mysql": "oracle-mysql:mysql",
-			},
-		},
-		{
-			name: "Multiple",
-			args: args{
-				services: []Service{
 					{
-						Name: "mariadb",
+						Name: "chrome-headless",
 						Type: ServiceType{
-							Name:    "mariadb",
+							Name:    "chrome-headless",
 							Version: "14",
 						},
 					},
-					{
-						Name: "redis",
-						Type: ServiceType{
-							Name:    "redis",
-							Version: "6",
-						},
-					},
 				},
 			},
 			want: map[string]string{
-				"mariadb": "mariadb:mysql",
-				"redis":   "redis:redis",
+				"mariadb":         "mariadb:mysql",
+				"oracle-mysql":    "oracle-mysql:mysql",
+				"chrome-headless": "chrome-headless:http",
 			},
 		},
 	}
