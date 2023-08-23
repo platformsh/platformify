@@ -157,9 +157,16 @@ func getStack(answersStack Stack) platformifier.Stack {
 
 // getRelationships returns a map of service names to their relationship names.
 func getRelationships(services []Service) map[string]string {
+	endpointRemap := map[string]string{
+		"mariadb":      "mysql",
+		"oracle-mysql": "mysql",
+	}
 	relationships := make(map[string]string)
 	for _, service := range services {
 		endpoint := strings.Split(service.Type.Name, ":")[0]
+		if remappedEndpoint, ok := endpointRemap[endpoint]; ok {
+			endpoint = remappedEndpoint
+		}
 		relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
 	}
 	return relationships
