@@ -5,17 +5,17 @@
 # More information: {{ .Assets.Docs.Services }}
 # Full list of available services: {{ .Assets.Docs.Services }}#available-services
 {{- if .Services -}}
-{{- range $value := .Services -}}
+{{- range $value := .Services }}
 {{ $value.Name }}:
   type: {{ $value.Type }} # All available versions are: {{ $value.TypeVersions | join ", "}}
   {{- if $value.Disk }}
   disk: {{ $value.Disk }} # All available sizes are: {{ $value.DiskSizes | join ", "}}
   {{- end }}
 
-{{ end -}}
+{{- end -}}
 {{ else }}
 # relationships
 # db:
-#     type: postgresql:14
-#     disk: 1024
+#   type: postgresql:14
+#   disk: 1024
 {{ end -}}

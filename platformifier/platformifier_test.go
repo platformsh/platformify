@@ -3,6 +3,7 @@ package platformifier
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"reflect"
@@ -14,6 +15,173 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/platformsh/platformify/validator"
+)
+
+var (
+	djangoStack = &UserInput{
+		Name:            "django",
+		Type:            "python",
+		Stack:           Django,
+		Runtime:         "python-3.9",
+		ApplicationRoot: "app",
+		Environment: map[string]string{
+			"DJANGO_SETTINGS_MODULE": "app.settings",
+			"PYTHONUNBUFFERED":       "1",
+		},
+		Root:        "app",
+		BuildFlavor: "none",
+		BuildSteps: []string{
+			"pip install -r requirements.txt",
+			"# comment here",
+			"python manage.py collectstatic --noinput",
+		},
+		WebCommand:   "gunicorn app.wsgi",
+		SocketFamily: "unix",
+		DeployCommand: []string{
+			"python manage.py migrate",
+			"# comment here",
+		},
+		DependencyManagers: []string{"pip", "yarn"},
+		Locations: map[string]map[string]interface{}{
+			"/": {
+				"passthru": true,
+			},
+			"/static": {
+				"root":    "static",
+				"expires": "1h",
+				"allow":   true,
+			},
+		},
+		Dependencies: map[string]map[string]string{
+			"python": {
+				"poetry": "*",
+				"pip":    ">=20.0.0",
+			},
+			"node": {
+				"yarn": "*",
+				"npm":  ">=6.0.0",
+			},
+		},
+		Disk: "1024",
+		Mounts: map[string]map[string]string{
+			"/.npm": {
+				"source":      "local",
+				"source_path": "npm",
+			},
+			"/.pip": {
+				"source":      "local",
+				"source_path": "pip",
+			},
+		},
+		Relationships: map[string]string{
+			"db":    "db:postgresql",
+			"mysql": "mysql:mysql",
+		},
+		HasGit: true,
+		Services: []Service{
+			{
+				Name:         "db",
+				Type:         "postgres",
+				TypeVersions: []string{"13", "14", "15"},
+				Disk:         "1024",
+				DiskSizes:    []string{"1024", "2048"},
+			},
+			{
+				Name:         "mysql",
+				Type:         "mysql",
+				TypeVersions: []string{"13", "14", "15"},
+				Disk:         "1024",
+				DiskSizes:    []string{"1024", "2034"},
+			},
+		},
+	}
+	genericStack = &UserInput{
+		Name:  "Generic",
+		Type:  "java",
+		Stack: Generic,
+		Environment: map[string]string{
+			"JAVA": "19",
+		},
+		Root:        "app",
+		BuildFlavor: "",
+		BuildSteps: []string{
+			"mvn install",
+		},
+		WebCommand:         "tomcat",
+		SocketFamily:       "tcp",
+		DeployCommand:      []string{},
+		DependencyManagers: []string{"mvn"},
+		Locations: map[string]map[string]interface{}{
+			"/": {
+				"passthru": true,
+			},
+		},
+		Dependencies: map[string]map[string]string{},
+		Disk:         "1024",
+		Mounts: map[string]map[string]string{
+			"/.mvn": {
+				"source":      "local",
+				"source_path": "maven",
+			},
+		},
+		Relationships: map[string]string{
+			"mysql": "mysql:mysql",
+		},
+		HasGit: true,
+		Services: []Service{
+			{
+				Name:         "mysql",
+				Type:         "mysql",
+				TypeVersions: []string{"13", "14", "15"},
+				Disk:         "1024",
+				DiskSizes:    []string{"1024", "2048"},
+			},
+		},
+	}
+	laravelStack = &UserInput{
+		Name:               "Laravel",
+		Type:               "php",
+		Stack:              Laravel,
+		Runtime:            "php-8.2",
+		ApplicationRoot:    "app",
+		Environment:        map[string]string{},
+		Root:               "app",
+		BuildFlavor:        "php",
+		BuildSteps:         []string{},
+		DeployCommand:      []string{},
+		DependencyManagers: []string{"composer"},
+		Locations: map[string]map[string]interface{}{
+			"/": {
+				"root": "index.php",
+			},
+		},
+		Dependencies:  map[string]map[string]string{},
+		Disk:          "",
+		Mounts:        map[string]map[string]string{},
+		Relationships: map[string]string{},
+		HasGit:        false,
+		Services:      []Service{},
+	}
+	nextJSStack = &UserInput{
+		Name:  "Next.js",
+		Type:  "node",
+		Stack: NextJS,
+	}
+	strapiStack = &UserInput{
+		Name:  "Strapi",
+		Type:  "node",
+		Stack: Strapi,
+	}
+	flaskStack = &UserInput{
+		Name:  "Flask",
+		Type:  "python",
+		Stack: Flask,
+	}
+	expressStack = &UserInput{
+		Name:  "Express",
+		Type:  "node",
+		Stack: Express,
+	}
 )
 
 func TestNewPlatformifier(t *testing.T) {
@@ -288,60 +456,32 @@ func TestPlatformifier_Platformify(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Django",
-			fields: fields{ui: &UserInput{
-				Name:  "Django",
-				Type:  "python",
-				Stack: Django,
-			}},
+			name:   "Django",
+			fields: fields{ui: djangoStack},
 		},
 		{
-			name: "Generic",
-			fields: fields{ui: &UserInput{
-				Name:  "Generic",
-				Type:  "java",
-				Stack: Generic,
-			}},
+			name:   "Generic",
+			fields: fields{ui: genericStack},
 		},
 		{
-			name: "Laravel",
-			fields: fields{ui: &UserInput{
-				Name:  "Laravel",
-				Type:  "php",
-				Stack: Laravel,
-			}},
+			name:   "Laravel",
+			fields: fields{ui: laravelStack},
 		},
 		{
-			name: "Next.js",
-			fields: fields{ui: &UserInput{
-				Name:  "Next.js",
-				Type:  "node",
-				Stack: NextJS,
-			}},
+			name:   "Next.js",
+			fields: fields{ui: nextJSStack},
 		},
 		{
-			name: "Strapi",
-			fields: fields{ui: &UserInput{
-				Name:  "Strapi",
-				Type:  "node",
-				Stack: Strapi,
-			}},
+			name:   "Strapi",
+			fields: fields{ui: strapiStack},
 		},
 		{
-			name: "Flask",
-			fields: fields{ui: &UserInput{
-				Name:  "Flask",
-				Type:  "python",
-				Stack: Flask,
-			}},
+			name:   "Flask",
+			fields: fields{ui: flaskStack},
 		},
 		{
-			name: "Express",
-			fields: fields{ui: &UserInput{
-				Name:  "Express",
-				Type:  "node",
-				Stack: Express,
-			}},
+			name:   "Express",
+			fields: fields{ui: expressStack},
 		},
 	}
 
@@ -382,60 +522,32 @@ func TestPlatformifier_Upsunify(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Django",
-			fields: fields{ui: &UserInput{
-				Name:  "Django",
-				Type:  "python",
-				Stack: Django,
-			}},
+			name:   "Django",
+			fields: fields{ui: djangoStack},
 		},
 		{
-			name: "Generic",
-			fields: fields{ui: &UserInput{
-				Name:  "Generic",
-				Type:  "java",
-				Stack: Generic,
-			}},
+			name:   "Generic",
+			fields: fields{ui: genericStack},
 		},
 		{
-			name: "Laravel",
-			fields: fields{ui: &UserInput{
-				Name:  "Laravel",
-				Type:  "php",
-				Stack: Laravel,
-			}},
+			name:   "Laravel",
+			fields: fields{ui: laravelStack},
 		},
 		{
-			name: "Next.js",
-			fields: fields{ui: &UserInput{
-				Name:  "Next.js",
-				Type:  "node",
-				Stack: NextJS,
-			}},
+			name:   "Next.js",
+			fields: fields{ui: nextJSStack},
 		},
 		{
-			name: "Strapi",
-			fields: fields{ui: &UserInput{
-				Name:  "Strapi",
-				Type:  "node",
-				Stack: Strapi,
-			}},
+			name:   "Strapi",
+			fields: fields{ui: strapiStack},
 		},
 		{
-			name: "Flask",
-			fields: fields{ui: &UserInput{
-				Name:  "Flask",
-				Type:  "python",
-				Stack: Flask,
-			}},
+			name:   "Flask",
+			fields: fields{ui: flaskStack},
 		},
 		{
-			name: "Express",
-			fields: fields{ui: &UserInput{
-				Name:  "Express",
-				Type:  "node",
-				Stack: Express,
-			}},
+			name:   "Express",
+			fields: fields{ui: expressStack},
 		},
 	}
 
@@ -462,6 +574,8 @@ func TestPlatformifier_Upsunify(t *testing.T) {
 			if err := validator.ValidateConfig(dir, "upsun"); (err != nil) != tt.wantErr {
 				t.Errorf("Platformifier.Platformify() validation error = %v, wantErr %v", err, tt.wantErr)
 			}
+			out, _ := os.ReadFile(dir + "/.upsun/config.yaml")
+			fmt.Println(string(out))
 		})
 	}
 }
