@@ -41,7 +41,7 @@ func newValidateCommand(assets *vendorization.VendorAssets) *cobra.Command {
 					cmd.ErrOrStderr(),
 					colors.Colorize(
 						colors.ErrorCode,
-						"%s config validation failed: %s",
+						"%s config validation failed: %s\n",
 					),
 					assets.ServiceName,
 					err.Error(),
