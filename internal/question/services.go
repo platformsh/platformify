@@ -37,7 +37,7 @@ func (q *Services) Ask(ctx context.Context) error {
 	fmt.Fprintln(out)
 
 	question := &survey.MultiSelect{
-		Message: "Which services are you using?",
+		Message: "Select all the services you are using",
 		Options: models.ServiceNames.AllTitles(),
 	}
 
