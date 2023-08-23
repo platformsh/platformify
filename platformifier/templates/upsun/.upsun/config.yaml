@@ -159,13 +159,13 @@ applications:
     # More information: {{ .Assets.Docs.AppReference }}#dependencies
     {{ if .Dependencies -}}
     dependencies:
-      {{ range $key, $value := .Dependencies -}}
+      {{- range $key, $value := .Dependencies }}
       {{ $key }}:
-        {{ range $key, $value := $value }}
-        {{- $key }}: "{{ $value }}"
+        {{- range $key, $value := $value }}
+        {{ $key }}: "{{ $value }}"
         {{- end }}
       {{- end }}
-    {{ else -}}
+    {{- else -}}
     # dependencies:
       {{- if eq "python" .Runtime }}
     #   python3: # Specify one Python 3 package per line.
