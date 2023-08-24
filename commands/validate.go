@@ -11,7 +11,7 @@ import (
 	"github.com/platformsh/platformify/vendorization"
 )
 
-func newValidateCommand(assets *vendorization.VendorAssets) *cobra.Command {
+func NewValidateCommand(assets *vendorization.VendorAssets) *cobra.Command {
 	return &cobra.Command{
 		Use: "validate",
 		Short: fmt.Sprintf(

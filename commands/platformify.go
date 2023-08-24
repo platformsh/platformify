@@ -19,7 +19,6 @@ type contextKey string
 var FlavorKey contextKey = "flavor"
 
 func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
-	validateCommand := newValidateCommand(assets)
 	cmd := &cobra.Command{
 		Use:           assets.Use,
 		Aliases:       []string{"ify"},
@@ -77,7 +76,6 @@ func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 			return done.Ask(ctx)
 		},
 	}
-	cmd.AddCommand(validateCommand)
 
 	return cmd
 }
