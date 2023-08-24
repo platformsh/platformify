@@ -19,6 +19,7 @@ func main() {
 
 	//nolint:lll
 	assets := &vendorization.VendorAssets{
+		Use:          "platformify",
 		Binary:       "platform",
 		ConfigFlavor: "platform",
 		EnvPrefix:    "PLATFORM",

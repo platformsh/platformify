@@ -19,6 +19,8 @@ type Docs struct {
 }
 
 type VendorAssets struct {
+	Use              string
+	Short            string
 	Binary           string
 	ConfigFlavor     string
 	EnvPrefix        string

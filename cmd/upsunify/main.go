@@ -19,6 +19,7 @@ func main() {
 
 	//nolint:lll
 	assets := &vendorization.VendorAssets{
+		Use:          "upsunify",
 		Binary:       "upsun",
 		ConfigFlavor: "upsun",
 		EnvPrefix:    "UPSUN",

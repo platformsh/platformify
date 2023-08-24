@@ -18,22 +18,12 @@ type contextKey string
 
 var FlavorKey contextKey = "flavor"
 
-func newPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
+func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 	validateCommand := newValidateCommand(assets)
 	cmd := &cobra.Command{
-		Use: assets.Binary + "ify",
-		Short: fmt.Sprintf(
-			"Create the configuration files needed deploy your project to %s",
-			assets.ServiceName,
-		),
-		//nolint:lll
-		Long: fmt.Sprintf(
-			`Create the configuration files needed deploy your project to %s
-
-This command will try to detect your project type and create the configuration files needed to deploy your project to %s.`,
-			assets.ServiceName,
-			assets.ServiceName,
-		),
+		Use:           assets.Use,
+		Aliases:       []string{"ify"},
+		Short:         fmt.Sprintf("Creates starter YAML files for your %s project", assets.ServiceName),
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -8,5 +8,5 @@ import (
 
 // Execute executes the ify command and sets flags appropriately.
 func Execute(assets *vendorization.VendorAssets) error {
-	return newPlatformifyCmd(assets).ExecuteContext(vendorization.WithVendorAssets(context.Background(), assets))
+	return NewPlatformifyCmd(assets).ExecuteContext(vendorization.WithVendorAssets(context.Background(), assets))
 }
