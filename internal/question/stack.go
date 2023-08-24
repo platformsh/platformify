@@ -194,7 +194,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 					colors.WarningCode,
 					fmt.Sprintf(
 						"Check out the Symfony CLI documentation here: %s",
-						assets.Docs.SymfonyCLI,
+						assets.Docs().SymfonyCLI,
 					),
 				),
 			)
