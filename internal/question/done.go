@@ -80,7 +80,7 @@ func (q *Done) Ask(ctx context.Context) error {
 	)
 	fmt.Fprintf(out, "  $ git init %s\n", answers.WorkingDirectory)
 	fmt.Fprintln(out, "  $ git add .")
-	fmt.Fprintf(out, "  $ git commit -m 'Add %s configuration files'", assets.ServiceName)
+	fmt.Fprintf(out, "  $ git commit -m 'Add %s configuration files'\n", assets.ServiceName)
 	fmt.Fprintf(out, "  $ %s project:set-remote", assets.Binary)
 	fmt.Fprintf(out, "  $ %s push", assets.Binary)
 	fmt.Fprintln(out)
