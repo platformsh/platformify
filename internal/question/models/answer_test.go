@@ -56,12 +56,20 @@ func Test_getRelationships(t *testing.T) {
 							Version: "14",
 						},
 					},
+					{
+						Name: "redis-persistent",
+						Type: ServiceType{
+							Name:    "redis-persistent",
+							Version: "14",
+						},
+					},
 				},
 			},
 			want: map[string]string{
-				"mariadb":         "mariadb:mysql",
-				"oracle-mysql":    "oracle-mysql:mysql",
-				"chrome-headless": "chrome-headless:http",
+				"mariadb":          "mariadb:mysql",
+				"oracle-mysql":     "oracle-mysql:mysql",
+				"chrome-headless":  "chrome-headless:http",
+				"redis-persistent": "redis-persistent:redis",
 			},
 		},
 	}
