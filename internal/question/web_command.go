@@ -37,7 +37,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 	//nolint:lll
 	answers.WebCommand = fmt.Sprintf(
 		"echo 'Put your web server command in here! You need to listen to \"$UNIX\" unix socket. Read more about it here: %s#web-commands'; sleep 60",
-		assets.Docs.AppReference,
+		assets.Docs().AppReference,
 	)
 
 	if answers.SocketFamily == models.TCP {
@@ -45,7 +45,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		answers.WebCommand = fmt.Sprintf(
 			"echo 'Put your web server command in here! You need to listen to \"$PORT\" port. Read more about it here: %s#web-commands'; sleep 60",
 
-			assets.Docs.AppReference,
+			assets.Docs().AppReference,
 		)
 	}
 

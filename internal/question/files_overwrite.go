@@ -28,8 +28,8 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 	}
 
 	assets, _ := vendorization.FromContext(ctx)
-	existingFiles := make([]string, 0, len(assets.ProprietaryFiles))
-	for _, p := range assets.ProprietaryFiles {
+	existingFiles := make([]string, 0, len(assets.ProprietaryFiles()))
+	for _, p := range assets.ProprietaryFiles() {
 		if st, err := os.Stat(filepath.Join(answers.WorkingDirectory, p)); err == nil && !st.IsDir() {
 			existingFiles = append(existingFiles, p)
 		}

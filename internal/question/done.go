@@ -28,7 +28,7 @@ func (q *Done) Ask(ctx context.Context) error {
 	fmt.Fprintln(out, "│   CONGRATULATIONS!                                │")
 	fmt.Fprintln(out, "│                                                   │")
 	fmt.Fprintln(out, "│   We have created the following files for your:   │")
-	for _, f := range assets.ProprietaryFiles {
+	for _, f := range assets.ProprietaryFiles() {
 		fmt.Fprintf(out, "│     - %-44s│\n", f)
 	}
 	fmt.Fprintln(out, "│                                                   │")

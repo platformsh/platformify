@@ -109,8 +109,16 @@ func validateUpsunConfig(path string) error {
 	cnf := map[string]map[string]interface{}{}
 	var errs error
 
-	dirFs := os.DirFS(filepath.Join(path, ".upsun"))
-	if err := fs.WalkDir(dirFs, ".", func(path string, d fs.DirEntry, walkErr error) error {
+	dirFs := os.DirFS(filepath.Join(path, "."))
+	if stat, err := fs.Stat(dirFs, ".upsun"); err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("the .upsun directory does not exist")
+		}
+		return fmt.Errorf("cannot open the .upsun directory")
+	} else if !stat.IsDir() {
+		return fmt.Errorf(".upsun is not a directory")
+	}
+	if err := fs.WalkDir(dirFs, ".upsun", func(path string, d fs.DirEntry, walkErr error) error {
 		if walkErr != nil {
 			return walkErr
 		}
