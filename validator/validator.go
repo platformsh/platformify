@@ -56,7 +56,7 @@ func ValidateConfig(path, flavor string) error {
 	case "platform":
 		return validatePlatformConfig(path)
 	case "upsun":
-		return validateUpsunConfig(path)
+		return validateUpsunConfig(os.DirFS(path))
 	default:
 		return fmt.Errorf("unknown flavor: %s", flavor)
 	}
@@ -105,11 +105,10 @@ func validatePlatformConfig(path string) error {
 	return nil
 }
 
-func validateUpsunConfig(path string) error {
+func validateUpsunConfig(dirFs fs.FS) error {
 	cnf := map[string]map[string]interface{}{}
 	var errs error
 
-	dirFs := os.DirFS(filepath.Join(path, "."))
 	if stat, err := fs.Stat(dirFs, ".upsun"); err != nil {
 		if os.IsNotExist(err) {
 			return fmt.Errorf("the .upsun directory does not exist")
@@ -118,29 +117,30 @@ func validateUpsunConfig(path string) error {
 	} else if !stat.IsDir() {
 		return fmt.Errorf(".upsun is not a directory")
 	}
-	if err := fs.WalkDir(dirFs, ".upsun", func(path string, d fs.DirEntry, walkErr error) error {
-		if walkErr != nil {
-			return walkErr
+	entries, err := fs.ReadDir(dirFs, ".upsun")
+	if err != nil {
+		return fmt.Errorf("cannot open the .upsun directory")
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() || filepath.Ext(entry.Name()) != ".yaml" {
+			continue
 		}
 
-		if d.IsDir() || filepath.Ext(path) != ".yaml" {
-			return nil
+		f, loopErr := dirFs.Open(filepath.Join(".upsun", entry.Name()))
+		if loopErr != nil {
+			return loopErr
 		}
 
-		f, err := dirFs.Open(path)
-		if err != nil {
-			return err
-		}
-
-		rawData, err := io.ReadAll(f)
-		if err != nil {
-			return err
+		rawData, loopErr := io.ReadAll(f)
+		if loopErr != nil {
+			return loopErr
 		}
 
 		data := map[string]map[string]interface{}{}
-		err = yaml.Unmarshal(rawData, &data)
-		if err != nil {
-			return err
+		loopErr = yaml.Unmarshal(rawData, &data)
+		if loopErr != nil {
+			return fmt.Errorf("unmarshal failed for %s: %w", entry.Name(), loopErr)
 		}
 
 		for topKey, topValue := range data {
@@ -162,10 +162,6 @@ func validateUpsunConfig(path string) error {
 				cnf[topKey][key] = value
 			}
 		}
-
-		return nil
-	}); err != nil {
-		return err
 	}
 
 	result, err := upsunSchema.Validate(gojsonschema.NewGoLoader(cnf))
