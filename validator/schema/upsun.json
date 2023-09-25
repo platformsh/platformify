@@ -1211,8 +1211,7 @@
     },
     "services": {
       "type": [
-        "object",
-        "null"
+        "object"
       ],
       "additionalProperties": {
         "type": "object",
