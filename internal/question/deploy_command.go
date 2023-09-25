@@ -37,6 +37,7 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		}
 	case models.Laravel:
 		answers.DeployCommand = append(answers.DeployCommand,
+			"mkdir -p storage/framework/{sessions,cache,views}",
 			"php artisan optimize:clear",
 			"php artisan migrate --force",
 		)
