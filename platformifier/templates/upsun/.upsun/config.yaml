@@ -226,17 +226,18 @@ applications:
 # to power your {{ .Assets.ServiceName }} project.
 # More information: {{ .Assets.Docs.Services }}
 # Full list of available services: {{ .Assets.Docs.Services }}#available-services
+{{- if .Services }}
 services:
-  {{- if .Services }}
   {{ range $value := .Services }}
   {{- $value.Name }}:
     type: {{ $value.Type }} # All available versions are: {{ $value.TypeVersions | join ", "}}
 
   {{ end }}
-  {{- else }}
-  # db:
-  #     type: postgresql:14
-  {{ end }}
+{{- else }}
+# services:
+#   db:
+#     type: postgresql:14
+{{ end }}
 
 # The routes of the project.
 #
