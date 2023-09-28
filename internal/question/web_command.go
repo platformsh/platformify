@@ -98,12 +98,6 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			}
 		}
 	case models.Express:
-		if indexFile := utils.FindFile(answers.WorkingDirectory, "index.js"); indexFile != "" {
-			indexFile, _ = filepath.Rel(answers.WorkingDirectory, indexFile)
-			answers.WebCommand = fmt.Sprintf("node %s", indexFile)
-			return nil
-		}
-
 		if _, ok := utils.GetJSONValue(
 			[]string{"scripts", "start"},
 			path.Join(answers.WorkingDirectory, "package.json"),
@@ -114,6 +108,22 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 			} else {
 				answers.WebCommand = "NODE_ENV=production npm start"
 			}
+			return nil
+		}
+
+		if mainPath, ok := utils.GetJSONValue(
+			[]string{"main"},
+			path.Join(answers.WorkingDirectory, "package.json"),
+			true,
+		); ok {
+			answers.WebCommand = fmt.Sprintf("node %s", mainPath.(string))
+			return nil
+		}
+
+		if indexFile := utils.FindFile(answers.WorkingDirectory, "index.js"); indexFile != "" {
+			indexFile, _ = filepath.Rel(answers.WorkingDirectory, indexFile)
+			answers.WebCommand = fmt.Sprintf("node %s", indexFile)
+			return nil
 		}
 	case models.Flask:
 		appPath := ""
