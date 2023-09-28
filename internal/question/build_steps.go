@@ -40,7 +40,7 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				"export PIP_USER=0",
 				"# Install Pipenv as a global tool",
 				"python -m venv /app/.global",
-				"pip install pipenv==$PIPENV_VERSION",
+				"pip install pipenv==$PIPENV_TOOL_VERSION",
 				"pipenv install",
 			)
 		case models.Pip:

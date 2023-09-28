@@ -21,7 +21,7 @@ func (q *Environment) Ask(ctx context.Context) error {
 			answers.Environment["POETRY_VERSION"] = "1.4.0"
 			answers.Environment["POETRY_VIRTUALENVS_IN_PROJECT"] = "true"
 		case models.Pipenv:
-			answers.Environment["PIPENV_VERSION"] = "2023.2.18"
+			answers.Environment["PIPENV_TOOL_VERSION"] = "2023.2.18"
 			answers.Environment["PIPENV_VENV_IN_PROJECT"] = "1"
 		}
 	}
