@@ -98,7 +98,12 @@ func (ui *UserInput) Database() string {
 	return ""
 }
 
-// Cache returns the first service that is a database.
+// DatabaseUpper returns the uppercase slug for the first service that is a database.
+func (ui *UserInput) DatabaseUpper() string {
+	return strings.ToUpper(strings.ReplaceAll(ui.Database(), "-", "_"))
+}
+
+// Cache returns the first service that is a cache.
 func (ui *UserInput) Cache() string {
 	for _, service := range ui.Services {
 		for _, cache := range caches {
@@ -109,4 +114,9 @@ func (ui *UserInput) Cache() string {
 	}
 
 	return ""
+}
+
+// CacheUpper returns the uppercase slug for the first service that is a cache.
+func (ui *UserInput) CacheUpper() string {
+	return strings.ToUpper(strings.ReplaceAll(ui.Cache(), "-", "_"))
 }
