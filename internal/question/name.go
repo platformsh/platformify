@@ -29,7 +29,9 @@ func (q *Name) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	question := &survey.Input{Message: "Tell us your project name:", Default: slugify(path.Base(answers.WorkingDirectory))}
+	question := &survey.Input{
+		Message: "Tell us your project's application name:", Default: slugify(path.Base(answers.WorkingDirectory)),
+	}
 
 	var name string
 	err := survey.AskOne(question, &name, survey.WithValidator(survey.Required), survey.WithValidator(validSlug))
