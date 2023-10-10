@@ -27,6 +27,7 @@ func (q *Locations) Ask(ctx context.Context) error {
 		if answers.Type.Runtime == models.PHP {
 			locations := map[string]interface{}{
 				"passthru": "/index.php",
+				"root":     "",
 			}
 			if indexPath := utils.FindFile(answers.WorkingDirectory, "index.php"); indexPath != "" {
 				indexRelPath, _ := filepath.Rel(answers.WorkingDirectory, indexPath)
