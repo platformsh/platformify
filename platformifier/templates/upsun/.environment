@@ -28,7 +28,15 @@ export REDIS_URL="$CACHE_URL"
 {{- end -}}
 {{- if eq .Stack.Name "strapi" }}
 
-# Strapi-specific environment variables
+# Set Strapi-specific environment variables
+export DATABASE_HOST="$DB_HOST"
+export DATABASE_PORT="$DB_PORT"
+export DATABASE_NAME="$DB_PATH"
+export DATABASE_USERNAME="$DB_USERNAME"
+export DATABASE_PASSWORD="$DB_PASSWORD"
+export DATABASE_SCHEME="$DB_SCHEME"
+
+export ADMIN_JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 export JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 export API_TOKEN_SALT="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 {{- end -}}
