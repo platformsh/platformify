@@ -55,7 +55,7 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				answers.Environment["N_PREFIX"] = "/app/.global"
 				answers.BuildSteps = append(
 					answers.BuildSteps,
-					"n auto",
+					"n auto || n lts",
 					"hash -r",
 				)
 			}
