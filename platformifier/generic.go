@@ -1,9 +1,12 @@
 package platformifier
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"io/fs"
+	"strings"
 	"text/template"
 
 	"github.com/platformsh/platformify/vendorization"
@@ -32,6 +35,15 @@ func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput
 			return nil
 		}
 		tpl := template.Must(template.New(d.Name()).Funcs(sprig.FuncMap()).ParseFS(p.templates, name))
+		contents := &bytes.Buffer{}
+		if err := tpl.Execute(contents, templateData{input, assets}); err != nil {
+			return err
+		}
+
+		// Skip empty files
+		if strings.TrimSpace(contents.String()) == "" {
+			return nil
+		}
 
 		f, writeErr := p.fileSystem.Create(name)
 		if writeErr != nil {
@@ -39,7 +51,11 @@ func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput
 		}
 		defer f.Close()
 
-		return tpl.Execute(f, templateData{input, assets})
+		if _, err := io.Copy(f, contents); err != nil {
+			return err
+		}
+
+		return nil
 	})
 	if err != nil {
 		return err
