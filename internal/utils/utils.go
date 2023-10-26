@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -28,31 +27,17 @@ func FileExists(searchPath, name string) bool {
 
 // FindFile searches for the file inside the path recursively
 // and returns the full path of the file if found
+// If multiple files exist, tries to return the one closest to root
 func FindFile(searchPath, name string) string {
-	var found string
-	//nolint:errcheck
-	filepath.WalkDir(searchPath, func(p string, d os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
+	files := FindAllFiles(searchPath, name)
+	if len(files) == 0 {
+		return ""
+	}
 
-		if d.IsDir() {
-			// Skip vendor directories
-			if slices.Contains(skipDirs, d.Name()) {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-
-		if d.Name() == name {
-			found = p
-			return errors.New("found")
-		}
-
-		return nil
+	slices.SortFunc(files, func(a, b string) bool {
+		return len(strings.Split(a, string(os.PathSeparator))) < len(strings.Split(b, string(os.PathSeparator)))
 	})
-
-	return found
+	return files[0]
 }
 
 // FindAllFiles searches for the file inside the path recursively and returns all matches
