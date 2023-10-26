@@ -1,22 +1,25 @@
-{{- if .Database }}
-export RELATIONSHIPS_JSON="$(echo ${{ .Assets.EnvPrefix }}_RELATIONSHIPS | base64 --decode)"
-
-# Set database environment variables
-export DB_HOSTNAME="${{ .DatabaseUpper }}_HOSTNAME"
+{{- if .Database }}# Set database environment variables
+export DB_HOST="${{ .DatabaseUpper }}_HOST"
 export DB_PORT="${{ .DatabaseUpper }}_PORT"
 export DB_PATH="${{ .DatabaseUpper }}_PATH"
 export DB_USERNAME="${{ .DatabaseUpper }}_USERNAME"
 export DB_PASSWORD="${{ .DatabaseUpper }}_PASSWORD"
 export DB_SCHEME="${{ .DatabaseUpper }}_SCHEME"
-export DATABASE_URL="${DB_SCHEME}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOSTNAME}:${DB_PORT}/${DB_PATH}"
+export DATABASE_URL="${DB_SCHEME}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_PATH}"
+{{- end -}}
+{{- if eq .Stack.Name "laravel" }}
+
+# Set Laravel-specific environment variables
+export DB_CONNECTION="$DB_SCHEME"
+export DB_DATABASE="$DB_PATH"
 {{- end -}}
 {{- if .Cache }}
 
 # Set Cache environment variables
-export CACHE_HOSTNAME="${{ .CacheUpper }}_HOSTNAME"
+export CACHE_HOST="${{ .CacheUpper }}_HOST"
 export CACHE_PORT="${{ .CacheUpper }}_PORT"
 export CACHE_SCHEME="${{ .CacheUpper }}_SCHEME"
-export CACHE_URL="${CACHE_SCHEME}://${CACHE_HOSTNAME}:${CACHE_PORT}"
+export CACHE_URL="${CACHE_SCHEME}://${CACHE_HOST}:${CACHE_PORT}"
 {{- end -}}
 {{- if or (eq .Cache "redis") (eq .Cache "redis_persistent") }}
 
