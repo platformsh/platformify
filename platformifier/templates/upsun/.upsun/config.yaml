@@ -35,14 +35,15 @@ applications:
       {{ range $key, $value := .Mounts -}}
       "{{ $key }}":
         {{ range $key, $value := $value }}
+        {{- if eq $key "source" -}}{{- $value = $value | replace "local" "storage" -}}{{- end -}}
         {{- $key }}: "{{ $value }}"
         {{ end }}
       {{ end -}}
     {{- else -}}
     # mounts:
-    #   "/.cache": # Represents the path in the app.
-    #     source: "local" # "local" sources are unique to the app, while "service" sources can be shared among apps.
-    #     source_path: "cache" # The subdirectory within the mounted disk (the source) where the mount should point.
+    #   "/var/uploads": # Represents the path in the app.
+    #     source: "storage" # "storage" sources are unique to the app, but shared among instances of the app. "service" sources can be shared among apps.
+    #     source_path: "var/uploads" # The subdirectory within the mounted disk (the source) where the mount should point.
     {{- end }}
 
     # The web key configures the web server running in front of your app.
