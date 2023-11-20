@@ -57,7 +57,11 @@
         "properties": {
           "source": {
             "type": "string",
-            "title": "The type of mount that will provide the data."
+            "title": "The type of mount that will provide the data.",
+            "enum": [
+              "local",
+              "service"
+            ]
           },
           "source_path": {
             "type": "string",
@@ -343,7 +347,11 @@
             "properties": {
               "source": {
                 "type": "string",
-                "title": "The type of mount that will provide the data."
+                "title": "The type of mount that will provide the data.",
+                "enum": [
+                  "local",
+                  "service"
+                ]
               },
               "source_path": {
                 "type": "string",
@@ -724,7 +732,11 @@
               "properties": {
                 "source": {
                   "type": "string",
-                  "title": "The type of mount that will provide the data."
+                  "title": "The type of mount that will provide the data.",
+                  "enum": [
+                    "local",
+                    "service"
+                  ]
                 },
                 "source_path": {
                   "type": "string",
