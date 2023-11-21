@@ -75,7 +75,6 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		answers.Dependencies["nodejs"] = map[string]string{"yarn": "^1.22.0"}
 	} else if exists := utils.FileExists(answers.WorkingDirectory, npmLockFileName); exists {
 		answers.DependencyManagers = append(answers.DependencyManagers, models.Npm)
-		answers.Dependencies["nodejs"] = map[string]string{"sharp": "*"}
 	}
 
 	return nil
