@@ -8,7 +8,7 @@ test: generate ## Run unit tests
 
 .PHONY: lint
 lint: ## Run linter
-	command -v golangci-lint >/dev/null || go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	command -v golangci-lint >/dev/null || go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52
 	golangci-lint run --timeout=10m --verbose
 
 .PHONY: generate

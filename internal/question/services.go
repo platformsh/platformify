@@ -72,7 +72,7 @@ func (q *Services) Ask(ctx context.Context) error {
 		}
 
 		service := models.Service{
-			Name: strings.ReplaceAll(serviceName.String(), "-", "_"),
+			Name: strings.ReplaceAll(serviceName.String(), "_", "-"),
 			Type: models.ServiceType{
 				Name:    serviceName.String(),
 				Version: versions[0],
