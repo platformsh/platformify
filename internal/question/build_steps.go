@@ -50,6 +50,9 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			)
 		case models.Yarn, models.Npm:
 			if answers.Type.Runtime != models.NodeJS {
+				if _, ok := answers.Dependencies["nodejs"]; !ok {
+					answers.Dependencies["nodejs"] = map[string]string{}
+				}
 				answers.Dependencies["nodejs"]["n"] = "*"
 				answers.Dependencies["nodejs"]["npx"] = "*"
 				answers.Environment["N_PREFIX"] = "/app/.global"
@@ -90,7 +93,8 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 		}
 	}
 
-	if answers.Stack == models.Django {
+	switch answers.Stack {
+	case models.Django:
 		if managePyPath := utils.FindFile(
 			path.Join(answers.WorkingDirectory, answers.ApplicationRoot),
 			managePyFile,
@@ -112,6 +116,15 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				),
 				fmt.Sprintf("%spython %s collectstatic --noinput", prefix, managePyPath),
 			)
+		}
+	case models.NextJS:
+		// If there is no custom build script, fallback to next build for Next.js projects
+		if !slices.Contains(answers.BuildSteps, "yarn build") && !slices.Contains(answers.BuildSteps, "npm run build") {
+			cmd := "npm exec next build"
+			if slices.Contains(answers.DependencyManagers, models.Yarn) {
+				cmd = "yarn exec next build"
+			}
+			answers.BuildSteps = append(answers.BuildSteps, cmd)
 		}
 	}
 
