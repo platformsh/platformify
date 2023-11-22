@@ -32,9 +32,20 @@ export DATABASE_PORT="$DB_PORT"
 export DATABASE_NAME="$DB_PATH"
 export DATABASE_USERNAME="$DB_USERNAME"
 export DATABASE_PASSWORD="$DB_PASSWORD"
-export DATABASE_SCHEME="$DB_SCHEME"
+export DATABASE_SCHEME="$DB_CONNECTION"
 
-export ADMIN_JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
-export JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
-export API_TOKEN_SALT="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
+# Set secrets needed by Strapi, if they are not set
+# Prefer setting these as project secret variables with {{ .Assets.Binary }} variable:create env:SECRET_NAME --sensitive=true
+if [[ -z "$ADMIN_JWT_SECRET" ]]; then
+  export ADMIN_JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
+fi
+if [[ -z "$JWT_SECRET" ]]; then
+  export JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
+fi
+if [[ -z "$API_TOKEN_SALT" ]]; then
+    export API_TOKEN_SALT="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
+fi
+if [[ -z "$APP_KEYS" ]]; then
+    export APP_KEYS="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
+fi
 {{- end -}}
