@@ -48,7 +48,7 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				"pip install -r requirements.txt",
 			)
 		case models.Yarn, models.Npm:
-			if answers.Type.Runtime != models.NodeJS {
+			if answers.Type.Runtime.Type != "nodejs" {
 				if _, ok := answers.Dependencies["nodejs"]; !ok {
 					answers.Dependencies["nodejs"] = map[string]string{}
 				}

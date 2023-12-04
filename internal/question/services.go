@@ -66,9 +66,9 @@ func (q *Services) Ask(ctx context.Context) error {
 	}
 
 	for _, serviceName := range services {
-		versions, ok := models.ServiceTypeVersions[serviceName]
-		if !ok || len(versions) == 0 {
-			return nil
+		versions := serviceName.Versions.Supported
+		if len(versions) == 0 {
+			continue
 		}
 
 		service := models.Service{

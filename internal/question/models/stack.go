@@ -88,17 +88,24 @@ func (s StackList) StackByTitle(title string) (Stack, error) {
 	return GenericStack, fmt.Errorf("stack by title is not found")
 }
 
-func RuntimeForStack(stack Stack) Runtime {
+func RuntimeForStack(stack Stack) *Runtime {
 	switch stack {
 	case Django, Flask:
-		return Python
+		if r, err := Runtimes.RuntimeByType("python"); err == nil {
+			return r
+		}
 	case Rails:
-		return Ruby
+		if r, err := Runtimes.RuntimeByType("ruby"); err == nil {
+			return r
+		}
 	case Laravel:
-		return PHP
+		if r, err := Runtimes.RuntimeByType("php"); err == nil {
+			return r
+		}
 	case NextJS, Strapi, Express:
-		return NodeJS
-	default:
-		return ""
+		if r, err := Runtimes.RuntimeByType("nodejs"); err == nil {
+			return r
+		}
 	}
+	return nil
 }

@@ -41,18 +41,21 @@ type Service struct {
 }
 
 type RuntimeType struct {
-	Runtime Runtime
+	Runtime *Runtime
 	Version string
 }
 
-func (t RuntimeType) String() string {
+func (t *RuntimeType) String() string {
+	if t.Runtime == nil {
+		return ""
+	}
 	if t.Version != "" {
 		return t.Runtime.String() + ":" + t.Version
 	}
 	return t.Runtime.String()
 }
 
-func (t RuntimeType) MarshalJSON() ([]byte, error) {
+func (t *RuntimeType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t.String())
 }
 

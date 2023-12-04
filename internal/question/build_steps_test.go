@@ -8,6 +8,15 @@ import (
 	"github.com/platformsh/platformify/internal/question/models"
 )
 
+func runtimeByType(t *testing.T, typ string) *models.Runtime {
+	t.Helper()
+	r, err := models.Runtimes.RuntimeByType(typ)
+	if err != nil {
+		t.Fatalf("runtime %q not found in registry", typ)
+	}
+	return r
+}
+
 func TestBuildSteps_Ask(t *testing.T) {
 	type args struct {
 		answers models.Answers
@@ -24,7 +33,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.NextJS,
-				Type:               models.RuntimeType{Runtime: models.NodeJS, Version: "20.0"},
+				Type:               models.RuntimeType{Runtime: runtimeByType(t, "nodejs"), Version: "20.0"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Yarn},
 				Environment:        map[string]string{},
@@ -37,7 +46,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.NextJS,
-				Type:               models.RuntimeType{Runtime: models.NodeJS, Version: "20.0"},
+				Type:               models.RuntimeType{Runtime: runtimeByType(t, "nodejs"), Version: "20.0"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Npm},
 				Environment:        map[string]string{},
@@ -50,7 +59,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.GenericStack,
-				Type:               models.RuntimeType{Runtime: models.Ruby, Version: "3.3"},
+				Type:               models.RuntimeType{Runtime: runtimeByType(t, "ruby"), Version: "3.3"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Bundler},
 				Environment:        map[string]string{},
@@ -63,7 +72,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.Rails,
-				Type:               models.RuntimeType{Runtime: models.Ruby, Version: "3.3"},
+				Type:               models.RuntimeType{Runtime: runtimeByType(t, "ruby"), Version: "3.3"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Bundler},
 				Environment:        map[string]string{},
