@@ -2,7 +2,7 @@ package question
 
 import (
 	"context"
-	"path/filepath"
+	"path"
 
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"
@@ -29,10 +29,9 @@ func (q *Locations) Ask(ctx context.Context) error {
 				"passthru": "/index.php",
 				"root":     "",
 			}
-			if indexPath := utils.FindFile(answers.WorkingDirectory, "index.php"); indexPath != "" {
-				indexRelPath, _ := filepath.Rel(answers.WorkingDirectory, indexPath)
-				if filepath.Dir(indexRelPath) != "." {
-					locations["root"] = filepath.Dir(indexRelPath)
+			if indexPath := utils.FindFile(answers.WorkingDirectory, "", "index.php"); indexPath != "" {
+				if path.Dir(indexPath) != "." {
+					locations["root"] = path.Dir(indexPath)
 				}
 			}
 			answers.Locations["/"] = locations

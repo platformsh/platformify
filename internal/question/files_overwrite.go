@@ -3,8 +3,7 @@ package question
 import (
 	"context"
 	"fmt"
-	"os"
-	"path/filepath"
+	"io/fs"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -30,7 +29,7 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 	assets, _ := vendorization.FromContext(ctx)
 	existingFiles := make([]string, 0, len(assets.ProprietaryFiles()))
 	for _, p := range assets.ProprietaryFiles() {
-		if st, err := os.Stat(filepath.Join(answers.WorkingDirectory, p)); err == nil && !st.IsDir() {
+		if st, err := fs.Stat(answers.WorkingDirectory, p); err == nil && !st.IsDir() {
 			existingFiles = append(existingFiles, p)
 		}
 	}
@@ -40,7 +39,7 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 			stderr,
 			colors.Colorize(
 				colors.WarningCode,
-				fmt.Sprintf("You are reconfiguring the project at %s.", answers.WorkingDirectory),
+				fmt.Sprintf("You are reconfiguring the project at %s.", answers.Cwd),
 			),
 		)
 		fmt.Fprintln(

@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -10,23 +11,24 @@ import (
 )
 
 type Answers struct {
-	Stack              Stack                             `json:"stack"`
-	Flavor             string                            `json:"flavor"`
-	Type               RuntimeType                       `json:"type"`
-	Name               string                            `json:"name"`
-	ApplicationRoot    string                            `json:"application_root"`
-	Environment        map[string]string                 `json:"environment"`
-	BuildSteps         []string                          `json:"build_steps"`
-	WebCommand         string                            `json:"web_command"`
-	SocketFamily       SocketFamily                      `json:"socket_family"`
-	DeployCommand      []string                          `json:"deploy_command"`
-	DependencyManagers []DepManager                      `json:"dependency_managers"`
-	Dependencies       map[string]map[string]string      `json:"dependencies"`
-	BuildFlavor        string                            `json:"build_flavor"`
-	Disk               string                            `json:"disk"`
-	Mounts             map[string]map[string]string      `json:"mounts"`
-	Services           []Service                         `json:"services"`
-	WorkingDirectory   string                            `json:"working_directory"`
+	Stack              Stack                        `json:"stack"`
+	Flavor             string                       `json:"flavor"`
+	Type               RuntimeType                  `json:"type"`
+	Name               string                       `json:"name"`
+	ApplicationRoot    string                       `json:"application_root"`
+	Environment        map[string]string            `json:"environment"`
+	BuildSteps         []string                     `json:"build_steps"`
+	WebCommand         string                       `json:"web_command"`
+	SocketFamily       SocketFamily                 `json:"socket_family"`
+	DeployCommand      []string                     `json:"deploy_command"`
+	DependencyManagers []DepManager                 `json:"dependency_managers"`
+	Dependencies       map[string]map[string]string `json:"dependencies"`
+	BuildFlavor        string                       `json:"build_flavor"`
+	Disk               string                       `json:"disk"`
+	Mounts             map[string]map[string]string `json:"mounts"`
+	Services           []Service                    `json:"services"`
+	WorkingDirectory   fs.FS
+	Cwd                string
 	HasGit             bool                              `json:"has_git"`
 	FilesCreated       []string                          `json:"files_created"`
 	Locations          map[string]map[string]interface{} `json:"locations"`
@@ -115,7 +117,6 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 
 	return &platformifier.UserInput{
 		Stack:              getStack(a.Stack),
-		Root:               "",
 		ApplicationRoot:    filepath.Join(string(os.PathSeparator), a.ApplicationRoot),
 		Name:               a.Name,
 		Type:               a.Type.String(),

@@ -86,11 +86,12 @@ func validatePlatformConfig(path string) error {
 	}
 
 	foundApp := false
-	for _, file := range utils.FindAllFiles(path, ".platform.app.yaml") {
+	dirFS := os.DirFS(path)
+	for _, file := range utils.FindAllFiles(dirFS, ".", ".platform.app.yaml") {
 		foundApp = true
-		if _, err := ValidateFile(file, applicationSchema); err != nil {
-			relPath, _ := filepath.Rel(path, file)
-			errs = errors.Join(errs, fmt.Errorf("validation failed for %s: %w", relPath, err))
+		absFile := filepath.Join(path, file)
+		if _, err := ValidateFile(absFile, applicationSchema); err != nil {
+			errs = errors.Join(errs, fmt.Errorf("validation failed for %s: %w", file, err))
 		}
 	}
 

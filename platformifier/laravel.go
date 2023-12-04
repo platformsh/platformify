@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-	"path/filepath"
 
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/utils"
@@ -14,7 +13,7 @@ const (
 	composerJSONFile = "composer.json"
 )
 
-func newLaravelPlatformifier(templates fs.FS, fileSystem FS) *laravelPlatformifier {
+func newLaravelPlatformifier(templates, fileSystem fs.FS) *laravelPlatformifier {
 	return &laravelPlatformifier{
 		templates:  templates,
 		fileSystem: fileSystem,
@@ -23,19 +22,23 @@ func newLaravelPlatformifier(templates fs.FS, fileSystem FS) *laravelPlatformifi
 
 type laravelPlatformifier struct {
 	templates  fs.FS
-	fileSystem FS
+	fileSystem fs.FS
 }
 
-func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
+func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput) (map[string][]byte, error) {
 	// Check for the Laravel Bridge.
-	appRoot := filepath.Join(input.Root, input.ApplicationRoot)
-	composerJSONPaths := p.fileSystem.Find(appRoot, composerJSONFile, false)
+	composerJSONPaths := utils.FindAllFiles(p.fileSystem, input.ApplicationRoot, composerJSONFile)
 	for _, composerJSONPath := range composerJSONPaths {
-		_, required := utils.GetJSONValue([]string{"require", "platformsh/laravel-bridge"}, composerJSONPath, true)
+		_, required := utils.GetJSONValue(
+			p.fileSystem,
+			[]string{"require", "platformsh/laravel-bridge"},
+			composerJSONPath,
+			true,
+		)
 		if !required {
 			out, _, ok := colors.FromContext(ctx)
 			if !ok {
-				return fmt.Errorf("output context failed")
+				return nil, fmt.Errorf("output context failed")
 			}
 
 			var suggest = "\nPlease use composer to add the Laravel Bridge to your project:\n"
@@ -44,5 +47,5 @@ func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput
 		}
 	}
 
-	return nil
+	return nil, nil
 }

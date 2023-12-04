@@ -3,7 +3,6 @@ package question
 import (
 	"context"
 	"fmt"
-	"path"
 	"path/filepath"
 	"slices"
 
@@ -74,8 +73,9 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				)
 			}
 			if _, ok := utils.GetJSONValue(
+				answers.WorkingDirectory,
 				[]string{"scripts", "build"},
-				path.Join(answers.WorkingDirectory, "package.json"),
+				"package.json",
 				true,
 			); ok {
 				if dm == models.Yarn {
@@ -100,7 +100,8 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 	switch answers.Stack {
 	case models.Django:
 		if managePyPath := utils.FindFile(
-			path.Join(answers.WorkingDirectory, answers.ApplicationRoot),
+			answers.WorkingDirectory,
+			answers.ApplicationRoot,
 			managePyFile,
 		); managePyPath != "" {
 			prefix := ""
@@ -110,7 +111,7 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				prefix = "poetry run "
 			}
 
-			managePyPath, _ = filepath.Rel(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyPath)
+			managePyPath, _ = filepath.Rel(answers.ApplicationRoot, managePyPath)
 			assets, _ := vendorization.FromContext(ctx)
 			answers.BuildSteps = append(
 				answers.BuildSteps,
