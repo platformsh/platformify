@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/platformsh/platformify/discovery"
 	"github.com/platformsh/platformify/platformifier"
 )
 
@@ -32,6 +33,7 @@ type Answers struct {
 	HasGit             bool                              `json:"has_git"`
 	FilesCreated       []string                          `json:"files_created"`
 	Locations          map[string]map[string]interface{} `json:"locations"`
+	Discoverer         *discovery.Discoverer
 }
 
 type Service struct {

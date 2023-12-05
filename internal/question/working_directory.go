@@ -10,6 +10,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 
+	"github.com/platformsh/platformify/discovery"
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/vendorization"
@@ -34,6 +35,7 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 	answers.WorkingDirectory = os.DirFS(cwd)
 	answers.Cwd = cwd
 	answers.HasGit = false
+	answers.Discoverer = discovery.New(answers.WorkingDirectory)
 
 	var outBuf, errBuf bytes.Buffer
 	cmd := exec.CommandContext(ctx, "git", "rev-parse", "--git-dir")
@@ -88,6 +90,7 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 			answers.WorkingDirectory = os.DirFS(gitRepoAbsPath)
 			answers.Cwd = gitRepoAbsPath
 			answers.HasGit = true
+			answers.Discoverer = discovery.New(answers.WorkingDirectory)
 		}
 	}
 
