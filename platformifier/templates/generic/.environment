@@ -8,6 +8,14 @@ export DB_DATABASE="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].path
 export DB_USERNAME="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].username')"
 export DB_PASSWORD="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].password')"
 export DB_CONNECTION="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].scheme')"
+{{- if eq .Runtime "ruby" }}
+{{- if eq .Database "postgresql" }}
+export DB_CONNECTION="postgresql"
+{{- end }}
+{{- if or (eq .Database "mariadb") (eq .Database "mysql") }}
+export DB_CONNECTION="mysql2"
+{{- end }}
+{{- end }}
 export DATABASE_URL="${DB_CONNECTION}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}"
 {{- end -}}
 {{- if .Cache }}
