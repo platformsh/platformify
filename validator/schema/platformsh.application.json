@@ -518,6 +518,10 @@
         "commands": {
           "type": "object",
           "properties": {
+            "pre_start": {
+              "type": "string",
+              "title": "The command used to run before starting the application."
+            },
             "start": {
               "type": "string",
               "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
@@ -798,6 +802,10 @@
           "commands": {
             "type": "object",
             "properties": {
+              "pre_start": {
+                "type": "string",
+                "title": "The command used to run before starting the cron job."
+              },
               "start": {
                 "type": "string",
                 "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
