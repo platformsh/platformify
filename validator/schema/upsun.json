@@ -26,9 +26,9 @@
             "title": "Resources",
             "default": null
           },
-          "size": {
+          "container_profile": {
             "type": "string",
-            "title": "The container size for this application in production. Leave blank to allow it to be set dynamically.",
+            "title": "The container profile for this application in production. Leave blank to allow it to be set dynamically.",
             "default": "AUTO"
           },
           "access": {

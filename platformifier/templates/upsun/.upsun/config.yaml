@@ -9,9 +9,9 @@ applications:
     # Complete list of available runtimes: {{ .Assets.Docs.AppReference }}#types
     type: "{{ .Type }}"
 
-    # How many resources to devote to the app. Defaults to AUTO in production environments.
-    # More information: {{ .Assets.Docs.AppReference }}#sizes
-    # size:
+    # Choose which container profile (ratio CPU+RAM) your app will use. Default value comes from the image itself.
+    # More information: https://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile
+    # container_profile:
 
     # The relationships of the application with services or other applications.
     # The left-hand side is the name of the relationship as it will be exposed
