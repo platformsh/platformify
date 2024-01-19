@@ -21,11 +21,15 @@ applications:
     {{ if .Relationships -}}
     relationships:
       {{ range $key, $value := .Relationships }}
-      {{- $key }}: "{{ $value }}"
+      {{- $key }}:
+        service: "{{ $key }}"
+        endpoint: "{{ $value }}"
       {{ end -}}
     {{ else }}
     # relationships:
-    #   database: "db:postgresql"
+    #   database:
+    #     service: db
+    #     endpoint: postgresql
     {{ end }}
 
     # Mounts define directories that are writable after the build is complete.
