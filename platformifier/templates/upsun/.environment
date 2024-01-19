@@ -4,7 +4,7 @@ export DB_PORT="${{ .DatabaseUpper }}_PORT"
 export DB_PATH="${{ .DatabaseUpper }}_PATH"
 export DB_USERNAME="${{ .DatabaseUpper }}_USERNAME"
 export DB_PASSWORD="${{ .DatabaseUpper }}_PASSWORD"
-export DB_SCHEME="${{ .DatabaseUpper }}_SCHEME"
+{{ if eq .Database "postgresql" }}export DB_SCHEME="postgresql"{{ else }}export DB_SCHEME="${{ .DatabaseUpper }}_SCHEME"{{ end }}
 export DATABASE_URL="${DB_SCHEME}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_PATH}"
 {{- end -}}
 {{- if eq .Stack.Name "laravel" }}
