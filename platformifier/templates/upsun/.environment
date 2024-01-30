@@ -12,6 +12,9 @@ export DATABASE_URL="${DB_SCHEME}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${D
 # Set Laravel-specific environment variables
 export DB_CONNECTION="$DB_SCHEME"
 export DB_DATABASE="$DB_PATH"
+if [ -z "$APP_KEYS" ]; then
+    export APP_KEYS="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
+fi
 {{- end -}}
 {{- if .Cache }}
 
@@ -38,16 +41,16 @@ export DATABASE_SCHEME="$DB_SCHEME"
 
 # Set secrets needed by Strapi, if they are not set
 # Prefer setting these as project secret variables with {{ .Assets.Binary }} variable:create env:SECRET_NAME --sensitive=true
-if [[ -z "$ADMIN_JWT_SECRET" ]]; then
+if [ -z "$ADMIN_JWT_SECRET" ]; then
   export ADMIN_JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 fi
-if [[ -z "$JWT_SECRET" ]]; then
+if [ -z "$JWT_SECRET" ]; then
   export JWT_SECRET="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 fi
-if [[ -z "$API_TOKEN_SALT" ]]; then
+if [ -z "$API_TOKEN_SALT" ]; then
     export API_TOKEN_SALT="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 fi
-if [[ -z "$APP_KEYS" ]]; then
+if [ -z "$APP_KEYS" ]; then
     export APP_KEYS="${{ .Assets.EnvPrefix }}_PROJECT_ENTROPY"
 fi
 {{- end -}}
