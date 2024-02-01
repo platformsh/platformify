@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"golang.org/x/exp/slices"
 )
@@ -53,6 +54,7 @@ func (f *OSFileSystem) Find(root, name string, firstMatch bool) []string {
 	if root == "" {
 		root = "."
 	}
+	root = strings.TrimPrefix(root, "/")
 	found := make([]string, 0)
 	_ = fs.WalkDir(f.readonly(), root, func(p string, d os.DirEntry, err error) error {
 		if err != nil {
