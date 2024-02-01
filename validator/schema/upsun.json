@@ -44,9 +44,25 @@
           "relationships": {
             "type": "object",
             "additionalProperties": {
-              "type": "string"
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "type": "string"
+                    },
+                    "endpoint": {
+                      "type": "string"
+                    }
+                  },
+                  "nullable": true
+                }
+              ]
             },
-            "title": "The relationships of the application to defined services.",
+            "title": "The relationships of the service to other services.",
             "default": {}
           },
           "mounts": {
@@ -1258,7 +1274,22 @@
           "relationships": {
             "type": "object",
             "additionalProperties": {
-              "type": "string"
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "type": "string"
+                    },
+                    "endpoint": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
             },
             "title": "The relationships of the service to other services.",
             "default": {}
