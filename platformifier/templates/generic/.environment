@@ -7,7 +7,7 @@ export DB_PORT="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].port')"
 export DB_DATABASE="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].path')"
 export DB_USERNAME="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].username')"
 export DB_PASSWORD="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].password')"
-{{ if eq .Database "postgresql" }}export DB_CONNECTION="postgresql"{{ else }}export DB_CONNECTION="${{ .DatabaseUpper }}_SCHEME"{{ end }}
+{{ if eq .Database "postgresql" }}export DB_CONNECTION="postgresql"{{ else }}export DB_CONNECTION="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].scheme')"{{ end }}
 export DATABASE_URL="${DB_CONNECTION}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}"
 {{- end -}}
 {{- if .Cache }}
