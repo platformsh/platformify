@@ -125,6 +125,17 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			}
 			answers.BuildSteps = append(answers.BuildSteps, cmd)
 		}
+	case models.Rails:
+		answers.Environment["RAILS_ENV"] = "production"
+		answers.Environment["PIDFILE"] = "tmp/server.pid"
+		// If there is no custom build script, fallback to next build for Rails projects
+		if !slices.Contains(answers.BuildSteps, "bundle install") {
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"bundle install",
+				"bundle exec rails assets:precompile",
+			)
+		}
 	}
 
 	return nil

@@ -81,6 +81,14 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 
 		answers.WebCommand = fmt.Sprintf("%sgunicorn %s -b unix:$SOCKET %s --log-file -", prefix, pythonPath, wsgi)
 		return nil
+	case models.Rails:
+		if answers.SocketFamily == models.TCP {
+			answers.WebCommand = "bundle exec rails server"
+			return nil
+		}
+
+		answers.WebCommand = "bundle exec puma -b unix://$SOCKET"
+		return nil
 	case models.NextJS:
 		answers.WebCommand = "npx next start -p $PORT"
 		return nil
