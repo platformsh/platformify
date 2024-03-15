@@ -43,6 +43,10 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 			"php artisan optimize:clear",
 			"php artisan migrate --force",
 		)
+	case models.Rails:
+		answers.DeployCommand = append(answers.DeployCommand,
+			"bundle exec rake db:migrate",
+		)
 	}
 
 	return nil
