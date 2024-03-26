@@ -14,6 +14,7 @@ const (
 	PHP    Runtime = "php"
 	Python Runtime = "python"
 	Ruby   Runtime = "ruby"
+	Rust   Runtime = "rust"
 )
 
 var (
@@ -27,6 +28,7 @@ var (
 		PHP,
 		Python,
 		Ruby,
+		Rust,
 	}
 )
 
@@ -56,6 +58,8 @@ func (r Runtime) Title() string {
 		return "Python"
 	case Ruby:
 		return "Ruby"
+	case Rust:
+		return "Rust"
 	default:
 		return ""
 	}
