@@ -26,6 +26,7 @@ const (
 	Strapi
 	Flask
 	Express
+	Rails
 )
 
 type Stack int
@@ -36,6 +37,8 @@ func (s Stack) Name() string {
 		return "generic"
 	case Django:
 		return "django"
+	case Rails:
+		return "rails"
 	case Laravel:
 		return "laravel"
 	case NextJS:

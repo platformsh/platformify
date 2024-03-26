@@ -14,6 +14,7 @@ const (
 	Strapi
 	Flask
 	Express
+	Rails
 )
 
 var (
@@ -25,6 +26,7 @@ var (
 		Strapi,
 		Flask,
 		Express,
+		Rails,
 	}
 )
 
@@ -36,6 +38,8 @@ func (s Stack) Title() string {
 		return "Other"
 	case Django:
 		return "Django"
+	case Rails:
+		return "Rails"
 	case Laravel:
 		return "Laravel"
 	case NextJS:
@@ -88,6 +92,8 @@ func RuntimeForStack(stack Stack) Runtime {
 	switch stack {
 	case Django, Flask:
 		return Python
+	case Rails:
+		return Ruby
 	case Laravel:
 		return PHP
 	case NextJS, Strapi, Express:

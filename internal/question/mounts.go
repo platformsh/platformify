@@ -15,6 +15,22 @@ func (q *Mounts) Ask(ctx context.Context) error {
 	}
 
 	switch answers.Stack {
+	case models.Rails:
+		answers.Disk = "2048" // in MB
+		answers.Mounts = map[string]map[string]string{
+			"storage": {
+				"source":      "local",
+				"source_path": "storage",
+			},
+			"tmp": {
+				"source":      "tmp",
+				"source_path": "tmp",
+			},
+			"log": {
+				"source":      "tmp",
+				"source_path": "tmp",
+			},
+		}
 	case models.Laravel:
 		answers.Disk = "2048" // in MB
 		answers.Mounts = map[string]map[string]string{
