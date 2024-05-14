@@ -40,8 +40,8 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 			"mkdir -p storage/framework/sessions",
 			"mkdir -p storage/framework/cache",
 			"mkdir -p storage/framework/views",
-			"php artisan optimize:clear",
 			"php artisan migrate --force",
+			"php artisan optimize:clear",
 		)
 	}
 
