@@ -2,7 +2,7 @@ package models
 
 import (
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -169,7 +169,8 @@ func getRelationships(services []Service) map[string]string {
 		if remappedEndpoint, ok := endpointRemap[endpoint]; ok {
 			endpoint = remappedEndpoint
 		}
-		relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
+		// relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
+		relationships[service.Name] = ""
 	}
 	return relationships
 }

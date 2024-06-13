@@ -28,7 +28,7 @@ func Test_getRelationships(t *testing.T) {
 				},
 			},
 			want: map[string]string{
-				"mysql": "mysql:mysql",
+				"mysql": "",
 			},
 		},
 		{
@@ -66,10 +66,10 @@ func Test_getRelationships(t *testing.T) {
 				},
 			},
 			want: map[string]string{
-				"mariadb":          "mariadb:mysql",
-				"oracle-mysql":     "oracle-mysql:mysql",
-				"chrome-headless":  "chrome-headless:http",
-				"redis-persistent": "redis-persistent:redis",
+				"mariadb":          "",
+				"oracle-mysql":     "",
+				"chrome-headless":  "",
+				"redis-persistent": "",
 			},
 		},
 	}

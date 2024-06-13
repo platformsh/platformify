@@ -20,7 +20,7 @@ type: "{{ .Type }}"
 {{ if .Relationships -}}
 relationships:
   {{ range $key, $value := .Relationships }}
-  {{- $key }}: "{{ $value }}"
+  {{- $key }}:
   {{ end -}}
 {{ else }}
 # relationships:
