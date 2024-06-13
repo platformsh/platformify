@@ -165,11 +165,6 @@ func getRelationships(services []Service) map[string]string {
 	}
 	relationships := make(map[string]string)
 	for _, service := range services {
-		endpoint := strings.Split(service.Type.Name, ":")[0]
-		if remappedEndpoint, ok := endpointRemap[endpoint]; ok {
-			endpoint = remappedEndpoint
-		}
-		// relationships[service.Name] = fmt.Sprintf("%s:%s", service.Name, endpoint)
 		relationships[service.Name] = ""
 	}
 	return relationships
