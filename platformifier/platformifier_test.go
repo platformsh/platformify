@@ -3,7 +3,6 @@ package platformifier
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"reflect"
@@ -574,8 +573,6 @@ func TestPlatformifier_Upsunify(t *testing.T) {
 			if err := validator.ValidateConfig(dir, "upsun"); (err != nil) != tt.wantErr {
 				t.Errorf("Platformifier.Platformify() validation error = %v, wantErr %v", err, tt.wantErr)
 			}
-			out, _ := os.ReadFile(dir + "/.upsun/config.yaml")
-			fmt.Println(string(out))
 		})
 	}
 }
