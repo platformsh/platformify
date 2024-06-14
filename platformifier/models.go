@@ -51,6 +51,11 @@ func (s Stack) Name() string {
 	}
 }
 
+type Relationship struct {
+	Service  string
+	Endpoint string
+}
+
 // UserInput contains the configuration from user input.
 type UserInput struct {
 	Stack              Stack
@@ -71,7 +76,7 @@ type UserInput struct {
 	Disk               string
 	Mounts             map[string]map[string]string
 	Services           []Service
-	Relationships      map[string]string
+	Relationships      map[string]Relationship
 	WorkingDirectory   string
 	HasGit             bool
 }

@@ -72,9 +72,9 @@ var (
 				"source_path": "pip",
 			},
 		},
-		Relationships: map[string]string{
-			"db":    "postgresql",
-			"mysql": "mysql",
+		Relationships: map[string]Relationship{
+			"db":    {Service: "db", Endpoint: "postgresql"},
+			"mysql": {Service: "mysql", Endpoint: "mysql"},
 		},
 		HasGit: true,
 		Services: []Service{
@@ -123,8 +123,8 @@ var (
 				"source_path": "maven",
 			},
 		},
-		Relationships: map[string]string{
-			"mysql": "mysql",
+		Relationships: map[string]Relationship{
+			"mysql": {Service: "mysql", Endpoint: "mysql"},
 		},
 		HasGit: true,
 		Services: []Service{
@@ -157,7 +157,7 @@ var (
 		Dependencies:  map[string]map[string]string{},
 		Disk:          "",
 		Mounts:        map[string]map[string]string{},
-		Relationships: map[string]string{},
+		Relationships: map[string]Relationship{},
 		HasGit:        false,
 		Services:      []Service{},
 	}
