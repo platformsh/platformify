@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/platformsh/platformify/platformifier"
 )
@@ -153,11 +154,21 @@ func getStack(answersStack Stack) platformifier.Stack {
 	}
 }
 
-// getRelationships returns a map of service names to their relationship names.
+// getRelationships returns a map of service names to their endpoint names.
 func getRelationships(services []Service) map[string]string {
+	endpointRemap := map[string]string{
+		"mariadb":          "mysql",
+		"oracle-mysql":     "mysql",
+		"chrome-headless":  "http",
+		"redis-persistent": "redis",
+	}
 	relationships := make(map[string]string)
 	for _, service := range services {
-		relationships[service.Name] = ""
+		endpoint := strings.Split(service.Type.Name, ":")[0]
+		if remappedEndpoint, ok := endpointRemap[endpoint]; ok {
+			endpoint = remappedEndpoint
+		}
+		relationships[service.Name] = endpoint
 	}
 	return relationships
 }

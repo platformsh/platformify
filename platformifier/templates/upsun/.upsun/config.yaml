@@ -25,7 +25,7 @@ applications:
       {{ end -}}
     {{ else }}
     # relationships:
-    #   database: "db:postgresql"
+    #   db:
     {{ end }}
 
     # Mounts define directories that are writable after the build is complete.

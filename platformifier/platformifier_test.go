@@ -73,8 +73,8 @@ var (
 			},
 		},
 		Relationships: map[string]string{
-			"db":    "",
-			"mysql": "",
+			"db":    "postgresql",
+			"mysql": "mysql",
 		},
 		HasGit: true,
 		Services: []Service{
@@ -124,7 +124,7 @@ var (
 			},
 		},
 		Relationships: map[string]string{
-			"mysql": "",
+			"mysql": "mysql",
 		},
 		HasGit: true,
 		Services: []Service{
