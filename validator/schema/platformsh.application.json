@@ -45,7 +45,25 @@
     "relationships": {
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "oneOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "service": {
+                "type": "string"
+              },
+              "endpoint": {
+                "type": "string"
+              }
+            }
+          }
+        ]
       },
       "title": "The relationships of the application to defined services.",
       "default": {}
@@ -373,9 +391,28 @@
         "relationships": {
           "type": "object",
           "additionalProperties": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "service": {
+                    "type": "string"
+                  },
+                  "endpoint": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
           },
-          "title": "The relationships of the application to defined services."
+          "title": "The relationships of the application to defined services.",
+          "default": {}
         },
         "access": {
           "type": "object",
@@ -762,9 +799,28 @@
           "relationships": {
             "type": "object",
             "additionalProperties": {
-              "type": "string"
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "service": {
+                      "type": "string"
+                    },
+                    "endpoint": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
             },
-            "title": "The relationships of the application to defined services."
+            "title": "The relationships of the application to defined services.",
+            "default": {}
           },
           "access": {
             "type": "object",

@@ -3,7 +3,6 @@ package platformifier
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io/fs"
 	"os"
 	"reflect"
@@ -73,9 +72,9 @@ var (
 				"source_path": "pip",
 			},
 		},
-		Relationships: map[string]string{
-			"db":    "db:postgresql",
-			"mysql": "mysql:mysql",
+		Relationships: map[string]Relationship{
+			"db":    {Service: "db", Endpoint: "postgresql"},
+			"mysql": {Service: "mysql", Endpoint: "mysql"},
 		},
 		HasGit: true,
 		Services: []Service{
@@ -124,8 +123,8 @@ var (
 				"source_path": "maven",
 			},
 		},
-		Relationships: map[string]string{
-			"mysql": "mysql:mysql",
+		Relationships: map[string]Relationship{
+			"mysql": {Service: "mysql", Endpoint: "mysql"},
 		},
 		HasGit: true,
 		Services: []Service{
@@ -158,7 +157,7 @@ var (
 		Dependencies:  map[string]map[string]string{},
 		Disk:          "",
 		Mounts:        map[string]map[string]string{},
-		Relationships: map[string]string{},
+		Relationships: map[string]Relationship{},
 		HasGit:        false,
 		Services:      []Service{},
 	}
@@ -574,8 +573,6 @@ func TestPlatformifier_Upsunify(t *testing.T) {
 			if err := validator.ValidateConfig(dir, "upsun"); (err != nil) != tt.wantErr {
 				t.Errorf("Platformifier.Platformify() validation error = %v, wantErr %v", err, tt.wantErr)
 			}
-			out, _ := os.ReadFile(dir + "/.upsun/config.yaml")
-			fmt.Println(string(out))
 		})
 	}
 }

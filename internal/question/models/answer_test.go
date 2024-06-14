@@ -3,6 +3,8 @@ package models
 import (
 	"reflect"
 	"testing"
+
+	"github.com/platformsh/platformify/platformifier"
 )
 
 func Test_getRelationships(t *testing.T) {
@@ -12,7 +14,7 @@ func Test_getRelationships(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want map[string]string
+		want map[string]platformifier.Relationship
 	}{
 		{
 			name: "Simple",
@@ -27,8 +29,8 @@ func Test_getRelationships(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]string{
-				"mysql": "mysql:mysql",
+			want: map[string]platformifier.Relationship{
+				"mysql": {Service: "mysql", Endpoint: "mysql"},
 			},
 		},
 		{
@@ -65,11 +67,11 @@ func Test_getRelationships(t *testing.T) {
 					},
 				},
 			},
-			want: map[string]string{
-				"mariadb":          "mariadb:mysql",
-				"oracle-mysql":     "oracle-mysql:mysql",
-				"chrome-headless":  "chrome-headless:http",
-				"redis-persistent": "redis-persistent:redis",
+			want: map[string]platformifier.Relationship{
+				"mariadb":          {Service: "mariadb", Endpoint: "mysql"},
+				"oracle-mysql":     {Service: "oracle-mysql", Endpoint: "mysql"},
+				"chrome-headless":  {Service: "chrome-headless", Endpoint: "http"},
+				"redis-persistent": {Service: "redis-persistent", Endpoint: "redis"},
 			},
 		},
 	}

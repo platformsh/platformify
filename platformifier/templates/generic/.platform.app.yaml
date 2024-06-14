@@ -20,11 +20,11 @@ type: "{{ .Type }}"
 {{ if .Relationships -}}
 relationships:
   {{ range $key, $value := .Relationships }}
-  {{- $key }}: "{{ $value }}"
+  {{- $key }}:
   {{ end -}}
 {{ else }}
 # relationships:
-#   database: "db:postgresql"
+#   db:
 {{ end }}
 
 # The size of the persistent disk of the application (in MB). Minimum value is 128.
