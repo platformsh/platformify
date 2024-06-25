@@ -4,7 +4,7 @@ var (
 	LanguageTypeVersions = map[Runtime][]string{
 		DotNet: {"6.0", "3.1"},
 		Elixir: {"1.13", "1.12", "1.11"},
-		Golang: {"1.20", "1.19"},
+		Golang: {"1.22", "1.21", "1.20"},
 		Java:   {"19", "18", "17", "11", "8"},
 		Lisp:   {"2.1", "2.0", "1.5"},
 		NodeJS: {"20", "18", "16"},
