@@ -59,7 +59,7 @@ linters:
     # checks whether HTTP response body is closed successfully
     - bodyclose
     # Go linter that checks if package imports are in a list of acceptable packages
-    - depguard
+    # - depguard
     # Checks assignments with too many blank identifiers (e.g. x, , , _, := f())
     - dogsled
     # Tool for code clone detection
@@ -157,6 +157,6 @@ issues:
       source: "^//go:generate "
 
 # golangci.com configuration
-# https://github.com/golangci/golangci/wiki/Configuration
+# https://github.com/golangci/golangci-lint-action?tab=readme-ov-file#how-to-use
 service:
-  golangci-lint-version: 1.52.x # use the fixed version to not introduce new linters unexpectedly
+  golangci-lint-version: 1.59.x # use the fixed version to not introduce new linters unexpectedly
