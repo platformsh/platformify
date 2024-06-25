@@ -7,9 +7,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
-
-	"golang.org/x/exp/slices"
 )
 
 var skipDirs = []string{

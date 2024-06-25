@@ -7,9 +7,9 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/xeipuuv/gojsonschema"
-	"golang.org/x/exp/slices"
 	"gopkg.in/yaml.v3"
 
 	"github.com/platformsh/platformify/internal/utils"

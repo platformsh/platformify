@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/AlecAivazis/survey/v2"
 
