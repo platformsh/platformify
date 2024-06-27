@@ -50,10 +50,10 @@ func (f *OSFileSystem) Create(name string) (io.WriteCloser, error) {
 
 // Find searches for the file inside the path recursively and returns all matches
 func (f *OSFileSystem) Find(root, name string, firstMatch bool) []string {
+	root = strings.TrimPrefix(root, "/")
 	if root == "" {
 		root = "."
 	}
-	root = strings.TrimPrefix(root, "/")
 	found := make([]string, 0)
 	_ = fs.WalkDir(f.readonly(), root, func(p string, d os.DirEntry, err error) error {
 		if err != nil {
