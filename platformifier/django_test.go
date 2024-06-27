@@ -55,7 +55,7 @@ func (s *PlatformifyDjangoSuiteTester) TestSuccessfulFileCreation() {
 	// AND the settings.py file exists
 	s.fileSystem.EXPECT().
 		Find("", settingsPyFile, true).
-		Return([]string{settingsPyFile}).Times(2)
+		Return([]string{settingsPyFile}).Times(1)
 	s.fileSystem.EXPECT().
 		Open(gomock.Eq(settingsPyFile), gomock.Any(), gomock.Any()).
 		Return(settingsBuff, nil).Times(1)
@@ -88,11 +88,7 @@ func (s *PlatformifyDjangoSuiteTester) TestSettingsFileNotFound() {
 	// AND the settings.py file doesn't exist
 	s.fileSystem.EXPECT().
 		Find("", settingsPyFile, true).
-		Return([]string{}).Times(2)
-	// AND creation of the PSH settings file returns no errors
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(settingsPshPyFile)).
-		Return(buff, nil).Times(1)
+		Return([]string{}).Times(1)
 
 	// WHEN run config files creation
 	p := newDjangoPlatformifier(s.templates, s.fileSystem)
@@ -109,7 +105,7 @@ func (s *PlatformifyDjangoSuiteTester) TestPSHSettingsFileCreationError() {
 	// AND the settings.py file exists
 	s.fileSystem.EXPECT().
 		Find("", settingsPyFile, true).
-		Return([]string{settingsPyFile}).Times(2)
+		Return([]string{settingsPyFile}).Times(1)
 	// AND creating PSH settings file fails
 	s.fileSystem.EXPECT().
 		Create(gomock.Eq(settingsPshPyFile)).
