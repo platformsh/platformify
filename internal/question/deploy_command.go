@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"path"
 	"path/filepath"
-
-	"golang.org/x/exp/slices"
+	"slices"
 
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"

@@ -23,7 +23,7 @@ func NewValidateCommand(assets *vendorization.VendorAssets) *cobra.Command {
 				"This will check your git repository and validate your files.",
 			assets.ServiceName,
 		),
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			cwd, err := os.Getwd()
 			if err != nil {
 				fmt.Fprintln(

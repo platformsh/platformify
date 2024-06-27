@@ -25,7 +25,7 @@ func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 		Short:         fmt.Sprintf("Creates starter YAML files for your %s project", assets.ServiceName),
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			answers := models.NewAnswers()
 			answers.Flavor, _ = cmd.Context().Value(FlavorKey).(string)
 			ctx := models.ToContext(cmd.Context(), answers)

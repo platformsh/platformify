@@ -362,7 +362,7 @@ func (s *PlatformifySuiteTester) TestSuccessfulPlatformifying() {
 			}
 			err := p.Platformify(ctx)
 			// THEN it doesn't return any errors
-			assert.NoError(s.T(), err)
+			assert.NoError(t, err)
 		})
 	}
 }
@@ -436,7 +436,7 @@ func (s *PlatformifySuiteTester) TestPlatformifyingError() {
 			}
 			err := p.Platformify(ctx)
 			// THEN it fails
-			assert.Error(s.T(), err)
+			assert.Error(t, err)
 		})
 	}
 }

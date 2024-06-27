@@ -6,9 +6,8 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"slices"
 	"strings"
-
-	"golang.org/x/exp/slices"
 
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/internal/utils"

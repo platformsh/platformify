@@ -3,14 +3,15 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"cmp"
 	"encoding/json"
 	"io"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/pelletier/go-toml/v2"
-	"golang.org/x/exp/slices"
 )
 
 var skipDirs = []string{
@@ -34,8 +35,8 @@ func FindFile(searchPath, name string) string {
 		return ""
 	}
 
-	slices.SortFunc(files, func(a, b string) bool {
-		return len(strings.Split(a, string(os.PathSeparator))) < len(strings.Split(b, string(os.PathSeparator)))
+	slices.SortFunc(files, func(a, b string) int {
+		return cmp.Compare(strings.Count(a, string(os.PathSeparator)), strings.Count(b, string(os.PathSeparator)))
 	})
 	return files[0]
 }
