@@ -51,7 +51,7 @@ if os.getenv("{{ .Assets.EnvPrefix }}_APPLICATION_NAME"):
     # Database service configuration, post-build only.
     if os.getenv("{{ .Assets.EnvPrefix }}_RELATIONSHIPS") and {{ .Assets.EnvPrefix }}_DB_RELATIONSHIP:
         {{ lower .Assets.EnvPrefix }}_relationships = decode(os.getenv("{{ .Assets.EnvPrefix }}_RELATIONSHIPS"))
-        if {{ .Assets.EnvPrefix }}_DB_RELATIONSHIP in {{ .Assets.EnvPrefix }}_relationships:
+        if {{ .Assets.EnvPrefix }}_DB_RELATIONSHIP in {{ lower .Assets.EnvPrefix }}_relationships:
             db_settings = {{ lower .Assets.EnvPrefix }}_relationships[{{ .Assets.EnvPrefix }}_DB_RELATIONSHIP][0]
             engine = None
             if (
