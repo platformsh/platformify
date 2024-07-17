@@ -46,10 +46,6 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		answers.DeployCommand = append(answers.DeployCommand,
 			"bundle exec rake db:migrate",
 		)
-	case models.Rails:
-		answers.DeployCommand = append(answers.DeployCommand,
-			"bundle exec rake db:migrate",
-		)
 	}
 
 	return nil
