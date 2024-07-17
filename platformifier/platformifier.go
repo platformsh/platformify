@@ -23,7 +23,6 @@ const (
 	djangoDir  = "templates/django"
 	laravelDir = "templates/laravel"
 	nextjsDir  = "templates/nextjs"
-	railsDir   = "templates/rails"
 )
 
 // A platformifier handles the business logic of a given runtime to platformify.
