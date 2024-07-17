@@ -89,6 +89,11 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				answers.BuildSteps,
 				"composer --no-ansi --no-interaction install --no-progress --prefer-dist --optimize-autoloader --no-dev",
 			)
+		case models.Bundler:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"bundle install",
+			)
 		}
 	}
 
@@ -128,14 +133,10 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 	case models.Rails:
 		answers.Environment["RAILS_ENV"] = "production"
 		answers.Environment["PIDFILE"] = "tmp/server.pid"
-		// If there is no custom build script, fallback to next build for Rails projects
-		if !slices.Contains(answers.BuildSteps, "bundle install") {
-			answers.BuildSteps = append(
-				answers.BuildSteps,
-				"bundle install",
-				"bundle exec rails assets:precompile",
-			)
-		}
+		answers.BuildSteps = append(
+			answers.BuildSteps,
+			"bundle exec rails assets:precompile",
+		)
 	}
 
 	return nil

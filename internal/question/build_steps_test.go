@@ -45,6 +45,32 @@ func TestBuildSteps_Ask(t *testing.T) {
 			buildSteps: []string{"npm i", "npm exec next build"},
 			wantErr:    false,
 		},
+		{
+			name: "Bundler",
+			q:    &BuildSteps{},
+			args: args{models.Answers{
+				Stack:              models.GenericStack,
+				Type:               models.RuntimeType{Runtime: models.Ruby, Version: "3.3"},
+				Dependencies:       map[string]map[string]string{},
+				DependencyManagers: []models.DepManager{models.Bundler},
+				Environment:        map[string]string{},
+			}},
+			buildSteps: []string{"bundle install"},
+			wantErr:    false,
+		},
+		{
+			name: "Bundler with Rails",
+			q:    &BuildSteps{},
+			args: args{models.Answers{
+				Stack:              models.Rails,
+				Type:               models.RuntimeType{Runtime: models.Ruby, Version: "3.3"},
+				Dependencies:       map[string]map[string]string{},
+				DependencyManagers: []models.DepManager{models.Bundler},
+				Environment:        map[string]string{},
+			}},
+			buildSteps: []string{"bundle install", "bundle exec rails assets:precompile"},
+			wantErr:    false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
