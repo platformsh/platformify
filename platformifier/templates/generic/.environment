@@ -7,10 +7,17 @@ export DB_PORT="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].port')"
 export DB_DATABASE="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].path')"
 export DB_USERNAME="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].username')"
 export DB_PASSWORD="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].password')"
-{{ if eq .Database "postgresql" }}export DB_CONNECTION="postgresql"{{ else }}export DB_CONNECTION="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].scheme')"{{ end }}
-{{ if eq .Stack.Name "rails" }}{{ if or (eq .Database "mariadb") (eq .Database "mysql") }}export DB_CONNECTION="mysql2" # mysql/mariadb rails adapter{{ end }}{{ end }}
-export DATABASE_URL="${DB_CONNECTION}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}"
+{{ if eq .Database "postgresql" }}export DB_SCHEME="postgresql"
+{{- else if and (eq .Stack.Name "rails") (or (eq .Database "mariadb") (eq .Database "mysql")) }}export DB_SCHEME="mysql2" # mysql/mariadb rails adapter
+{{- else }}export DB_SCHEME="$(echo $RELATIONSHIPS_JSON | jq -r '.{{ .Database }}[0].scheme')"{{ end }}
 {{- end -}}
+{{- if eq .Stack.Name "laravel" }}
+
+# Set Laravel-specific environment variables
+export DB_CONNECTION="$DB_SCHEME"
+export DB_DATABASE="$DB_PATH"
+{{- end }}
+export DATABASE_URL="${DB_SCHEME}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_PATH}"
 {{- if .Cache }}
 
 # Set Cache environment variables
