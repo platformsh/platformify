@@ -61,10 +61,6 @@ func New(input *UserInput, flavor string, fileSystems ...FS) *Platformifier {
 	stacks = append(stacks, newGenericPlatformifier(templates, fileSystem))
 
 	switch input.Stack {
-	case Rails:
-		// No need to check for errors (see the comment above)
-		templates, _ := fs.Sub(templatesFS, railsDir)
-		stacks = append(stacks, newRailsPlatformifier(templates))
 	case Django:
 		// No need to check for errors (see the comment above)
 		templates, _ := fs.Sub(templatesFS, djangoDir)
