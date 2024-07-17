@@ -2,7 +2,7 @@
 export DB_HOST="${{ .DatabaseUpper }}_HOST"
 export DB_PORT="${{ .DatabaseUpper }}_PORT"
 export DB_PATH="${{ .DatabaseUpper }}_PATH"
-export DB_DATABASE="${{ .DatabaseUpper }}_PATH"
+export DB_DATABASE="$DB_PATH"
 export DB_USERNAME="${{ .DatabaseUpper }}_USERNAME"
 export DB_PASSWORD="${{ .DatabaseUpper }}_PASSWORD"
 {{ if eq .Database "postgresql" }}export DB_SCHEME="postgresql"
@@ -13,7 +13,6 @@ export DB_PASSWORD="${{ .DatabaseUpper }}_PASSWORD"
 
 # Set Laravel-specific environment variables
 export DB_CONNECTION="$DB_SCHEME"
-export DB_DATABASE="$DB_PATH"
 {{- end }}
 export DATABASE_URL="${DB_SCHEME}://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_PATH}"
 {{- if .Cache }}
