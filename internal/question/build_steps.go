@@ -89,6 +89,11 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 				answers.BuildSteps,
 				"composer --no-ansi --no-interaction install --no-progress --prefer-dist --optimize-autoloader --no-dev",
 			)
+		case models.Bundler:
+			answers.BuildSteps = append(
+				answers.BuildSteps,
+				"bundle install",
+			)
 		}
 	}
 
@@ -125,6 +130,13 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			}
 			answers.BuildSteps = append(answers.BuildSteps, cmd)
 		}
+	case models.Rails:
+		answers.Environment["RAILS_ENV"] = "production"
+		answers.Environment["PIDFILE"] = "tmp/server.pid"
+		answers.BuildSteps = append(
+			answers.BuildSteps,
+			"bundle exec rails assets:precompile",
+		)
 	}
 
 	return nil

@@ -22,6 +22,7 @@ const (
 	composerJSONFile = "composer.json"
 	packageJSONFile  = "package.json"
 	symfonyLockFile  = "symfony.lock"
+	rackFile         = "config.ru"
 )
 
 type Stack struct{}
@@ -57,6 +58,18 @@ func (q *Stack) Ask(ctx context.Context) error {
 	if hasSettingsPy && hasManagePy {
 		answers.Stack = models.Django
 		return nil
+	}
+
+	rackPath := utils.FindFile(answers.WorkingDirectory, rackFile)
+	if rackPath != "" {
+		f, err := os.Open(rackPath)
+		if err == nil {
+			defer f.Close()
+			if ok, _ := utils.ContainsStringInFile(f, "Rails.application.load_server", true); ok {
+				answers.Stack = models.Rails
+				return nil
+			}
+		}
 	}
 
 	requirementsPath := utils.FindFile(answers.WorkingDirectory, "requirements.txt")

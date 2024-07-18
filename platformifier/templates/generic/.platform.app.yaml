@@ -141,6 +141,8 @@ variables:
 #     XDEBUG_MODE: off
 {{- else if eq "nodejs" .Runtime }}
 #     NODE_ENV: development
+{{- else if eq "ruby" .Runtime }}
+#     RACK_ENV: production
 {{- else }}
 #     ENV_VARIABLE_NAME: "value"
 {{- end }}

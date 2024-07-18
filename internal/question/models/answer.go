@@ -141,6 +141,8 @@ func getStack(answersStack Stack) platformifier.Stack {
 		return platformifier.Django
 	case Laravel:
 		return platformifier.Laravel
+	case Rails:
+		return platformifier.Rails
 	case NextJS:
 		return platformifier.NextJS
 	case Strapi:
