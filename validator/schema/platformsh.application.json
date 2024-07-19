@@ -888,11 +888,44 @@
         "type": "string"
       },
       "title": "Resolve additional IPs to domain names."
+    },
+    "stack": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object"
+        },
+        {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              }
+            ]
+          }
+        }
+      ]
     }
   },
-  "required": [
-    "name",
-    "type"
+  "oneOf": [
+    {
+      "required": [
+        "name",
+        "type"
+      ]
+    },
+    {
+      "required": [
+        "name",
+        "stack"
+      ]
+    }
   ],
   "additionalProperties": false
 }
