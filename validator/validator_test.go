@@ -127,6 +127,73 @@ services:
 			},
 			wantErr: false,
 		},
+		{
+			name: "stack",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    stack:
+      - "php@8.3":
+        extensions:
+          - apcu
+          - sodium
+          - xsl
+          - pdo_sqlite
+      - "nodejs@20"
+      - "python@3.12"
+`,
+						),
+					},
+					".upsun/services.yaml": &fstest.MapFile{
+						Data: []byte(`
+services:
+  redis:
+    type: redis:6.2
+    size: AUTO
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "stack-and-type",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    stack:
+      - "php@8.3":
+        extensions:
+          - apcu
+          - sodium
+          - xsl
+          - pdo_sqlite
+      - "nodejs@20"
+      - "python@3.12"
+`,
+						),
+					},
+					".upsun/services.yaml": &fstest.MapFile{
+						Data: []byte(`
+services:
+  redis:
+    type: redis:6.2
+    size: AUTO
+`,
+						),
+					},
+				},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

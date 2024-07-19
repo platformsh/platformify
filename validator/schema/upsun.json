@@ -875,10 +875,42 @@
               "type": "string"
             },
             "title": "Resolve additional IPs to domain names."
+          },
+          "stack": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            ]
           }
         },
-        "required": [
-          "type"
+        "oneOf": [
+          {
+            "required": [
+              "type"
+            ]
+          },
+          {
+            "required": [
+              "stack"
+            ]
+          }
         ],
         "additionalProperties": false
       }
