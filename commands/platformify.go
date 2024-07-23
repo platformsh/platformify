@@ -1,8 +1,10 @@
 package commands
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"io"
 
 	"github.com/spf13/cobra"
 
@@ -26,56 +28,60 @@ func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			answers := models.NewAnswers()
-			answers.Flavor, _ = cmd.Context().Value(FlavorKey).(string)
-			ctx := models.ToContext(cmd.Context(), answers)
-			ctx = colors.ToContext(
-				ctx,
-				cmd.OutOrStderr(),
-				cmd.ErrOrStderr(),
-			)
-			q := questionnaire.New(
-				&question.WorkingDirectory{},
-				&question.FilesOverwrite{},
-				&question.Welcome{},
-				&question.Stack{},
-				&question.Type{},
-				&question.DependencyManager{},
-				&question.Locations{},
-				&question.Mounts{},
-				&question.Name{},
-				&question.ApplicationRoot{},
-				&question.Environment{},
-				&question.BuildSteps{},
-				&question.DeployCommand{},
-				&question.SocketFamily{},
-				&question.WebCommand{},
-				&question.AlmostDone{},
-				&question.Services{},
-			)
-			err := q.AskQuestions(ctx)
-			if errors.Is(err, questionnaire.ErrSilent) {
-				return nil
-			}
-
-			if err != nil {
-				fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
-				return err
-			}
-
-			input := answers.ToUserInput()
-
-			pfier := platformifier.New(input, assets.ConfigFlavor)
-			err = pfier.Platformify(ctx)
-			if err != nil {
-				fmt.Fprintln(cmd.ErrOrStderr(), colors.Colorize(colors.ErrorCode, err.Error()))
-				return fmt.Errorf("could not configure project: %w", err)
-			}
-
-			done := question.Done{}
-			return done.Ask(ctx)
+			return Platformify(cmd.Context(), cmd.OutOrStderr(), cmd.ErrOrStderr(), assets)
 		},
 	}
 
 	return cmd
+}
+
+func Platformify(ctx context.Context, stdout, stderr io.Writer, assets *vendorization.VendorAssets) error {
+	answers := models.NewAnswers()
+	answers.Flavor, _ = ctx.Value(FlavorKey).(string)
+	ctx = models.ToContext(ctx, answers)
+	ctx = colors.ToContext(
+		ctx,
+		stdout,
+		stderr,
+	)
+	q := questionnaire.New(
+		&question.WorkingDirectory{},
+		&question.FilesOverwrite{},
+		&question.Welcome{},
+		&question.Stack{},
+		&question.Type{},
+		&question.DependencyManager{},
+		&question.Locations{},
+		&question.Mounts{},
+		&question.Name{},
+		&question.ApplicationRoot{},
+		&question.Environment{},
+		&question.BuildSteps{},
+		&question.DeployCommand{},
+		&question.SocketFamily{},
+		&question.WebCommand{},
+		&question.AlmostDone{},
+		&question.Services{},
+	)
+	err := q.AskQuestions(ctx)
+	if errors.Is(err, questionnaire.ErrSilent) {
+		return nil
+	}
+
+	if err != nil {
+		fmt.Fprintln(stderr, colors.Colorize(colors.ErrorCode, err.Error()))
+		return err
+	}
+
+	input := answers.ToUserInput()
+
+	pfier := platformifier.New(input, assets.ConfigFlavor)
+	err = pfier.Platformify(ctx)
+	if err != nil {
+		fmt.Fprintln(stderr, colors.Colorize(colors.ErrorCode, err.Error()))
+		return fmt.Errorf("could not configure project: %w", err)
+	}
+
+	done := question.Done{}
+	return done.Ask(ctx)
 }
