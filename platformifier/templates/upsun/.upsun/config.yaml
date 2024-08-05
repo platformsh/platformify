@@ -55,6 +55,9 @@ applications:
       commands:
         # The command to launch your app. If it terminates, it’s restarted immediately.
         # You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
+        {{- if or ( eq .Stack "Django" ) ( eq .Stack "Flask" ) }}
+        # The command below assumes Gunicorn has been added as a dependency in your requirements.txt, Pipfile, or pyproject.toml file.
+        {{- end }}
         start: {{ quote .WebCommand }}
       {{- else }}
       # commands:
