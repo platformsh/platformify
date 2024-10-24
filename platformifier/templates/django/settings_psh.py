@@ -22,10 +22,7 @@ def decode(variable):
         JSON decoding error.
     """
     try:
-        if sys.version_info[1] > 5:
-            return json.loads(base64.b64decode(variable))
-        else:
-            return json.loads(base64.b64decode(variable).decode("utf-8"))
+        return json.loads(base64.b64decode(variable))
     except json.decoder.JSONDecodeError:
         print("Error decoding JSON, code %d", json.decoder.JSONDecodeError)
 
