@@ -24,6 +24,9 @@ func Test_validateUpsunConfig(t *testing.T) {
 applications:
   app1:
     type: "python:3.11"
+    mounts:
+      /mnt/data:
+        source: storage
 `),
 					},
 				},
