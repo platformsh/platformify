@@ -49,7 +49,7 @@ func (va *VendorAssets) ProprietaryFiles() []string {
 
 func (va *VendorAssets) Docs() *Docs {
 	return &Docs{
-		AppReference:   fmt.Sprintf("%s/create-apps/app-reference.html", va.DocsBaseURL),
+		AppReference:   fmt.Sprintf("%s/create-apps/app-reference/single-runtime-image.html", va.DocsBaseURL),
 		GettingStarted: fmt.Sprintf("%s/guides/symfony/get-started.html", va.DocsBaseURL),
 		Hooks:          fmt.Sprintf("%s/create-apps/hooks/hooks-comparison.html", va.DocsBaseURL),
 		PHP:            fmt.Sprintf("%s/languages/php.html", va.DocsBaseURL),
