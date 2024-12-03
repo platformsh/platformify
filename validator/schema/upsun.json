@@ -90,8 +90,7 @@
                 }
               },
               "required": [
-                "source",
-                "source_path"
+                "source"
               ],
               "additionalProperties": false
             },
@@ -376,8 +375,7 @@
                     }
                   },
                   "required": [
-                    "source",
-                    "source_path"
+                    "source"
                   ],
                   "additionalProperties": false
                 },
@@ -780,8 +778,7 @@
                       }
                     },
                     "required": [
-                      "source",
-                      "source_path"
+                      "source"
                     ],
                     "additionalProperties": false
                   },
