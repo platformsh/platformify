@@ -76,7 +76,11 @@ func (q *Stack) Ask(ctx context.Context) error {
 		answers.Stack = models.Strapi
 		return nil
 	case platformifier.Symfony:
-		// Pass to handle below
+		// Pass to handle below if no interaction
+		if answers.NoInteraction {
+			answers.Stack = models.GenericStack
+			return nil
+		}
 	default:
 		answers.Stack = models.GenericStack
 		return nil
@@ -87,7 +91,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 		f, err := os.Open(rackPath)
 		if err == nil {
 			defer f.Close()
-			if ok, _ := utils.ContainsStringInFile(f, "Rails.application.load_server", true); ok {
+			if ok, _ = utils.ContainsStringInFile(f, "Rails.application.load_server", true); ok {
 				answers.Stack = models.Rails
 				return nil
 			}
@@ -99,7 +103,7 @@ func (q *Stack) Ask(ctx context.Context) error {
 		f, err := answers.WorkingDirectory.Open(requirementsPath)
 		if err == nil {
 			defer f.Close()
-			if ok, _ := utils.ContainsStringInFile(f, "flask", true); ok {
+			if ok, _ = utils.ContainsStringInFile(f, "flask", true); ok {
 				answers.Stack = models.Flask
 				return nil
 			}

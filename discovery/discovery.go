@@ -30,6 +30,7 @@ func (d *Discoverer) Locations() (map[string]map[string]any, error) {
 	return nil, nil
 }
 func (d *Discoverer) Dependencies() (map[string]map[string]string, error) {
+	// TODO: Add back dependencies
 	// answers.Dependencies["nodejs"]["n"] = "*"
 	// answers.Dependencies["nodejs"]["npx"] = "*"
 	return nil, nil

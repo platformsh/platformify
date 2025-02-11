@@ -18,7 +18,7 @@ func (q *Done) Ask(ctx context.Context) error {
 	}
 
 	answers, ok := models.FromContext(ctx)
-	if !ok {
+	if !ok || answers.NoInteraction {
 		return nil
 	}
 

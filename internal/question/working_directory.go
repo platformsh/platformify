@@ -24,18 +24,21 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
 	answers, ok := models.FromContext(ctx)
 	if !ok {
 		return nil
+	}
+	cwd, err := os.Getwd()
+	if err != nil {
+		return err
 	}
 	answers.WorkingDirectory = os.DirFS(cwd)
 	answers.Cwd = cwd
 	answers.HasGit = false
 	answers.Discoverer = discovery.New(answers.WorkingDirectory)
+	if answers.NoInteraction {
+		return nil
+	}
 
 	var outBuf, errBuf bytes.Buffer
 	cmd := exec.CommandContext(ctx, "git", "rev-parse", "--git-dir")

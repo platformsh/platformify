@@ -27,8 +27,8 @@ var (
 
 // Returns the Runtime, either from memory or by discovering it on the spot
 func (d *Discoverer) Type() (string, error) {
-	if stack, ok := d.memory["type"]; ok {
-		return stack.(string), nil
+	if typ, ok := d.memory["type"]; ok {
+		return typ.(string), nil
 	}
 
 	typ, err := d.discoverType()
@@ -70,11 +70,11 @@ func (d *Discoverer) discoverType() (string, error) {
 		}
 	}
 
-	max := 0
+	maxCount := 0
 	selectedLang := ""
 	for lang, count := range langCount {
-		if count > max {
-			max = count
+		if count > maxCount {
+			maxCount = count
 			selectedLang = lang
 		}
 	}

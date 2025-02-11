@@ -21,6 +21,7 @@ import (
 type contextKey string
 
 var FlavorKey contextKey = "flavor"
+var NoInteractionKey contextKey = "no-interaction"
 
 func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 	cmd := &cobra.Command{
@@ -30,7 +31,12 @@ func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			return Platformify(cmd.Context(), cmd.OutOrStderr(), cmd.ErrOrStderr(), assets)
+			return Platformify(
+				cmd.Context(),
+				cmd.OutOrStderr(),
+				cmd.ErrOrStderr(),
+				assets,
+			)
 		},
 	}
 
@@ -40,6 +46,7 @@ func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 func Platformify(ctx context.Context, stdout, stderr io.Writer, assets *vendorization.VendorAssets) error {
 	answers := models.NewAnswers()
 	answers.Flavor, _ = ctx.Value(FlavorKey).(string)
+	answers.NoInteraction, _ = ctx.Value(NoInteractionKey).(bool)
 	ctx = models.ToContext(ctx, answers)
 	ctx = colors.ToContext(
 		ctx,

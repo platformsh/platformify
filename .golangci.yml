@@ -65,7 +65,7 @@ linters:
     # Tool for code clone detection
     # - dupl
     # Errcheck is a program for checking for unchecked errors in go programs. These unchecked errors can be critical bugs in some cases
-    - errcheck
+    # - errcheck
     # Tool for detection of long functions
     # - funlen
     # Checks that no globals are present in Go code

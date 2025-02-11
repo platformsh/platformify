@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/platformsh/platformify/internal/colors"
+	"github.com/platformsh/platformify/internal/question/models"
 )
 
 type AlmostDone struct{}
@@ -12,6 +13,10 @@ type AlmostDone struct{}
 func (q *AlmostDone) Ask(ctx context.Context) error {
 	out, _, ok := colors.FromContext(ctx)
 	if !ok {
+		return nil
+	}
+	answers, ok := models.FromContext(ctx)
+	if !ok || answers.NoInteraction {
 		return nil
 	}
 

@@ -18,7 +18,7 @@ func (q *Services) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	if len(answers.Services) != 0 {
+	if len(answers.Services) != 0 || answers.NoInteraction {
 		// Skip the step
 		return nil
 	}

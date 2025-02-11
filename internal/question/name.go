@@ -24,13 +24,17 @@ func (q *Name) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
+	defaultName := slugify(path.Base(answers.Cwd))
+	if answers.NoInteraction {
+		answers.Name = defaultName
+	}
 	if answers.Name != "" {
 		// Skip the step
 		return nil
 	}
 
 	question := &survey.Input{
-		Message: "Tell us your project's application name:", Default: slugify(path.Base(answers.Cwd)),
+		Message: "Tell us your project's application name:", Default: defaultName,
 	}
 
 	var name string

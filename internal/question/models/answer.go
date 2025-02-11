@@ -12,6 +12,7 @@ import (
 )
 
 type Answers struct {
+	NoInteraction      bool
 	Stack              Stack
 	Flavor             string
 	Type               RuntimeType
@@ -78,9 +79,10 @@ func (t ServiceType) MarshalJSON() ([]byte, error) {
 
 func NewAnswers() *Answers {
 	return &Answers{
-		Environment: make(map[string]string),
-		BuildSteps:  make([]string, 0),
-		Services:    make([]Service, 0),
+		NoInteraction: true,
+		Environment:   make(map[string]string),
+		BuildSteps:    make([]string, 0),
+		Services:      make([]Service, 0),
 	}
 }
 
@@ -119,6 +121,9 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 		ApplicationRoot:    filepath.Join(string(os.PathSeparator), a.ApplicationRoot),
 		Name:               a.Name,
 		Type:               a.Type.String(),
+		Runtime:            strings.Split(a.Type.Runtime.String(), ":")[0],
+		SocketFamily:       a.SocketFamily.String(),
+		Disk:               a.Disk,
 		Environment:        a.Environment,
 		BuildSteps:         a.BuildSteps,
 		DependencyManagers: dependencyManagers,

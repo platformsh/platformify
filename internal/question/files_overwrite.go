@@ -19,7 +19,7 @@ type FilesOverwrite struct {
 
 func (q *FilesOverwrite) Ask(ctx context.Context) error {
 	answers, ok := models.FromContext(ctx)
-	if !ok {
+	if !ok || answers.NoInteraction {
 		return nil
 	}
 

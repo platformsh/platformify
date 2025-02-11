@@ -75,7 +75,10 @@ type UserInput struct {
 	ApplicationRoot    string
 	Name               string
 	Type               string
+	Runtime            string
+	SocketFamily       string
 	Environment        map[string]string
+	Disk               string
 	BuildSteps         []string
 	WebCommand         []string
 	DeployCommand      []string
