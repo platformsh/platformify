@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path"
 
@@ -23,6 +24,7 @@ type contextKey string
 var FlavorKey contextKey = "flavor"
 
 func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
+	var noInteraction bool
 	cmd := &cobra.Command{
 		Use:           assets.Use,
 		Aliases:       []string{"ify"},
@@ -30,21 +32,40 @@ func NewPlatformifyCmd(assets *vendorization.VendorAssets) *cobra.Command {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			return Platformify(cmd.Context(), cmd.OutOrStderr(), cmd.ErrOrStderr(), assets)
+			return Platformify(
+				cmd.Context(),
+				cmd.OutOrStderr(),
+				cmd.ErrOrStderr(),
+				noInteraction,
+				assets,
+			)
 		},
 	}
 
+	cmd.Flags().BoolVar(&noInteraction, "no-interaction", false, "Disable interactive prompts")
 	return cmd
 }
 
-func Platformify(ctx context.Context, stdout, stderr io.Writer, assets *vendorization.VendorAssets) error {
-	answers := models.NewAnswers()
-	answers.Flavor, _ = ctx.Value(FlavorKey).(string)
-	ctx = models.ToContext(ctx, answers)
-	ctx = colors.ToContext(ctx, stdout, stderr)
+// Discover detects project configuration non-interactively.
+// It is the entry point for programmatic callers like source-integration-apps.
+func Discover(
+	ctx context.Context,
+	flavor string,
+	noInteraction bool,
+	fileSystem fs.FS,
+) (*platformifier.UserInput, error) {
+	answers, _ := models.FromContext(ctx)
+	if answers == nil {
+		answers = models.NewAnswers()
+		ctx = models.ToContext(ctx, answers)
+	}
+	answers.Flavor = flavor
+	answers.NoInteraction = noInteraction
+	if fileSystem != nil {
+		answers.WorkingDirectory = fileSystem
+	}
 	q := questionnaire.New(
 		&question.WorkingDirectory{},
-		&question.FilesOverwrite{},
 		&question.Welcome{},
 		&question.Stack{},
 		&question.Type{},
@@ -63,21 +84,46 @@ func Platformify(ctx context.Context, stdout, stderr io.Writer, assets *vendoriz
 	)
 	err := q.AskQuestions(ctx)
 	if errors.Is(err, questionnaire.ErrSilent) {
-		return nil
+		return nil, nil
 	}
 
 	if err != nil {
-		fmt.Fprintln(stderr, colors.Colorize(colors.ErrorCode, err.Error()))
-		return err
+		return nil, err
 	}
 
-	input := answers.ToUserInput()
+	return answers.ToUserInput(), nil
+}
 
+func Platformify(
+	ctx context.Context,
+	stdout, stderr io.Writer,
+	noInteraction bool,
+	assets *vendorization.VendorAssets,
+) error {
+	ctx = colors.ToContext(ctx, stdout, stderr)
+	ctx = models.ToContext(ctx, models.NewAnswers())
+	input, err := Discover(ctx, assets.ConfigFlavor, noInteraction, nil)
+	if err != nil {
+		return err
+	}
+	if input == nil {
+		return nil
+	}
+	answers, _ := models.FromContext(ctx)
 	pfier := platformifier.New(input, assets.ConfigFlavor)
 	configFiles, err := pfier.Platformify(ctx)
 	if err != nil {
-		fmt.Fprintln(stderr, colors.Colorize(colors.ErrorCode, err.Error()))
 		return fmt.Errorf("could not configure project: %w", err)
+	}
+
+	filesToCreateUpdate := make([]string, 0, len(configFiles))
+	for file := range configFiles {
+		filesToCreateUpdate = append(filesToCreateUpdate, file)
+	}
+
+	filesOverwrite := question.FilesOverwrite{FilesToCreateUpdate: filesToCreateUpdate}
+	if err := filesOverwrite.Ask(ctx); err != nil {
+		return err
 	}
 
 	for file, contents := range configFiles {

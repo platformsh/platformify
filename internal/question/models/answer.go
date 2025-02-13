@@ -12,6 +12,7 @@ import (
 )
 
 type Answers struct {
+	NoInteraction      bool
 	Stack              Stack                        `json:"stack"`
 	Flavor             string                       `json:"flavor"`
 	Type               RuntimeType                  `json:"type"`

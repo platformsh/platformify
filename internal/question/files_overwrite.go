@@ -13,11 +13,20 @@ import (
 	"github.com/platformsh/platformify/vendorization"
 )
 
-type FilesOverwrite struct{}
+// FilesOverwrite prompts the user to confirm overwriting existing config files.
+// If FilesToCreateUpdate is set, those files are checked instead of the
+// default proprietary files list.
+type FilesOverwrite struct {
+	FilesToCreateUpdate []string
+}
 
 func (q *FilesOverwrite) Ask(ctx context.Context) error {
 	answers, ok := models.FromContext(ctx)
 	if !ok {
+		return nil
+	}
+
+	if answers.NoInteraction {
 		return nil
 	}
 
@@ -26,15 +35,21 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	assets, _ := vendorization.FromContext(ctx)
-	existingFiles := make([]string, 0, len(assets.ProprietaryFiles()))
-	for _, p := range assets.ProprietaryFiles() {
+	filesToCheck := q.FilesToCreateUpdate
+	if len(filesToCheck) == 0 {
+		assets, _ := vendorization.FromContext(ctx)
+		filesToCheck = assets.ProprietaryFiles()
+	}
+
+	existingFiles := make([]string, 0, len(filesToCheck))
+	for _, p := range filesToCheck {
 		if st, err := fs.Stat(answers.WorkingDirectory, p); err == nil && !st.IsDir() {
 			existingFiles = append(existingFiles, p)
 		}
 	}
 
 	if len(existingFiles) > 0 {
+		assets, _ := vendorization.FromContext(ctx)
 		fmt.Fprintln(
 			stderr,
 			colors.Colorize(
