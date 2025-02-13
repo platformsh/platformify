@@ -25,6 +25,9 @@ func (q *Name) Ask(ctx context.Context) error {
 		return nil
 	}
 	defaultName := slugify(path.Base(answers.Cwd))
+	if defaultName == "" {
+		defaultName = "app"
+	}
 	if answers.NoInteraction {
 		answers.Name = defaultName
 	}

@@ -23,11 +23,11 @@ func ToContext(ctx context.Context, out, err io.Writer) context.Context {
 func FromContext(ctx context.Context) (out, err io.Writer, ok bool) {
 	out, ok = ctx.Value(outKey).(io.Writer)
 	if !ok {
-		return nil, nil, false
+		return io.Discard, io.Discard, false
 	}
 	err, ok = ctx.Value(errKey).(io.Writer)
 	if !ok {
-		return nil, nil, false
+		return out, io.Discard, false
 	}
 	return out, err, true
 }

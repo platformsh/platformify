@@ -28,15 +28,17 @@ func (q *Type) Ask(ctx context.Context) error {
 			return
 		}
 
-		fmt.Fprintf(
-			stderr,
-			"%s %s\n",
-			colors.Colorize(colors.GreenCode, "✓"),
-			colors.Colorize(
-				colors.BrandCode,
-				fmt.Sprintf("Detected runtime: %s", answers.Type.Runtime.Title()),
-			),
-		)
+		if answers.Type.Runtime.Title() != "" {
+			fmt.Fprintf(
+				stderr,
+				"%s %s\n",
+				colors.Colorize(colors.GreenCode, "✓"),
+				colors.Colorize(
+					colors.BrandCode,
+					fmt.Sprintf("Detected runtime: %s", answers.Type.Runtime.Title()),
+				),
+			)
+		}
 	}()
 
 	typ, err := answers.Discoverer.Type()

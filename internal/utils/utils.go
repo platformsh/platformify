@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"cmp"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/fs"
 	"os"
@@ -176,7 +177,12 @@ func GetTOMLValue(
 
 func CountFiles(fileSystem fs.FS) (map[string]int, error) {
 	fileCounter := make(map[string]int)
-	err := fs.WalkDir(fileSystem, ".", func(path string, d fs.DirEntry, _ error) error {
+	err := fs.WalkDir(fileSystem, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+
 		if d.IsDir() {
 			if slices.Contains(skipDirs, d.Name()) {
 				return filepath.SkipDir
