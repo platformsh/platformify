@@ -76,8 +76,11 @@
                   "type": "string",
                   "title": "The type of mount that will provide the data.",
                   "enum": [
+                    "instance",
+                    "service",
                     "storage",
-                    "service"
+                    "temporary",
+                    "tmp"
                   ]
                 },
                 "source_path": {
@@ -361,8 +364,11 @@
                       "type": "string",
                       "title": "The type of mount that will provide the data.",
                       "enum": [
+                        "instance",
+                        "service",
                         "storage",
-                        "service"
+                        "temporary",
+                        "tmp"
                       ]
                     },
                     "source_path": {
@@ -764,8 +770,11 @@
                         "type": "string",
                         "title": "The type of mount that will provide the data.",
                         "enum": [
+                          "instance",
+                          "service",
                           "storage",
-                          "service"
+                          "temporary",
+                          "tmp"
                         ]
                       },
                       "source_path": {
@@ -849,6 +858,10 @@
                     "start": {
                       "type": "string",
                       "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
+                    },
+                    "post_start": {
+                      "type": "string",
+                      "title": "A command executed after the application is started."
                     }
                   },
                   "required": [
