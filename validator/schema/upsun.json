@@ -8,6 +8,27 @@
       "additionalProperties": {
         "type": "object",
         "properties": {
+          "resources": {
+            "type": "object",
+            "deprecationMessage": "Deprecated",
+            "properties": {
+              "base_memory": {
+                "type": "integer",
+                "title": "The base memory for the container",
+                "default": 64
+              },
+              "memory_ratio": {
+                "type": "integer",
+                "title": "The amount of memory to allocate per units of CPU",
+                "default": 128
+              }
+            },
+            "additionalProperties": false,
+            "nullable": true,
+            "title": "Use flexible resources.",
+            "description": "Adjust the amount of memory using the resources key in your Platform.sh app configuration. All memory must stay within the limits set by your plan.",
+            "default": null
+          },
           "container_profile": {
             "type": "string",
             "title": "The container profile for this application in production. Leave blank to allow it to be set dynamically.",
@@ -165,7 +186,9 @@
           "runtime": {
             "type": "object",
             "title": "Runtime-specific configuration.",
-            "description": "Customizations to your PHP or Lisp runtime.\\nContains a runtime dictionary:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#runtime"
+            "description": "Customizations to your PHP or Lisp runtime.\\nContains a runtime dictionary:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#runtime",
+            "default": {},
+            "deprecationMessage": "Deprecated"
           },
           "preflight": {
             "type": "object",
@@ -209,6 +232,42 @@
                 "type": "string",
                 "title": "The pre-set build tasks to use for this application.",
                 "default": null
+              },
+              "caches": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "directory": {
+                      "type": "string",
+                      "title": "The directory, relative to the application root, that should be cached.",
+                      "default": null
+                    },
+                    "watch": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "The file or files whose hashed contents should be considered part of the cache key."
+                    },
+                    "allow_stale": {
+                      "type": "boolean",
+                      "title": "If true, on a cache miss the last cache version will be used and can be updated in place.",
+                      "default": false
+                    },
+                    "share_between_apps": {
+                      "type": "boolean",
+                      "title": "Whether multiple applications in the project should share cached directories.",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "watch"
+                  ],
+                  "additionalProperties": false
+                },
+                "title": "The configuration of paths managed by the build cache.",
+                "default": {}
               }
             },
             "additionalProperties": false,
@@ -256,47 +315,110 @@
               "root": null
             }
           },
-          "operations": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "commands": {
-                  "type": "object",
-                  "properties": {
-                    "start": {
-                      "type": "string",
-                      "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
-                    }  
-                  },
-                  "required": [
-                    "start"
-                  ]
-                },
-                "role": {
-                  "type": "string",
-                  "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP.",
-                  "enum": [
-                    "viewer",
-                    "contributor",
-                    "admin"
-                  ]
-                }
-              },
-              "required": [
-                "commands"
-              ],
-              "additionalProperties": false
-            },
-            "title": "Runtime operations that can be executed in the application container.",
-            "description": "For more information, see [Runtime operations](https://docs.upsun.com/create-apps/runtime-operations.html)",
-            "default": {}
-          },
           "web": {
             "type": "object",
             "title": "How the web application is served.",
             "description": "More information:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#web",
             "properties": {
+              "variables": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "title": "Variables provide environment-sensitive information to control how your application behaves.  To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment."
+              },
+              "timezone": {
+                "type": "string",
+                "title": "The timezone of the application.  This primarily affects the timezone in which cron tasks will run.  It will not affect the application itself. Defaults to UTC if not specified."
+              },
+              "mounts": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "source": {
+                      "type": "string",
+                      "title": "The type of mount that will provide the data.",
+                      "enum": [
+                        "instance",
+                        "service",
+                        "storage",
+                        "temporary",
+                        "tmp"
+                      ]
+                    },
+                    "source_path": {
+                      "type": "string",
+                      "title": "The path to be mounted, relative to the root directory of the volume that's being mounted from."
+                    },
+                    "service": {
+                      "type": "string",
+                      "title": "The name of the service that the volume will be mounted from. Must be a service in `services.yaml` of type `network-storage`."
+                    }
+                  },
+                  "required": [
+                    "source"
+                  ],
+                  "additionalProperties": false
+                },
+                "title": "Filesystem mounts of this application.  If not specified the application will have no writeable disk space."
+              },
+              "relationships": {
+                "type": "object",
+                "additionalProperties": {
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "service": {
+                          "type": "string"
+                        },
+                        "endpoint": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "title": "The relationships of the application to defined services.",
+                "default": {}
+              },
+              "access": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "title": "Access information, a mapping between access type and roles."
+              },
+              "size": {
+                "type": "string",
+                "title": "The container size for this application in production. Leave blank to allow it to be set dynamically."
+              },
+              "resources": {
+                "type": "object",
+                "properties": {
+                  "base_memory": {
+                    "type": "integer",
+                    "title": "The base memory for the container",
+                    "default": 64
+                  },
+                  "memory_ratio": {
+                    "type": "integer",
+                    "title": "The amount of memory to allocate per units of CPU",
+                    "default": 128
+                  }
+                },
+                "additionalProperties": false,
+                "nullable": true,
+                "title": "Resources"
+              },
               "locations": {
                 "type": "object",
                 "additionalProperties": {
@@ -368,8 +490,8 @@
                               "boolean"
                             ],
                             "title": "Whether to forward disallowed and missing resources from this location to the app.",
-                            "description": "Whether to forward disallowed and missing resources from this location to the application. On PHP, set to the PHP front controller script, as a URL fragment. Otherwise set to `true`/`false`.",
-                            "default": false
+                            "description": "On PHP, set to the PHP front controller script, as a URL fragment. Otherwise set to `true`/`false`.",
+                            "default": true
                           },
                           "scripts": {
                             "type": "boolean",
@@ -388,8 +510,7 @@
                               "type": "string"
                             },
                             "title": "A set of header fields set to the HTTP response.",
-                            "description": "Any additional headers to apply to static assets, mapping header names to values. Responses from the app aren’t affected.\\nSee how to set custom headers on static content:\\nhttps://docs.upsun.com/create-apps/web/custom-headers.html",
-                            "default": {}
+                            "description": "Any additional headers to apply to static assets, mapping header names to values. Responses from the app aren’t affected.\\nSee how to set custom headers on static content:\\nhttps://docs.upsun.com/create-apps/web/custom-headers.html"
                           }
                         },
                         "additionalProperties": false
@@ -457,12 +578,93 @@
                 },
                 "additionalProperties": false,
                 "title": "Configuration on how the web server communicates with the application."
+              },
+              "document_root": {
+                "type": "string",
+                "title": "The document root of this application, relative to its root.",
+                "deprecationMessage": "Deprecated"
+              },
+              "passthru": {
+                "type": "string",
+                "title": "The URL to use as a passthru if a file doesn't match the whitelist.",
+                "deprecationMessage": "Deprecated"
+              },
+              "index_files": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Files to look for to serve directories.",
+                "deprecationMessage": "Deprecated"
+              },
+              "whitelist": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Whitelisted entries.",
+                "deprecationMessage": "Deprecated"
+              },
+              "blacklist": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "title": "Blacklisted entries.",
+                "deprecationMessage": "Deprecated"
+              },
+              "expires": {
+                "type": "string",
+                "title": "Amount of time to cache static assets.",
+                "deprecationMessage": "Deprecated"
+              },
+              "move_to_root": {
+                "type": "boolean",
+                "title": "Whether to move the whole root of the app to the document root.",
+                "default": false,
+                "deprecationMessage": "Deprecated"
               }
             },
             "additionalProperties": false,
             "default": {
               "locations": {}
             }
+          },
+          "operations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "commands": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "string",
+                      "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
+                    }
+                  },
+                  "required": [
+                    "start"
+                  ]
+                },
+                "role": {
+                  "type": "string",
+                  "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP.",
+                  "enum": [
+                    "viewer",
+                    "contributor",
+                    "admin"
+                  ]
+                }
+              },
+              "required": [
+                "commands"
+              ],
+              "additionalProperties": false
+            },
+            "title": "Runtime operations that can be executed in the application container.",
+            "description": "For more information, see [Runtime operations](https://docs.upsun.com/create-apps/runtime-operations.html)",
+            "default": {}
           },
           "hooks": {
             "type": "object",
@@ -531,6 +733,11 @@
                   "title": "The cron timeout.",
                   "description": "The maximum amount of time a cron can run before it’s terminated. Defaults to the maximum allowed value of `86400` seconds (24 hours).",
                   "maximum": 86400
+                },
+                "cmd": {
+                  "type": "string",
+                  "title": "The command to execute.",
+                  "deprecationMessage": "Deprecated"
                 }
               },
               "required": [
@@ -658,10 +865,10 @@
                   "additionalProperties": {
                     "oneOf": [
                       {
-                        "type": "string"
+                        "type": "null"
                       },
                       {
-                        "type": "null"
+                        "type": "string"
                       },
                       {
                         "type": "object",
@@ -690,6 +897,32 @@
                   "default": {
                     "ssh": "contributor"
                   }
+                },
+                "size": {
+                  "type": "string",
+                  "title": "The container size for this application in production. Leave blank to allow it to be set dynamically.",
+                  "deprecationMessage": "Deprecated"
+                },
+                "resources": {
+                  "type": "object",
+                  "properties": {
+                    "base_memory": {
+                      "type": "integer",
+                      "title": "The base memory for the container",
+                      "default": 64,
+                      "deprecationMessage": "Deprecated"
+                    },
+                    "memory_ratio": {
+                      "type": "integer",
+                      "title": "The amount of memory to allocate per units of CPU",
+                      "default": 128,
+                      "deprecationMessage": "Deprecated"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "nullable": true,
+                  "title": "Resources",
+                  "deprecationMessage": "Deprecated"
                 },
                 "commands": {
                   "type": "object",
@@ -825,7 +1058,7 @@
                   "expires": {
                     "type": "string",
                     "description": "The duration the redirect is cached. Examples of valid values include 3600s, 1d, 2w, 3m.\\nTo disable caching for all your redirects, set expires to 0. You can also disable caching on a specific redirect: \\nhttps://docs.upsun.com/define-routes/redirects.html#disable-caching-on-your-redirects",
-                    "default": "1w"
+                    "default": -1
                   },
                   "paths": {
                     "type": "object",
@@ -922,8 +1155,8 @@
                     "enum": [
                       "TLSv1.1",
                       "TLSv1.0",
-                      "TLSv1.2",
-                      "TLSv1.3"
+                      "TLSv1.3",
+                      "TLSv1.2"
                     ],
                     "title": "The minimum TLS version to support.",
                     "description": "Note that TLS versions older than 1.2 are deprecated and are rejected by default.",
@@ -1214,6 +1447,18 @@
             "type": "string",
             "title": "The service type.",
             "description": "One of the available services in the format `type:version`.\\nMore information: \\nhttps://docs.upsun.com/add-services.html#available-services"
+          },
+          "size": {
+            "type": "string",
+            "title": "The service size.",
+            "default": "AUTO",
+            "deprecationMessage": "Deprecated"
+          },
+          "access": {
+            "type": "object",
+            "title": "The configuration of the service.",
+            "default": {},
+            "deprecationMessage": "Deprecated"
           },
           "configuration": {
             "type": "object",
