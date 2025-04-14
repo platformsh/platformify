@@ -1058,6 +1058,9 @@
           }
         ],
         "additionalProperties": false
+      },
+      "patternProperties": {
+        "^[^.]*": {}  
       }
     },
     "routes": {
@@ -1486,6 +1489,9 @@
             "additionalProperties": false
           }
         ]
+      },
+      "patternProperties": {
+        "^[^.]*": {}
       }
     },
     "services": {
@@ -1501,7 +1507,8 @@
           "type": {
             "type": "string",
             "title": "The service type.",
-            "description": "One of the available services in the format `type:version`.\\nMore information: \\nhttps://docs.upsun.com/add-services.html#available-services"
+            "description": "One of the available services in the format `type:version`.\\nMore information: \\nhttps://docs.upsun.com/add-services.html#available-services",
+            "default": {}
           },
           "size": {
             "type": "string",
@@ -1621,10 +1628,23 @@
           "type"
         ],
         "additionalProperties": false
+      },
+      "patternProperties": {
+        "^[^.]*": {}
       }
     }
   },
   "required": [
     "applications"
-  ]
+  ],
+  "patternProperties": {
+    "^\\..+": {
+      "type": "object",
+      "patternProperties": {
+        "^[^.].*": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
 }
