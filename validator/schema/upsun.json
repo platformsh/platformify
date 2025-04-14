@@ -187,8 +187,63 @@
             "type": "object",
             "title": "Runtime-specific configuration.",
             "description": "Customizations to your PHP or Lisp runtime.\\nContains a runtime dictionary:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#runtime",
-            "default": {},
-            "deprecationMessage": "Deprecated"
+            "properties": {
+              "extensions": {
+                "type": "array",
+                "title": "PHP extensions to enable.",
+                "description": "More information:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#extensions",
+                "default": []
+              },
+              "disabled_extensions": {
+                "type": "array",
+                "title": "PHP extensions to disable.",
+                "description": "More information:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#extensions",
+                "default": []
+              },
+              "request_terminate_timeout": {
+                "type": "integer",
+                "title": "PHP timeout to terminate requests.",
+                "description": "The timeout in seconds for serving a single request after which the PHP-FPM worker process is killed."
+              },
+              "sizing_hints": {
+                "type": "object",
+                "title": "A sizing hints definition.",
+                "description": "The assumptions for setting the number of workers in your PHP-FPM runtime.\\nMore information:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#sizing-hints",
+                "properties": {
+                  "request_memory": {
+                    "type": "integer",
+                    "title": "The average memory consumed per request in MB.",
+                    "description": "Minimum to 10",
+                    "default": 45,
+                    "minimum": 10
+                  },
+                  "reserved_memory": {
+                    "type": "integer",
+                    "title": "The amount of memory reserved in MB.",
+                    "description": "Minimum to 70",
+                    "default": 70,
+                    "minimum": 70
+                  }
+                },
+                "additionalProperties": false
+              },
+              "xdebug": {
+                "type": "object",
+                "title": "An Xdebug definition",
+                "description": "The setting to turn on Xdebug.\\nMore information:\\nhttps://docs.upsun.com/languages/php/xdebug.html",
+                "properties": {
+                  "idekey": {
+                    "type": "string",
+                    "title": "Your Xdebug key."
+                  }
+                }
+              },
+              "quicklisp": {
+                "type": "object",
+                "title": "Distributions for QuickLisp to use.",
+                "description": "More information:\\nhttps://docs.upsun.com/languages/lisp.html#quicklisp-options"
+              }
+            }
           },
           "preflight": {
             "type": "object",
