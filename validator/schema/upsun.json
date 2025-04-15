@@ -33,7 +33,13 @@
             "type": "string",
             "title": "The container profile for this application in production. Leave blank to allow it to be set dynamically.",
             "description": "More information:\\nhttps://docs.upsun.com/manage-resources.html",
-            "default": "AUTO"
+            "default": "",
+            "enum": [
+              "HIGH_CPU",
+              "BALANCED",
+              "HIGH_MEMORY",
+              "HIGHER_MEMORY"
+            ]
           },
           "access": {
             "type": "object",
