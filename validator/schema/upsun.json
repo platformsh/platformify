@@ -287,50 +287,13 @@
                 "type": "string",
                 "title": "The pre-set build tasks to use for this application.",
                 "default": null
-              },
-              "caches": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object",
-                  "properties": {
-                    "directory": {
-                      "type": "string",
-                      "title": "The directory, relative to the application root, that should be cached.",
-                      "default": null
-                    },
-                    "watch": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "title": "The file or files whose hashed contents should be considered part of the cache key."
-                    },
-                    "allow_stale": {
-                      "type": "boolean",
-                      "title": "If true, on a cache miss the last cache version will be used and can be updated in place.",
-                      "default": false
-                    },
-                    "share_between_apps": {
-                      "type": "boolean",
-                      "title": "Whether multiple applications in the project should share cached directories.",
-                      "default": false
-                    }
-                  },
-                  "required": [
-                    "watch"
-                  ],
-                  "additionalProperties": false
-                },
-                "title": "The configuration of paths managed by the build cache.",
-                "default": {}
               }
             },
             "additionalProperties": false,
             "title": "The build configuration of the application.",
             "description": "It contains a build dictionary. \\nMore information:\\nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#build",
             "default": {
-              "flavor": null,
-              "caches": {}
+              "flavor": null
             }
           },
           "source": {
@@ -1058,9 +1021,6 @@
           }
         ],
         "additionalProperties": false
-      },
-      "patternProperties": {
-        "^[^.]*": {}  
       }
     },
     "routes": {
@@ -1489,9 +1449,6 @@
             "additionalProperties": false
           }
         ]
-      },
-      "patternProperties": {
-        "^[^.]*": {}
       }
     },
     "services": {
@@ -1628,23 +1585,11 @@
           "type"
         ],
         "additionalProperties": false
-      },
-      "patternProperties": {
-        "^[^.]*": {}
       }
     }
   },
   "required": [
     "applications"
   ],
-  "patternProperties": {
-    "^\\..+": {
-      "type": "object",
-      "patternProperties": {
-        "^[^.].*": {}
-      },
-      "additionalProperties": false
-    }
-  },
   "additionalProperties": false
 }
