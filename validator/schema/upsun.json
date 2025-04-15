@@ -1591,5 +1591,5 @@
   "required": [
     "applications"
   ],
-  "additionalProperties": false
+  "additionalProperties": true
 }
