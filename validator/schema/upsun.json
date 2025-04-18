@@ -764,12 +764,11 @@
                 "cmd": {
                   "type": "string",
                   "title": "The command to execute.",
-                  "deprecationMessage": "Deprecated"
+                  "deprecationMessage": "Deprecated, please use `commands.start` instead."
                 }
               },
               "required": [
-                "spec",
-                "commands"
+                "spec"
               ],
               "additionalProperties": false
             },
