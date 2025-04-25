@@ -733,7 +733,7 @@
                     "start": {
                       "type": "string",
                       "title": "The command used to start the cron job.",
-                      "description": "It’s run in Dash:\\nhttps://en.wikipedia.org/wiki/Almquist_shell"
+                      "description": "By default, the command is run in Dash (till you specify something else):\\nhttps://en.wikipedia.org/wiki/Almquist_shell"
                     },
                     "stop": {
                       "type": "string",
