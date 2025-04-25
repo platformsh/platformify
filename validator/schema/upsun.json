@@ -29,21 +29,7 @@
             "description": "Adjust the amount of memory using the resources key in your Platform.sh app configuration. All memory must stay within the limits set by your plan.",
             "default": null
           },
-          "container_profile": {
-            "type": ["string", "null"],
-            "title": "The container profile for this application in production. Leave blank to allow it to be set dynamically.",
-            "description": "More information:\\nhttps://docs.upsun.com/manage-resources.html",
-            "default": null,
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["HIGH_CPU", "BALANCED", "HIGH_MEMORY", "HIGHER_MEMORY"]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
+          "container_profile": {"$ref": "#/definitions/container_profile"},
           "access": {
             "type": "object",
             "additionalProperties": {
@@ -1589,21 +1575,7 @@
             "title": "Resources",
             "default": null
           },
-          "container_profile": {
-            "type": ["string", "null"],
-            "title": "The container profile for this service in production. Leave blank to allow it to be set dynamically.",
-            "description": "More information:\\nhttps://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile",
-            "default": null,
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": ["HIGH_CPU", "BALANCED", "HIGH_MEMORY", "HIGHER_MEMORY"]
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
+          "container_profile": {"$ref": "#/definitions/container_profile"}
         },
         "required": [
           "type"
@@ -1615,5 +1587,30 @@
   "required": [
     "applications"
   ],
-  "additionalProperties": true
+  "additionalProperties": true,
+  "definitions": {
+    "container_profile": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "title": "The container profile for this application/service in production. Leave blank to allow it to be set dynamically.",
+      "description": "More information:\\nhttps://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile",
+      "default": null,
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "HIGH_CPU",
+            "BALANCED",
+            "HIGH_MEMORY",
+            "HIGHER_MEMORY"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
 }
