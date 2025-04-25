@@ -1588,6 +1588,21 @@
             "nullable": true,
             "title": "Resources",
             "default": null
+          },
+          "container_profile": {
+            "type": ["string", "null"],
+            "title": "The container profile for this service in production. Leave blank to allow it to be set dynamically.",
+            "description": "More information:\\nhttps://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile",
+            "default": null,
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["HIGH_CPU", "BALANCED", "HIGH_MEMORY", "HIGHER_MEMORY"]
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "required": [
