@@ -250,7 +250,8 @@
               "quicklisp": {
                 "type": "object",
                 "title": "Distributions for QuickLisp to use.",
-                "description": "More information:\\nhttps://docs.upsun.com/languages/lisp.html#quicklisp-options"
+                "description": "More information:\\nhttps://docs.upsun.com/languages/lisp.html#quicklisp-options",
+                "deprecationMessage": "Lisp image no longer exists, please see\\nhttps://devcenter.upsun.com/posts/deploying-with-lisp/\\n for more information"
               }
             }
           },
