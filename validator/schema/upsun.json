@@ -116,8 +116,8 @@
                 "title": "Whether the preflight security blocks are enabled",
                 "description": "Must be a boolean",
                 "enum": [
-                  "true",
-                  "false"
+                  true,
+                  false
                 ]
               },
               "ignored_rules": {
@@ -973,8 +973,8 @@
                 "description": "If set to true, HSTS is enabled for 1 year.  \nIf set to false, other properties are ignored.",
                 "default": null,
                 "enum": [
-                  "true",
-                  "false"
+                  true,
+                  false
                 ]
               },
               "include_subdomains": {
@@ -983,8 +983,8 @@
                 "description": "More information: \nhttps://docs.upsun.com/define-routes/https.html#enable-http-strict-transport-security-hsts",
                 "default": false,
                 "enum": [
-                  "true",
-                  "false"
+                  true,
+                  false
                 ]
               },
               "preload": {
@@ -993,8 +993,8 @@
                 "description": "To add your website to the HSTS preload list: \nhttps://hstspreload.org/. \nThanks to this list, most browsers are informed that your site requires HSTS before an HSTS header response is even issued.\n",
                 "default": false,
                 "enum": [
-                  "true",
-                  "false"
+                  true,
+                  false
                 ]
               }
             },
