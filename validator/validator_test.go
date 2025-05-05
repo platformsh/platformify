@@ -249,7 +249,7 @@ applications:
 					},
 				},
 			},
-			wantErr: false,
+			wantErr: true,
 		},
 		{
 			name: "false-string-boolean",
@@ -267,7 +267,7 @@ applications:
 					},
 				},
 			},
-			wantErr: false,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
