@@ -197,6 +197,78 @@ services:
 			},
 			wantErr: true,
 		},
+		{
+			name: "true-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: true
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "false-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: false
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "true-string-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: "true"
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "false-string-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: "false"
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
