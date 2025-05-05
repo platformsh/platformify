@@ -112,7 +112,7 @@
             "type": "object",
             "properties": {
               "enabled": {
-                "type": "boolean",
+                "type": ["boolean","string"],
                 "title": "Whether the preflight security blocks are enabled",
                 "description": "Must be a boolean",
                 "enum": [
@@ -273,7 +273,7 @@
                       "description": "Files to consider when serving a request for a directory. When set, requires access to the files through the `allow` or `rules` keys."
                     },
                     "allow": {
-                      "type": "boolean",
+                      "type": ["boolean","string"],
                       "title": "Whether to allow serving files which don’t match a rule",
                       "default": true,
                       "enum": [
@@ -968,7 +968,7 @@
             "description": "https://docs.upsun.com/define-routes/https.html#optional-configure-tls-connections",
             "properties": {
               "enabled": {
-                "type": "boolean",
+                "type": ["boolean","string"],
                 "title": "Whether strict transport security is enabled or not",
                 "description": "If set to true, HSTS is enabled for 1 year.  \nIf set to false, other properties are ignored.",
                 "default": null,
@@ -978,7 +978,7 @@
                 ]
               },
               "include_subdomains": {
-                "type": "boolean",
+                "type": ["boolean","string"],
                 "title": "Whether the strict transport security policy should include all subdomains",
                 "description": "More information: \nhttps://docs.upsun.com/define-routes/https.html#enable-http-strict-transport-security-hsts",
                 "default": false,
@@ -988,7 +988,7 @@
                 ]
               },
               "preload": {
-                "type": "boolean",
+                "type": ["boolean","string"],
                 "title": "Whether the strict transport security policy should be preloaded in browsers",
                 "description": "To add your website to the HSTS preload list: \nhttps://hstspreload.org/. \nThanks to this list, most browsers are informed that your site requires HSTS before an HSTS header response is even issued.\n",
                 "default": false,
