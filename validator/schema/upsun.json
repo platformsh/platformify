@@ -277,8 +277,8 @@
                       "title": "Whether to allow serving files which don’t match a rule",
                       "default": true,
                       "enum": [
-                        "true",
-                        "false"
+                        true,
+                        false
                       ]
                     },
                     "headers": {
