@@ -244,7 +244,7 @@
                       "default": "public"
                     },
                     "expires": {
-                      "type": "string",
+                      "type": ["integer", "string"],
                       "title": "Amount of time to cache static assets",
                       "description": "How long static assets are cached. The default means no caching. Setting it to a value enables the `Cache-Control` and `Expires` headers. Times can be suffixed with `ms` = milliseconds, `s` = seconds, `m` = minutes, `h` = hours, `d` = days, `w` = weeks, `M` = months/30d, or `y` = years/365d. If a `Cache-Control` appears on the `headers` configuration, `expires`, if set, will be ignored. Thus, make sure to set the `Cache-Control`’s `max-age` value when specifying a the header.",
                       "default": -1
@@ -296,7 +296,7 @@
                         "type": "object",
                         "properties": {
                           "expires": {
-                            "type": "string",
+                            "type": ["integer", "string"],
                             "title": "Amount of time to cache static assets",
                             "description": "How long static assets are cached. The default means no caching. Setting it to a value enables the `Cache-Control` and `Expires` headers. Times can be suffixed with `ms` = milliseconds, `s` = seconds, `m` = minutes, `h` = hours, `d` = days, `w` = weeks, `M` = months/30d, or `y` = years/365d. If a `Cache-Control` appears on the `headers` configuration, `expires`, if set, will be ignored. Thus, make sure to set the `Cache-Control`’s `max-age` value when specifying a the header.",
                             "default": -1
@@ -437,7 +437,7 @@
                 "deprecationMessage": "Deprecated"
               },
               "expires": {
-                "type": "string",
+                "type": ["integer", "string"],
                 "title": "Amount of time to cache static assets",
                 "deprecationMessage": "Deprecated"
               },
@@ -896,7 +896,7 @@
         "description": "Defines redirects for partial routes. For definition and options, see the redirect rules: \nhttps://docs.upsun.com/define-routes/redirects.html",
         "properties": {
           "expires": {
-            "type": "string",
+            "type": ["integer", "string"],
             "title": "The duration the redirect is cached",
             "description": "Examples of valid values include 3600s, 1d, 2w, 3m. \nTo disable caching for all your redirects, set expires to 0. You can also disable caching on a specific redirect:  \nhttps://docs.upsun.com/define-routes/redirects.html#disable-caching-on-your-redirects",
             "default": -1
@@ -938,7 +938,7 @@
                   "default": 302
                 },
                 "expires": {
-                  "type": "string",
+                  "type": ["integer", "string"],
                   "title": "The amount of time, in seconds, to cache the redirects",
                   "description": "The duration the redirect is cached for.  \nMore information: \nhttps://docs.upsun.com/define-routes/redirects.html#manage-caching",
                   "default": null

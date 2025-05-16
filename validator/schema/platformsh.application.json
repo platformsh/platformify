@@ -458,7 +458,7 @@
                 "default": null
               },
               "expires": {
-                "type": "string",
+                "type": ["integer", "string"],
                 "title": "Amount of time to cache static assets.",
                 "default": -1
               },
@@ -501,7 +501,7 @@
                   "type": "object",
                   "properties": {
                     "expires": {
-                      "type": "string",
+                      "type": ["integer", "string"],
                       "title": "Amount of time to cache static assets."
                     },
                     "passthru": {
@@ -621,7 +621,7 @@
           "title": "Blacklisted entries."
         },
         "expires": {
-          "type": "string",
+          "type": ["integer", "string"],
           "title": "Amount of time to cache static assets."
         },
         "move_to_root": {

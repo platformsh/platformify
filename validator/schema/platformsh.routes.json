@@ -33,7 +33,7 @@
             "type": "object", 
             "properties": {
               "expires": {
-                "type": "string", 
+                "type": ["integer", "string"],
                 "title": "The amount of time, in seconds, to cache the redirects.", 
                 "default": -1
               }, 
@@ -67,7 +67,7 @@
                       "default": 302
                     }, 
                     "expires": {
-                      "type": "string", 
+                      "type": ["integer", "string"],
                       "title": "The amount of time, in seconds, to cache the redirects.", 
                       "default": null
                     }
@@ -195,7 +195,7 @@
             "type": "object", 
             "properties": {
               "expires": {
-                "type": "string", 
+                "type": ["integer", "string"],
                 "title": "The amount of time, in seconds, to cache the redirects.", 
                 "default": -1
               }, 
@@ -229,7 +229,7 @@
                       "default": 302
                     }, 
                     "expires": {
-                      "type": "string", 
+                      "type": ["integer", "string"],
                       "title": "The amount of time, in seconds, to cache the redirects.", 
                       "default": null
                     }
