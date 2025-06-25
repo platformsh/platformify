@@ -712,7 +712,7 @@
             "description": "A list of packages from the Upsun collection of supported runtimes and/or from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/composable-image.html"
           }
         },
-        "oneOf": [
+        "anyOf": [
           {
             "required": [
               "type"
