@@ -9,7 +9,6 @@ const (
 	Elixir Runtime = "elixir"
 	Golang Runtime = "golang"
 	Java   Runtime = "java"
-	Lisp   Runtime = "lisp"
 	NodeJS Runtime = "nodejs"
 	PHP    Runtime = "php"
 	Python Runtime = "python"
@@ -23,7 +22,6 @@ var (
 		Elixir,
 		Golang,
 		Java,
-		Lisp,
 		NodeJS,
 		PHP,
 		Python,
@@ -48,8 +46,6 @@ func (r Runtime) Title() string {
 		return "Go"
 	case Java:
 		return "Java"
-	case Lisp:
-		return "Lisp"
 	case NodeJS:
 		return "JavaScript/Node.js"
 	case PHP:
