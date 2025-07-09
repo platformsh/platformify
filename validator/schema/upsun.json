@@ -42,8 +42,8 @@
           "firewall": {"$ref": "#/definitions/firewall"},
           "type": {
             "type": "string",
-            "title": "The base runtime (language) and version to use for this application",
-            "description": "The base image to use with a specific app language.  \nFormat: runtime:version. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#types"
+            "title": "The base runtime and version to use for this application",
+            "description": "The base image to use.  \nFormat: runtime:version. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#types"
           },
           "runtime": {
             "type": "object",
@@ -709,10 +709,9 @@
               }
             ],
             "title": "Composable Image definition",
-            "description": "A list of packages from the Upsun collection of supported runtimes and/or from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/composable-image.html"
-          }
+            "description": "A list of Nix packages from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/composable-image.html"          }
         },
-        "oneOf": [
+        "anyOf": [
           {
             "required": [
               "type"
@@ -720,6 +719,12 @@
           },
           {
             "required": [
+              "stack"
+            ]
+          },
+          {
+            "required": [
+              "type",
               "stack"
             ]
           }
