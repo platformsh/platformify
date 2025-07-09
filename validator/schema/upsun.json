@@ -705,8 +705,7 @@
                       "type": "object"
                     }
                   ]
-                },
-                "description": "A package definition, for example 'package@version' (for services) or just 'package' (for tools)."
+                }
               }
             ],
             "title": "Composable Image definition",
