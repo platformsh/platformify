@@ -171,7 +171,7 @@ services:
 						Data: []byte(`
 applications:
   app1:
-    type: "python:3.11"
+    type: "composable:25.05"
     stack:
       - "php@8.3":
         extensions:
@@ -195,7 +195,7 @@ services:
 					},
 				},
 			},
-			wantErr: true,
+			wantErr: false,
 		},
 		{
 			name: "true-boolean",
