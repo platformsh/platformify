@@ -642,6 +642,7 @@
                 },
                 "size": {"$ref": "#/definitions/deprecated/size"},
                 "resources": {"$ref": "#/definitions/deprecated/resources"},
+                "container_profile": {"$ref": "#/definitions/container_profile"},
                 "commands": {
                   "type": "object",
                   "properties": {
