@@ -216,6 +216,30 @@ applications:
 			wantErr: false,
 		},
 		{
+			name: "worker container profile",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: true
+    workers:
+      app1-worker:
+        commands:
+          start: |
+            sleep 86400 && echo "done"
+        container_profile: HIGH_CPU
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
 			name: "false-boolean",
 			args: args{
 				path: fstest.MapFS{
