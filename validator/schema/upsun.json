@@ -987,19 +987,21 @@
             }
           },
           "min_version": {
-            "type": "string",
+            "type": ["string", "null"],
             "enum": [
-              "TLSv1.1",
               "TLSv1.0",
+              "TLSv1.1",
+              "TLSv1.2",
               "TLSv1.3",
-              "TLSv1.2"
+              null
             ],
             "title": "The minimum TLS version to support.",
             "description": "Note that TLS versions older than 1.2 are deprecated and are rejected by default.",
             "default": null
           },
           "client_authentication": {
-            "type": "string",
+            "type": ["string", "null"],
+            "enum": ["request", "require", null],
             "description": "The type of client authentication to request.",
             "default": null
           },
