@@ -20,7 +20,7 @@ func main() {
 	assets := &vendorization.VendorAssets{
 		Binary:       "platform",
 		ConfigFlavor: "platform",
-		DocsBaseURL:  "https://docs.platform.sh/",
+		DocsBaseURL:  "https://docs.upsun.com/anchors/fixed",
 		EnvPrefix:    "PLATFORM",
 		ServiceName:  "Platform.sh",
 		Use:          "platformify",
