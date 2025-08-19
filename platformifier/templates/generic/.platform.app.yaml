@@ -67,7 +67,7 @@ web:
   #   You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
   {{- if eq "php" .Runtime }}
   #   PHP applications run PHP-fpm by default
-  #   Read about alternative commands here: {{ .Assets.Docs.PHP }}#alternate-start-commands
+  #   Read about alternative commands here: {{ .Assets.Docs.PHP }}alternate-start-commands/
   {{- end }}
   #   start: echo 'Put your start command here'
   {{- end }}
@@ -113,7 +113,7 @@ web:
   {{ end }}
 
 # Alternate copies of the application to run as background processes.
-# More information: {{ .Assets.Docs.AppReference }}#workers
+# More information: {{ .Assets.Docs.AppReference }}workers/
 # workers:
 
 # The timezone for crons to run. Format: a TZ database name. Defaults to UTC, which is the timezone used for all logs
