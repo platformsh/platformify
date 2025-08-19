@@ -927,13 +927,13 @@
                 "code": {
                   "type": "integer",
                   "title": "The redirect HTTP status code to use",
-                  "description": "Valid status codes are 301, 302, 307, and 308.  \nDefaults to 302 for Partial redirects: \nhttps://docs.upsun.com/anchors/routes/redirects/affix/ \nand 301 for Whole-route redirects: \nhttps://docs.upsun.comroutes/redirects/whole/ \nMore information:  \nhttps://docs.upsun.comroutes/redirects/partial/http-status-code/",
+                  "description": "Valid status codes are 301, 302, 307, and 308.  \nDefaults to 302 for Partial redirects: \nhttps://docs.upsun.com/anchors/routes/redirects/affix/ \nand 301 for Whole-route redirects: \nhttps://docs.upsun.com/anchors/routes/redirects/whole/ \nMore information:  \nhttps://docs.upsun.com/anchors/routes/redirects/partial/http-status-code/",
                   "default": 302
                 },
                 "expires": {
                   "type": ["integer", "string"],
                   "title": "The amount of time, in seconds, to cache the redirects",
-                  "description": "The duration the redirect is cached for.  \nMore information: \nhttps://docs.upsun.com/routes/redirects/caching/manage/",
+                  "description": "The duration the redirect is cached for.  \nMore information: \nhttps://docs.upsun.com/anchors/routes/redirects/caching/manage/",
                   "default": null
                 }
               },
