@@ -76,11 +76,11 @@ web:
   # For PHP, the defaults are configured for PHP-FPM and shouldn't need adjustment.
   {{- end }}
   # Whether your app should speak to the webserver via TCP or Unix socket. Defaults to tcp
-  # More information: {{ .Assets.Docs.AppReference }}web/upstream/
+  # More information: {{ .Assets.Docs.AppReference }}web/upstream/socket-family/
   {{- if .SocketFamily }}
   upstream:
     # Whether your app should speak to the webserver via TCP or Unix socket. Defaults to tcp
-    # More information: {{ .Assets.Docs.AppReference }}web/upstream/
+    # More information: {{ .Assets.Docs.AppReference }}web/upstream/socket-family/
     socket_family: {{ .SocketFamily }}
   {{- else }}
   # upstream:

@@ -6,18 +6,18 @@ applications:
       root: "{{ .ApplicationRoot }}"
 
     # The runtime the application uses.
-    # Complete list of available runtimes: {{ .Assets.Docs.AppReference }}#types
+    # Complete list of available runtimes: {{ .Assets.Docs.AppReference }}type/
     type: "{{ .Type }}"
 
     # Choose which container profile (ratio CPU+RAM) your app will use. Default value comes from the image itself.
-    # More information: https://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile
+    # More information: https://docs.upsun.com/anchors/resources/manage/configuration/profiles/adjust/
     # container_profile:
 
     # The relationships of the application with services or other applications.
     # The left-hand side is the name of the relationship as it will be exposed
     # to the application in the {{ .Assets.EnvPrefix }}_RELATIONSHIPS variable. The right-hand
     # side is in the form `<service name>:<endpoint name>`.
-    # More information: {{ .Assets.Docs.AppReference }}#relationships
+    # More information: {{ .Assets.Docs.AppReference }}relationships/
     {{ if .Relationships -}}
     relationships:
       {{ range $key, $value := .Relationships }}
@@ -29,7 +29,7 @@ applications:
     {{ end }}
 
     # Mounts define directories that are writable after the build is complete.
-    # More information: {{ .Assets.Docs.AppReference }}#mounts
+    # More information: {{ .Assets.Docs.AppReference }}mounts/
     {{ if .Mounts -}}
     mounts:
       {{ range $key, $value := .Mounts -}}
@@ -47,10 +47,10 @@ applications:
     {{- end }}
 
     # The web key configures the web server running in front of your app.
-    # More information: {{ .Assets.Docs.AppReference }}#web
+    # More information: {{ .Assets.Docs.AppReference }}web/
     web:
       # Commands are run once after deployment to start the application process.
-      # More information: {{ .Assets.Docs.AppReference }}#web-commands
+      # More information: {{ .Assets.Docs.AppReference }}web/commands/
       {{- if .WebCommand }}
       commands:
         # The command to launch your app. If it terminates, it’s restarted immediately.
@@ -62,7 +62,7 @@ applications:
       #   You can use the $PORT or the $SOCKET environment variable depending on the socket family of your upstream
       {{- if eq "php" .Runtime }}
       #   PHP applications run PHP-fpm by default
-      #   Read about alternative commands here: {{ .Assets.Docs.PHP }}#alternate-start-commands
+      #   Read about alternative commands here: {{ .Assets.Docs.PHP }}alternate-start-commands/
       {{- end }}
       #   start: echo 'Put your start command here'
       {{- end }}
@@ -71,11 +71,11 @@ applications:
       # For PHP, the defaults are configured for PHP-FPM and shouldn't need adjustment.
       {{- end }}
       # Whether your app should speak to the webserver via TCP or Unix socket. Defaults to tcp
-      # More information: {{ .Assets.Docs.AppReference }}#where-to-listen
+      # More information: {{ .Assets.Docs.AppReference }}web/upstream/socket-family/
       {{- if .SocketFamily }}
       upstream:
         # Whether your app should speak to the webserver via TCP or Unix socket. Defaults to tcp
-        # More information: {{ .Assets.Docs.AppReference }}#where-to-listen
+        # More information: {{ .Assets.Docs.AppReference }}web/upstream/socket-family/
         socket_family: {{ .SocketFamily }}
       {{- else }}
       # upstream:
