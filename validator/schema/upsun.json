@@ -4,7 +4,7 @@
   "type": "object",
   "properties": {
     "applications": {
-      "description": "For more information, see https://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#primary-application-properties",
+      "description": "For more information, see https://docs.upsun.com/anchors/app/reference/root-keys/",
       "additionalProperties": {
         "type": "object",
         "properties": {
@@ -16,7 +16,7 @@
               "type": "string"
             },
             "title": "Access control for roles accessing app environments",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#access",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/access/",
             "default": {
               "ssh": "contributor"
             }
@@ -26,7 +26,7 @@
           "timezone": {
             "type": "string",
             "title": "The timezone of the application",
-            "description": "This primarily affects the timezone in which cron tasks will run. It will not affect the application itself. Defaults to UTC if not specified. \nSee also: \nhttps://docs.upsun.com/create-apps/timezone.html",
+            "description": "This primarily affects the timezone in which cron tasks will run. It will not affect the application itself. Defaults to UTC if not specified. \nSee also: \nhttps://docs.upsun.com/anchors/app/timezone/",
             "default": null
           },
           "variables": {
@@ -36,30 +36,30 @@
               "additionalProperties": {}
             },
             "title": "Variables to control the environment",
-            "description": "Variables provide environment-sensitive information to control how your application behaves. To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#variables",
+            "description": "Variables provide environment-sensitive information to control how your application behaves. To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/variables/",
             "default": {}
           },
           "firewall": {"$ref": "#/definitions/firewall"},
           "type": {
             "type": "string",
             "title": "The base runtime (language) and version to use for this application",
-            "description": "The base image to use with a specific app language.  \nFormat: runtime:version. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#types"
+            "description": "The base image to use with a specific app language.  \nFormat: runtime:version. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/type/"
           },
           "runtime": {
             "type": "object",
             "title": "Runtime-specific configuration",
-            "description": "Customizations to your PHP or Lisp runtime. \nContains a runtime dictionary: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#runtime",
+            "description": "Customizations to your PHP or Lisp runtime. \nContains a runtime dictionary: \nhttps://docs.upsun.com/anchors/app/reference/runtime/",
             "properties": {
               "extensions": {
                 "type": "array",
                 "title": "PHP extensions to enable",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#extensions",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/extensions/",
                 "default": []
               },
               "disabled_extensions": {
                 "type": "array",
                 "title": "PHP extensions to disable",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#extensions",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/extensions/",
                 "default": []
               },
               "request_terminate_timeout": {
@@ -70,7 +70,7 @@
               "sizing_hints": {
                 "type": "object",
                 "title": "A sizing hints definition",
-                "description": "The assumptions for setting the number of workers in your PHP-FPM runtime. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#sizing-hints",
+                "description": "The assumptions for setting the number of workers in your PHP-FPM runtime. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/runtime/sizing-hints/",
                 "properties": {
                   "request_memory": {
                     "type": "integer",
@@ -92,7 +92,7 @@
               "xdebug": {
                 "type": "object",
                 "title": "An Xdebug definition",
-                "description": "The setting to turn on Xdebug. \nMore information: \nhttps://docs.upsun.com/languages/php/xdebug.html",
+                "description": "The setting to turn on Xdebug. \nMore information: \nhttps://docs.upsun.com/anchors/languages/php/xdebug/",
                 "properties": {
                   "idekey": {
                     "type": "string",
@@ -103,7 +103,7 @@
               "quicklisp": {
                 "type": "object",
                 "title": "Distributions for QuickLisp to use",
-                "description": "More information: \nhttps://docs.upsun.com/languages/lisp.html#quicklisp-options",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/languages/lisp/",
                 "deprecationMessage": "Lisp image no longer exists, please see \nhttps://devcenter.upsun.com/posts/deploying-with-lisp/ \n for more information"
               }
             }
@@ -141,7 +141,7 @@
               "type": "object"
             },
             "title": "External global dependencies of this application",
-            "description": "What global dependencies to install before the build `hook` is run. They will be downloaded by the language's package manager.  \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#dependencies",
+            "description": "What global dependencies to install before the build `hook` is run. They will be downloaded by the language's package manager.  \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/dependencies/",
             "default": {}
           },
           "build": {
@@ -155,7 +155,7 @@
             },
             "additionalProperties": false,
             "title": "The build configuration of the application",
-            "description": "It contains a build dictionary.  \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#build",
+            "description": "It contains a build dictionary.  \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/build/",
             "default": {
               "flavor": null
             }
@@ -166,7 +166,7 @@
               "root": {
                 "type": "string",
                 "title": "The root of the application relative to the repository root",
-                "description": " \nDefaults to the root project directory.  \nUseful for multi-app setups: \nhttps://docs.upsun.com/create-apps/multi-app.html",
+                "description": " \nDefaults to the root project directory.  \nUseful for multi-app setups: \nhttps://docs.upsun.com/anchors/app/multiple/",
                 "default": null
               },
               "operations": {
@@ -177,7 +177,7 @@
                     "command": {
                       "type": "string",
                       "title": "Operations that can be applied to the source code",
-                      "description": "More information: \nhttps://docs.upsun.com/create-apps/source-operations.html"
+                      "description": "More information: \nhttps://docs.upsun.com/anchors/app/source-operations/"
                     }
                   },
                   "required": [
@@ -191,7 +191,7 @@
             },
             "additionalProperties": false,
             "title": "Information on the app’s source code and operations that can be run on it",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#source",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/source/operations/",
             "default": {
               "operations": {},
               "root": null
@@ -200,7 +200,7 @@
           "web": {
             "type": "object",
             "title": "How the web application is served",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#web",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/web/",
             "properties": {
               "variables": {
                 "type": "object",
@@ -224,7 +224,7 @@
                   "type": "string"
                 },
                 "title": "Access information, a mapping between access type and roles",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#access"
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/access/"
               },
               "size": {"$ref": "#/definitions/deprecated/size"},
               "resources": {"$ref": "#/definitions/deprecated/resources"},
@@ -236,7 +236,7 @@
                     "root": {
                       "type": "string",
                       "title": "The folder from which to serve static assets for this location relative to the application root",
-                      "description": "The directory to serve static assets for this location relative to the app’s root directory. Must be an actual directory inside the root directory. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#root-directory",
+                      "description": "The directory to serve static assets for this location relative to the app’s root directory. Must be an actual directory inside the root directory. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/source/root/",
                       "default": "public"
                     },
                     "expires": {
@@ -279,7 +279,7 @@
                         "type": "string"
                       },
                       "title": "A set of header fields set to the HTTP response",
-                      "description": "Any additional headers to apply to static assets, mapping header names to values. Responses from the app aren’t affected. \nSee how to set custom headers on static content: \nhttps://docs.upsun.com/create-apps/web/custom-headers.html",
+                      "description": "Any additional headers to apply to static assets, mapping header names to values. Responses from the app aren’t affected. \nSee how to set custom headers on static content: \nhttps://docs.upsun.com/anchors/app/web/custom-headers/",
                       "default": {}
                     },
                     "rules": {
@@ -319,13 +319,13 @@
                               "type": "string"
                             },
                             "title": "A set of header fields set to the HTTP response",
-                            "description": "Any additional headers to apply to static assets, mapping header names to values. Responses from the app aren’t affected. \nSee how to set custom headers on static content: \nhttps://docs.upsun.com/create-apps/web/custom-headers.html"
+                            "description": "Any additional headers to apply to static assets, mapping header names to values. Responses from the app aren’t affected. \nSee how to set custom headers on static content: \nhttps://docs.upsun.com/anchors/app/web/custom-headers/"
                           }
                         },
                         "additionalProperties": false
                       },
                       "title": "Specific overrides for specific locations",
-                      "description": "Contains a rules dictionary. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#rules",
+                      "description": "Contains a rules dictionary. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/web/locations/rules/",
                       "default": {}
                     },
                     "request_buffering": {
@@ -339,19 +339,19 @@
                         "max_request_size": {
                           "type": "string",
                           "title": "The maximum size request that can be buffered",
-                          "description": "Supports K, M, and G suffixes. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#request-buffering",
+                          "description": "Supports K, M, and G suffixes. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/request-buffering/",
                           "default": 262144000
                         }
                       },
                       "additionalProperties": false,
                       "title": "Configuration for supporting request buffering.",
-                      "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#request-buffering"
+                      "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/request-buffering/"
                     }
                   },
                   "additionalProperties": false
                 },
                 "title": "The specification of the web locations served by this application",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#web",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/web/",
                 "default": {}
               },
               "commands": {
@@ -365,7 +365,7 @@
                   "start": {
                     "type": "string",
                     "title": "The command used to start the application",
-                    "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP or FrankenPHP. \nSee note: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#required-command"
+                    "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP or FrankenPHP. \nSee note: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/start/"
                   }
                 },
                 "required": [
@@ -373,7 +373,7 @@
                 ],
                 "additionalProperties": false,
                 "title": "The command to launch your app",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#web-commands"
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/"
               },
               "upstream": {
                 "type": "object",
@@ -381,7 +381,7 @@
                   "socket_family": {
                     "type": "string",
                     "title": "Whether your app listens on a Unix or TCP socket",
-                    "description": "If `tcp`, check the PORT environment variable on application startup. If `unix`, check SOCKET. \nMore Information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#upstream",
+                    "description": "If `tcp`, check the PORT environment variable on application startup. If `unix`, check SOCKET. \nMore Information: \nhttps://docs.upsun.com/anchors/app/reference/web/upstream/",
                     "default": "tcp"
                   },
                   "protocol": {
@@ -392,7 +392,7 @@
                 },
                 "additionalProperties": false,
                 "title": "Configuration on how the web server communicates with the application",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#upstream"
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/web/upstream/"
               },
               "document_root": {
                 "type": "string",
@@ -466,7 +466,7 @@
                 "role": {
                   "type": "string",
                   "title": "which users can trigger it according to their user role",
-                  "description": "More information: \nhttps://docs.upsun.com/create-apps/runtime-operations.html#define-a-runtime-operation",
+                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/runtime-operations/define/",
                   "enum": [
                     "viewer",
                     "contributor",
@@ -480,7 +480,7 @@
               "additionalProperties": false
             },
             "title": "Runtime operations that can be executed in the application container",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/runtime-operations.html",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/runtime-operations/",
             "default": {}
           },
           "hooks": {
@@ -489,25 +489,25 @@
               "build": {
                 "type": "string",
                 "title": "Hook executed after the build process",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#hooks",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
                 "default": null
               },
               "deploy": {
                 "type": "string",
                 "title": "Hook executed after the deployment of new code",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#hooks",
+                "description": "More information: \nhttps://docs.upsun.com\t\n/anchors/app/reference/hooks/",
                 "default": null
               },
               "post_deploy": {
                 "type": "string",
                 "title": "Hook executed after an environment is fully deployed",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#hooks",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
                 "default": null
               }
             },
             "additionalProperties": false,
             "title": "What commands run at different stages in the `build`, `deploy` and `post_deploy` process",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#hooks",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
             "default": {}
           },
           "crons": {
@@ -540,7 +540,7 @@
                   ],
                   "additionalProperties": false,
                   "title": "A definition of what commands to run when starting and stopping the cron job",
-                  "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#cron-commands"
+                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/crons/commands/"
                 },
                 "shutdown_timeout": {
                   "type": "integer",
@@ -566,7 +566,7 @@
               "additionalProperties": false
             },
             "title": "Scheduled cron tasks executed by this application",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#crons",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/crons/",
             "default": {}
           },
           "workers": {
@@ -582,13 +582,13 @@
                     "additionalProperties": {}
                   },
                   "title": "Variables to control the environment",
-                  "description": "Variables provide environment-sensitive information to control how your application behaves. To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#variables",
+                  "description": "Variables provide environment-sensitive information to control how your application behaves. To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/variables/",
                   "default": {}
                 },
                 "timezone": {
                   "type": "string",
                   "title": "The timezone of the application",
-                  "description": "This primarily affects the timezone in which cron tasks will run.  It will not affect the application itself. Defaults to UTC if not specified. \nSee also: \nhttps://docs.upsun.com/create-apps/timezone.html",
+                  "description": "This primarily affects the timezone in which cron tasks will run.  It will not affect the application itself. Defaults to UTC if not specified. \nSee also: \nhttps://docs.upsun.com/anchors/app/timezone/",
                   "default": null
                 },
                 "mounts": {
@@ -611,7 +611,7 @@
                       "source_path": {
                         "type": "string",
                         "title": "The path to be mounted",
-                        "description": "Path relative to the root directory of the volume that's being mounted from.  \nWARNING: Changing the name of your mount affects the source_path when it’s undefined. See how to ensure continuity and maintain access to your files \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#ensure-continuity-when-changing-the-name-of-your-mount"
+                        "description": "Path relative to the root directory of the volume that's being mounted from.  \nWARNING: Changing the name of your mount affects the source_path when it’s undefined. See how to ensure continuity and maintain access to your files \nhttps://docs.upsun.com/anchors/app/reference/mounts/change-name/"
                       },
                       "service": {
                         "type": "string",
@@ -625,7 +625,7 @@
                     "additionalProperties": false
                   },
                   "title": "Filesystem mounts of this application",
-                  "description": "Directories that are writable even after the app is built. Allocated disk for mounts is defined with a separate resource configuration call using `upsun resources:set`. \nContains a dictionary of mounts: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#mounts",
+                  "description": "Directories that are writable even after the app is built. Allocated disk for mounts is defined with a separate resource configuration call using `upsun resources:set`. \nContains a dictionary of mounts: \nhttps://docs.upsun.com/anchors/app/reference/mounts/",
                   "default": {}
                 },
                 "relationships": {"$ref": "#/definitions/relationships"},
@@ -635,7 +635,7 @@
                     "type": "string"
                   },
                   "title": "Access control for roles accessing app environments",
-                  "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#access",
+                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/access/",
                   "default": {
                     "ssh": "contributor"
                   }
@@ -649,17 +649,17 @@
                     "pre_start": {
                       "type": "string",
                       "title": "The command used to run before starting the application",
-                      "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers"
+                      "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/workers/"
                     },
                     "start": {
                       "type": "string",
                       "title": "The command used to start the application",
-                      "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers"
+                      "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/workers/"
                     },
                     "post_start": {
                       "type": "string",
                       "title": "A command executed after the application is started",
-                      "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers"
+                      "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/workers/"
                     }
                   },
                   "required": [
@@ -667,7 +667,7 @@
                   ],
                   "additionalProperties": false,
                   "title": "The commands to manage the worker",
-                  "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers"
+                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/workers/"
                 }
               },
               "required": [
@@ -676,7 +676,7 @@
               "additionalProperties": false
             },
             "title": "Alternate copies of the application to run as background processes",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/workers/",
             "default": {}
           },
           "additional_hosts": {
@@ -685,7 +685,7 @@
               "type": "string"
             },
             "title": "Maps of hostnames to IP addresses",
-            "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#additional-hosts"
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/additional-hosts/"
           },
           "stack": {
             "oneOf": [
@@ -710,7 +710,7 @@
               }
             ],
             "title": "Composable Image definition",
-            "description": "A list of packages from the Upsun collection of supported runtimes and/or from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/composable-image.html"
+            "description": "A list of packages from the Upsun collection of supported runtimes and/or from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/anchors/app/composable/"
           }
         },
         "anyOf": [
@@ -730,7 +730,7 @@
     },
     "routes": {
       "title": "The routes of the project",
-      "description": "Each route describes how an incoming URL is going to be processed by Upsun. \nMore information:  \nhttps://docs.upsun.com/define-routes.html",
+      "description": "Each route describes how an incoming URL is going to be processed by Upsun. \nMore information:  \nhttps://docs.upsun.com/anchors/routes/",
       "type": [
         "object",
         "null"
@@ -740,7 +740,7 @@
           {
             "type": "object",
             "title": "Route identifier",
-            "description": "More information: \nhttps://docs.upsun.com/define-routes.html#route-identifiers",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/routes/identifiers/",
             "properties": {
               "primary": {"$ref": "#/definitions/routes/primary"},
               "id": {"$ref": "#/definitions/routes/id"},
@@ -780,7 +780,7 @@
     },
     "services": {
       "title": "The services of the project",
-      "description": "Each service listed will be deployed to power your Upsun project.  \nMore information:  \nhttps://docs.upsun.com/add-services.html \nFull list of available services:  \nhttps://docs.upsun.com/add-services.html#available-services",
+      "description": "Each service listed will be deployed to power your Upsun project.  \nMore information:  \nhttps://docs.upsun.com/anchors/services/ \nFull list of available services:  \nhttps://docs.upsun.com/anchors/services/available/",
       "type": [
         "object",
         "null"
@@ -791,7 +791,7 @@
           "type": {
             "type": "string",
             "title": "The service type",
-            "description": "One of the available services in the format `type:version`. \nMore information:  \nhttps://docs.upsun.com/add-services.html#available-services",
+            "description": "One of the available services in the format `type:version`. \nMore information:  \nhttps://docs.upsun.com/anchors/services/available/",
             "default": {}
           },
           "size": {"$ref": "#/definitions/deprecated/size"},
@@ -804,7 +804,7 @@
           "configuration": {
             "type": "object",
             "title": "The configuration of the service",
-            "description": "Some services have additional specific configuration options that can be defined here, such as specific endpoints. \nSee the given service page for more details:  \nhttps://docs.upsun.com/add-services.html#available-services.",
+            "description": "Some services have additional specific configuration options that can be defined here, such as specific endpoints. \nSee the given service page for more details:  \nhttps://docs.upsun.com/anchors/services/available/.",
             "default": {}
           },
           "relationships": {"$ref": "#/definitions/relationships"},
@@ -830,7 +830,7 @@
         "null"
       ],
       "title": "The container profile for this application/service in production",
-      "description": "Leave blank to allow it to be set dynamically. \nMore information: \nhttps://docs.upsun.com/manage-resources/adjust-resources.html#adjust-a-container-profile",
+      "description": "Leave blank to allow it to be set dynamically. \nMore information: \nhttps://docs.upsun.com/anchors/resources/manage/configuration/profiles/adjust/",
       "default": "",
       "anyOf": [
         {
@@ -857,7 +857,7 @@
       "id": {
         "type": "string",
         "title": "Route Identifier",
-        "description": "A unique identifier for the route. See route identifiers: \nhttps://docs.upsun.com/define-routes.html#route-identifiers",
+        "description": "A unique identifier for the route. See route identifiers: \nhttps://docs.upsun.com/anchors/routes/identifiers/",
         "default": null
       },
       "attributes": {
@@ -866,7 +866,7 @@
         "additionalProperties": {
           "type": "string"
         },
-        "description": "Arbitrary attributes attached to this resource: \nhttps://docs.upsun.com/define-routes.html#route-attributes",
+        "description": "Arbitrary attributes attached to this resource: \nhttps://docs.upsun.com/anchors/routes/attributes/",
         "default": {}
       },
       "route_type": {
@@ -875,7 +875,7 @@
           "null"
         ],
         "title": "Route type",
-        "description": "More information: \nhttps://docs.upsun.com/define-routes.html#route-configuration-reference",
+        "description": "More information: \nhttps://docs.upsun.com/anchors/routes/configuration/",
         "enum": [
           "proxy",
           "redirect",
@@ -886,54 +886,54 @@
       "redirects": {
         "type": "object",
         "title": "The configuration of the redirects",
-        "description": "Defines redirects for partial routes. For definition and options, see the redirect rules: \nhttps://docs.upsun.com/define-routes/redirects.html",
+        "description": "Defines redirects for partial routes. For definition and options, see the redirect rules: \nhttps://docs.upsun.com/anchors/routes/redirects/",
         "properties": {
           "expires": {
             "type": ["integer", "string"],
             "title": "The duration the redirect is cached",
-            "description": "Examples of valid values include 3600s, 1d, 2w, 3m. \nTo disable caching for all your redirects, set expires to 0. You can also disable caching on a specific redirect:  \nhttps://docs.upsun.com/define-routes/redirects.html#disable-caching-on-your-redirects",
+            "description": "Examples of valid values include 3600s, 1d, 2w, 3m. \nTo disable caching for all your redirects, set expires to 0. You can also disable caching on a specific redirect:  \nhttps://docs.upsun.com/anchors/routes/redirects/caching/disable/",
             "default": -1
           },
           "paths": {
             "type": "object",
             "title": "The paths to redirect",
-            "description": "More information: \nhttps://docs.upsun.com/define-routes/redirects.html#partial-redirects",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/routes/redirects/partial/",
             "additionalProperties": {
               "type": "object",
               "properties": {
                 "regexp": {
                   "type": "boolean",
                   "title": "Whether the path is a regular expression",
-                  "description": "Specifies whether the path key should be interpreted as a PCRE regular expression. \nMore information: \nhttps://docs.upsun.com/define-routes/redirects.html#partial-redirects",
+                  "description": "Specifies whether the path key should be interpreted as a PCRE regular expression. \nMore information: \nhttps://docs.upsun.com/anchors/routes/redirects/partial/",
                   "default": false
                 },
                 "to": {
                   "type": "string",
                   "title": "The URL to redirect to",
-                  "description": "A relative URL - '/destination',  \nor absolute URL - 'https://example.com/'. \nMore information: \nhttps://docs.upsun.com/define-routes/redirects.html#partial-redirects"
+                  "description": "A relative URL - '/destination',  \nor absolute URL - 'https://example.com/'. \nMore information: \nhttps://docs.upsun.com/anchors/routes/redirects/partial/"
                 },
                 "prefix": {
                   "type": "boolean",
                   "title": "Prefix of the redirect path",
-                  "description": "Specifies whether both the path and all its children or just the path itself should be redirected.  \nMore information: \nhttps://docs.upsun.com/define-routes/redirects.html#redirects-using-prefix-and-append_suffix",
+                  "description": "Specifies whether both the path and all its children or just the path itself should be redirected.  \nMore information: \nhttps://docs.upsun.com/anchors/routes/redirects/affix/",
                   "default": null
                 },
                 "append_suffix": {
                   "type": "boolean",
                   "title": "Suffix of the redirect path",
-                  "description": "Determines if the suffix is carried over with the redirect. More information. \nhttps://docs.upsun.com/define-routes/redirects.html#redirects-using-prefix-and-append_suffix",
+                  "description": "Determines if the suffix is carried over with the redirect. More information. \nhttps://docs.upsun.com/anchors/routes/redirects/affix/",
                   "default": null
                 },
                 "code": {
                   "type": "integer",
                   "title": "The redirect HTTP status code to use",
-                  "description": "Valid status codes are 301, 302, 307, and 308.  \nDefaults to 302 for Partial redirects: \nhttps://docs.upsun.com/define-routes/redirects.html#partial-redirects \nand 301 for Whole-route redirects: \nhttps://docs.upsun.com/define-routes/redirects.html#whole-route-redirects \nMore information:  \nhttps://docs.upsun.com/define-routes/redirects.html#specify-a-http-status-code",
+                  "description": "Valid status codes are 301, 302, 307, and 308.  \nDefaults to 302 for Partial redirects: \nhttps://docs.upsun.com/anchors/routes/redirects/affix/ \nand 301 for Whole-route redirects: \nhttps://docs.upsun.comroutes/redirects/whole/ \nMore information:  \nhttps://docs.upsun.comroutes/redirects/partial/http-status-code/",
                   "default": 302
                 },
                 "expires": {
                   "type": ["integer", "string"],
                   "title": "The amount of time, in seconds, to cache the redirects",
-                  "description": "The duration the redirect is cached for.  \nMore information: \nhttps://docs.upsun.com/define-routes/redirects.html#manage-caching",
+                  "description": "The duration the redirect is cached for.  \nMore information: \nhttps://docs.upsun.com/routes/redirects/caching/manage/",
                   "default": null
                 }
               },
@@ -953,12 +953,12 @@
       "tls": {
         "type": "object",
         "title": "TLS settings for the route",
-        "description": "The absolute URL or other route to which the given route should be redirected with an HTTP 301 status code. \nhttps://docs.upsun.com/define-routes/https.html#optional-configure-tls-connections",
+        "description": "The absolute URL or other route to which the given route should be redirected with an HTTP 301 status code. \nhttps://docs.upsun.com/anchors/routes/https/tls/",
         "properties": {
           "strict_transport_security": {
             "type": "object",
             "title": "Strict-Transport-Security options",
-            "description": "https://docs.upsun.com/define-routes/https.html#optional-configure-tls-connections",
+            "description": "https://docs.upsun.com/anchors/routes/https/tls/",
             "properties": {
               "enabled": {
                 "type": "boolean",
@@ -969,7 +969,7 @@
               "include_subdomains": {
                 "type": "boolean",
                 "title": "Whether the strict transport security policy should include all subdomains",
-                "description": "More information: \nhttps://docs.upsun.com/define-routes/https.html#enable-http-strict-transport-security-hsts",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/routes/https/tls/hsts/",
                 "default": false
               },
               "preload": {
@@ -1011,7 +1011,7 @@
               "type": "string"
             },
             "title": "Certificate authorities to validate the client certificate against",
-            "description": "If not specified, a default set of trusted CAs will be used. \nMore Information: \nhttps://docs.upsun.com/define-routes/https.html#enable-mtls",
+            "description": "If not specified, a default set of trusted CAs will be used. \nMore Information: \nhttps://docs.upsun.com/anchors/routes/https/tls/mtls/",
             "default": []
           }
         },
@@ -1030,7 +1030,7 @@
       "to": {
         "type": "string",
         "title": "Redirect destination",
-        "description": "The absolute URL or other route to which the given route should be redirected with an HTTP 301 status code. \nA relative URL - '/destination', or absolute URL - 'https://example.com/' \nMore information: \nhttps://docs.upsun.com/define-routes/redirects.html#partial-redirects"
+        "description": "The absolute URL or other route to which the given route should be redirected with an HTTP 301 status code. \nA relative URL - '/destination', or absolute URL - 'https://example.com/' \nMore information: \nhttps://docs.upsun.com/anchors/routes/redirects/partial/"
       },
       "cache": {
         "type": "object",
@@ -1089,7 +1089,7 @@
           "enabled": {
             "type": "boolean",
             "title": "Whether SSI include is enabled",
-            "description": "More information: \nhttps://docs.upsun.com/define-routes/ssi.html"
+            "description": "More information: \nhttps://docs.upsun.com/anchors/routes/server-side-includes/"
           }
         },
         "required": [
@@ -1097,7 +1097,7 @@
         ],
         "additionalProperties": false,
         "title": "Server-Side Include configuration.",
-        "description": "More information: \nhttps://docs.upsun.com/define-routes.html#route-configuration-reference",
+        "description": "More information: \nhttps://docs.upsun.com/anchors/routes/configuration/",
         "default": {
           "enabled": false
         }
@@ -1105,7 +1105,7 @@
       "upstream": {
         "type": "string",
         "title": "The upstream to use for this route",
-        "description": "The name of the app to be served (as defined in your app configuration) followed by :http. Example: app:http \nMore information: \nhttps://docs.upsun.com/define-routes.html#route-configuration-reference"
+        "description": "The name of the app to be served (as defined in your app configuration) followed by :http. Example: app:http \nMore information: \nhttps://docs.upsun.com/anchors/routes/configuration/"
       }
     },
     "relationships": {
@@ -1132,7 +1132,7 @@
         ]
       },
       "title": "The relationships of the application/service to other services",
-      "description": "Contains a dictionary of relationships: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#relationships",
+      "description": "Contains a dictionary of relationships: \nhttps://docs.upsun.com/anchors/app/reference/relationships/",
       "default": {}
     },
     "firewall": {
@@ -1146,7 +1146,7 @@
               "protocol": {
                 "type": "string",
                 "title": "The IP protocol to apply the restriction on",
-                "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/workers/",
                 "default": "tcp"
               },
               "ips": {
@@ -1155,7 +1155,7 @@
                   "type": "string"
                 },
                 "title": "The IP range in CIDR notation to apply the restriction on",
-                "description": "See a CIDR format converter: \nhttps://www.ipaddressguide.com/cidr \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers",
+                "description": "See a CIDR format converter: \nhttps://www.ipaddressguide.com/cidr \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/workers/",
                 "default": []
               },
               "domains": {
@@ -1164,7 +1164,7 @@
                   "type": "string"
                 },
                 "title": "Domains of the restriction",
-                "description": "Fully qualified domain names to specify specific destinations by hostname \nhttps://en.wikipedia.org/wiki/Fully_qualified_domain_name \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers",
+                "description": "Fully qualified domain names to specify specific destinations by hostname \nhttps://en.wikipedia.org/wiki/Fully_qualified_domain_name \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/workers/",
                 "default": []
               },
               "ports": {
@@ -1180,14 +1180,14 @@
             "additionalProperties": false
           },
           "title": "Outbound firewall restrictions",
-          "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#workers",
+          "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/workers/",
           "default": []
         }
       },
       "additionalProperties": false,
       "nullable": true,
       "title": "Outbound firewall rules for the application",
-      "description": "More information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#firewall",
+      "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/firewall/",
       "default": null
     },
     "mounts": {
@@ -1210,12 +1210,12 @@
           "source_path": {
             "type": "string",
             "title": "The path to be mounted, relative to the root directory of the volume that's being mounted from",
-            "description": "WARNING: Changing the name of your mount affects the source_path when it’s undefined. See how to ensure continuity and maintain access to your files \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#ensure-continuity-when-changing-the-name-of-your-mount"
+            "description": "WARNING: Changing the name of your mount affects the source_path when it’s undefined. See how to ensure continuity and maintain access to your files \nhttps://docs.upsun.com/anchors/app/reference/mounts/change-name/"
           },
           "service": {
             "type": "string",
             "title": "The name of the service that the volume will be mounted from",
-            "description":" Must be a service in `services.yaml` of type `network-storage`. \nMore information: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#mounts"
+            "description":" Must be a service in `services.yaml` of type `network-storage`. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/mounts/"
           }
         },
         "required": [
@@ -1224,7 +1224,7 @@
         "additionalProperties": false
       },
       "title": "Filesystem mounts of this application",
-      "description": "Directories that are writable even after the app is built. Allocated disk for mounts is defined with a separate resource configuration call using `upsun resources:set`. \nContains a dictionary of mounts: \nhttps://docs.upsun.com/create-apps/app-reference/single-runtime-image.html#mounts",
+      "description": "Directories that are writable even after the app is built. Allocated disk for mounts is defined with a separate resource configuration call using `upsun resources:set`. \nContains a dictionary of mounts: \nhttps://docs.upsun.com/anchors/app/reference/mounts/",
       "default": {}
     },
     "deprecated": {
