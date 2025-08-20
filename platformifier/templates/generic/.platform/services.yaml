@@ -3,7 +3,7 @@
 # Each service listed will be deployed
 # to power your {{ .Assets.ServiceName }} project.
 # More information: {{ .Assets.Docs.Services }}
-# Full list of available services: {{ .Assets.Docs.Services }}#available-services
+# Full list of available services: {{ .Assets.Docs.Services }}available/
 {{- if .Services -}}
 {{- range $value := .Services }}
 {{ $value.Name }}:
