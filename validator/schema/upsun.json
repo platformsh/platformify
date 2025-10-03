@@ -725,7 +725,30 @@
             ]
           }
         ],
-        "additionalProperties": false
+        "additionalProperties": false,
+        "x-order": [
+          "type",
+          "stack",
+          "source",
+          "resources",
+          "relationships",
+          "mounts",
+          "web",
+          "workers",
+          "access",
+          "variables",
+          "firewall",
+          "build",
+          "dependencies",
+          "hooks",
+          "crons",
+          "runtime",
+          "container_profile",
+          "additional_hosts",
+          "timezone",
+          "preflight",
+          "operations"
+        ]
       }
     },
     "routes": {
