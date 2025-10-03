@@ -8,157 +8,35 @@
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "resources": {"$ref": "#/definitions/deprecated/resources"},
-          "container_profile": {"$ref": "#/definitions/container_profile"},
-          "access": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "title": "Access control for roles accessing app environments",
-            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/access/",
-            "default": {
-              "ssh": "contributor"
-            }
-          },
-          "relationships": {"$ref": "#/definitions/relationships"},
-          "mounts": {"$ref": "#/definitions/mounts"},
-          "timezone": {
-            "type": "string",
-            "title": "The timezone of the application",
-            "description": "This primarily affects the timezone in which cron tasks will run. It will not affect the application itself. Defaults to UTC if not specified. \nSee also: \nhttps://docs.upsun.com/anchors/app/timezone/",
-            "default": null
-          },
-          "variables": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "additionalProperties": {}
-            },
-            "title": "Variables to control the environment",
-            "description": "Variables provide environment-sensitive information to control how your application behaves. To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/variables/",
-            "default": {}
-          },
-          "firewall": {"$ref": "#/definitions/firewall"},
           "type": {
             "type": "string",
             "title": "The base runtime (language) and version to use for this application",
             "description": "The base image to use with a specific app language.  \nFormat: runtime:version. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/type/"
           },
-          "runtime": {
-            "type": "object",
-            "title": "Runtime-specific configuration",
-            "description": "Customizations to your PHP or Lisp runtime. \nContains a runtime dictionary: \nhttps://docs.upsun.com/anchors/app/reference/runtime/",
-            "properties": {
-              "extensions": {
-                "type": "array",
-                "title": "PHP extensions to enable",
-                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/extensions/",
-                "default": []
+          "stack": {
+            "oneOf": [
+              {
+                "type": "string"
               },
-              "disabled_extensions": {
-                "type": "array",
-                "title": "PHP extensions to disable",
-                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/extensions/",
-                "default": []
+              {
+                "type": "object"
               },
-              "request_terminate_timeout": {
-                "type": "integer",
-                "title": "PHP timeout to terminate requests",
-                "description": "The timeout in seconds for serving a single request after which the PHP-FPM worker process is killed."
-              },
-              "sizing_hints": {
-                "type": "object",
-                "title": "A sizing hints definition",
-                "description": "The assumptions for setting the number of workers in your PHP-FPM runtime. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/runtime/sizing-hints/",
-                "properties": {
-                  "request_memory": {
-                    "type": "integer",
-                    "title": "The average memory consumed per request in MB",
-                    "description": "Minimum to 10",
-                    "default": 45,
-                    "minimum": 10
-                  },
-                  "reserved_memory": {
-                    "type": "integer",
-                    "title": "The amount of memory reserved in MB",
-                    "description": "Minimum to 70",
-                    "default": 70,
-                    "minimum": 70
-                  }
-                },
-                "additionalProperties": false
-              },
-              "xdebug": {
-                "type": "object",
-                "title": "An Xdebug definition",
-                "description": "The setting to turn on Xdebug. \nMore information: \nhttps://docs.upsun.com/anchors/languages/php/xdebug/",
-                "properties": {
-                  "idekey": {
-                    "type": "string",
-                    "title": "Your Xdebug key"
-                  }
-                }
-              },
-              "quicklisp": {
-                "type": "object",
-                "title": "Distributions for QuickLisp to use",
-                "description": "More information: \nhttps://docs.upsun.com/anchors/languages/lisp/",
-                "deprecationMessage": "Lisp image no longer exists, please see \nhttps://devcenter.upsun.com/posts/deploying-with-lisp/ \n for more information"
-              }
-            }
-          },
-          "preflight": {
-            "type": "object",
-            "properties": {
-              "enabled": {
-                "type": "boolean",
-                "title": "Whether the preflight security blocks are enabled",
-                "description": "Must be a boolean"
-              },
-              "ignored_rules": {
+              {
                 "type": "array",
                 "items": {
-                  "type": "string"
-                },
-                "title": "Specific rules to ignore during preflight security checks",
-                "default": []
+                  "oneOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
               }
-            },
-            "required": [
-              "enabled"
             ],
-            "additionalProperties": false,
-            "description": "Configuration for pre-flight checks",
-            "default": {
-              "enabled": true,
-              "ignored_rules": []
-            }
-          },
-          "dependencies": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object"
-            },
-            "title": "External global dependencies of this application",
-            "description": "What global dependencies to install before the build `hook` is run. They will be downloaded by the language's package manager.  \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/dependencies/",
-            "default": {}
-          },
-          "build": {
-            "type": "object",
-            "properties": {
-              "flavor": {
-                "type": "string",
-                "description": "The pre-set build tasks to use for this application",
-                "default": null
-              }
-            },
-            "additionalProperties": false,
-            "title": "The build configuration of the application",
-            "description": "It contains a build dictionary.  \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/build/",
-            "default": {
-              "flavor": null
-            }
+            "title": "Composable Image definition",
+            "description": "A list of packages from the Upsun collection of supported runtimes and/or from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/anchors/app/composable/"
           },
           "source": {
             "type": "object",
@@ -197,6 +75,9 @@
               "root": null
             }
           },
+          "resources": {"$ref": "#/definitions/deprecated/resources"},
+          "relationships": {"$ref": "#/definitions/relationships"},
+          "mounts": {"$ref": "#/definitions/mounts"},
           "web": {
             "type": "object",
             "title": "How the web application is served",
@@ -445,130 +326,6 @@
               "locations": {}
             }
           },
-          "operations": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "commands": {
-                  "type": "object",
-                  "properties": {
-                    "start": {
-                      "type": "string",
-                      "title": "The command used to start the application",
-                      "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
-                    }
-                  },
-                  "required": [
-                    "start"
-                  ]
-                },
-                "role": {
-                  "type": "string",
-                  "title": "which users can trigger it according to their user role",
-                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/runtime-operations/define/",
-                  "enum": [
-                    "viewer",
-                    "contributor",
-                    "admin"
-                  ]
-                }
-              },
-              "required": [
-                "commands"
-              ],
-              "additionalProperties": false
-            },
-            "title": "Runtime operations that can be executed in the application container",
-            "description": "More information: \nhttps://docs.upsun.com/anchors/app/runtime-operations/",
-            "default": {}
-          },
-          "hooks": {
-            "type": "object",
-            "properties": {
-              "build": {
-                "type": "string",
-                "title": "Hook executed after the build process",
-                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
-                "default": null
-              },
-              "deploy": {
-                "type": "string",
-                "title": "Hook executed after the deployment of new code",
-                "description": "More information: \nhttps://docs.upsun.com\t\n/anchors/app/reference/hooks/",
-                "default": null
-              },
-              "post_deploy": {
-                "type": "string",
-                "title": "Hook executed after an environment is fully deployed",
-                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
-                "default": null
-              }
-            },
-            "additionalProperties": false,
-            "title": "What commands run at different stages in the `build`, `deploy` and `post_deploy` process",
-            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
-            "default": {}
-          },
-          "crons": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "object",
-              "properties": {
-                "spec": {
-                  "type": "string",
-                  "title": "The cron schedule specification",
-                  "description": "The cron specification. To prevent competition for resources that might hurt performance, use `H` in definitions to indicate an unspecified but invariant time. For example, instead of using `0 * * * *` to indicate the cron job runs at the start of every hour, you can use `H * * * *` to indicate it runs every hour, but not necessarily at the start. This prevents multiple cron jobs from trying to start at the same time. \nMore information: \nhttps://en.wikipedia.org/wiki/Cron#Cron_expression"
-                },
-                "commands": {
-                  "type": "object",
-                  "properties": {
-                    "start": {
-                      "type": "string",
-                      "title": "The command used to start the cron job",
-                      "description": "By default, the command is run in Dash (till you specify something else): \nhttps://en.wikipedia.org/wiki/Almquist_shell"
-                    },
-                    "stop": {
-                      "type": "string",
-                      "title": "The command used to stop the cron job",
-                      "description": "The command that’s issued to give the cron command a chance to shutdown gracefully, such as to finish an active item in a list of tasks. Issued when a cron task is interrupted by a user through the CLI or Console. If not specified, a `SIGTERM` signal is sent to the process.",
-                      "default": null
-                    }
-                  },
-                  "required": [
-                    "start"
-                  ],
-                  "additionalProperties": false,
-                  "title": "A definition of what commands to run when starting and stopping the cron job",
-                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/crons/commands/"
-                },
-                "shutdown_timeout": {
-                  "type": "integer",
-                  "title": "The timeout in seconds after which the cron job will be forcefully killed",
-                  "description": "When a cron is canceled, this represents the number of seconds after which a `SIGKILL` signal is sent to the process to force terminate it. The default is `10` seconds.",
-                  "default": 10
-                },
-                "timeout": {
-                  "type": "integer",
-                  "title": "The cron timeout",
-                  "description": "The maximum amount of time a cron can run before it’s terminated. Defaults to the maximum allowed value of `86400` seconds (24 hours).",
-                  "maximum": 86400
-                },
-                "cmd": {
-                  "type": "string",
-                  "title": "The command to execute",
-                  "deprecationMessage": "Deprecated, please use `commands.start` instead."
-                }
-              },
-              "required": [
-                "spec"
-              ],
-              "additionalProperties": false
-            },
-            "title": "Scheduled cron tasks executed by this application",
-            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/crons/",
-            "default": {}
-          },
           "workers": {
             "type": "object",
             "additionalProperties": {
@@ -679,6 +436,203 @@
             "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/workers/",
             "default": {}
           },
+          "access": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Access control for roles accessing app environments",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/access/",
+            "default": {
+              "ssh": "contributor"
+            }
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "title": "Variables to control the environment",
+            "description": "Variables provide environment-sensitive information to control how your application behaves. To set a Unix environment variable, specify a key of `env:`, and then each sub-item of that is a key/value pair that will be injected into the environment. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/variables/",
+            "default": {}
+          },
+          "firewall": {"$ref": "#/definitions/firewall"},
+          "build": {
+            "type": "object",
+            "properties": {
+              "flavor": {
+                "type": "string",
+                "description": "The pre-set build tasks to use for this application",
+                "default": null
+              }
+            },
+            "additionalProperties": false,
+            "title": "The build configuration of the application",
+            "description": "It contains a build dictionary.  \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/build/",
+            "default": {
+              "flavor": null
+            }
+          },
+          "dependencies": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            },
+            "title": "External global dependencies of this application",
+            "description": "What global dependencies to install before the build `hook` is run. They will be downloaded by the language's package manager.  \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/dependencies/",
+            "default": {}
+          },
+          "hooks": {
+            "type": "object",
+            "properties": {
+              "build": {
+                "type": "string",
+                "title": "Hook executed after the build process",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
+                "default": null
+              },
+              "deploy": {
+                "type": "string",
+                "title": "Hook executed after the deployment of new code",
+                "description": "More information: \nhttps://docs.upsun.com\t\n/anchors/app/reference/hooks/",
+                "default": null
+              },
+              "post_deploy": {
+                "type": "string",
+                "title": "Hook executed after an environment is fully deployed",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
+                "default": null
+              }
+            },
+            "additionalProperties": false,
+            "title": "What commands run at different stages in the `build`, `deploy` and `post_deploy` process",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/hooks/",
+            "default": {}
+          },
+          "crons": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "spec": {
+                  "type": "string",
+                  "title": "The cron schedule specification",
+                  "description": "The cron specification. To prevent competition for resources that might hurt performance, use `H` in definitions to indicate an unspecified but invariant time. For example, instead of using `0 * * * *` to indicate the cron job runs at the start of every hour, you can use `H * * * *` to indicate it runs every hour, but not necessarily at the start. This prevents multiple cron jobs from trying to start at the same time. \nMore information: \nhttps://en.wikipedia.org/wiki/Cron#Cron_expression"
+                },
+                "commands": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "string",
+                      "title": "The command used to start the cron job",
+                      "description": "By default, the command is run in Dash (till you specify something else): \nhttps://en.wikipedia.org/wiki/Almquist_shell"
+                    },
+                    "stop": {
+                      "type": "string",
+                      "title": "The command used to stop the cron job",
+                      "description": "The command that’s issued to give the cron command a chance to shutdown gracefully, such as to finish an active item in a list of tasks. Issued when a cron task is interrupted by a user through the CLI or Console. If not specified, a `SIGTERM` signal is sent to the process.",
+                      "default": null
+                    }
+                  },
+                  "required": [
+                    "start"
+                  ],
+                  "additionalProperties": false,
+                  "title": "A definition of what commands to run when starting and stopping the cron job",
+                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/crons/commands/"
+                },
+                "shutdown_timeout": {
+                  "type": "integer",
+                  "title": "The timeout in seconds after which the cron job will be forcefully killed",
+                  "description": "When a cron is canceled, this represents the number of seconds after which a `SIGKILL` signal is sent to the process to force terminate it. The default is `10` seconds.",
+                  "default": 10
+                },
+                "timeout": {
+                  "type": "integer",
+                  "title": "The cron timeout",
+                  "description": "The maximum amount of time a cron can run before it’s terminated. Defaults to the maximum allowed value of `86400` seconds (24 hours).",
+                  "maximum": 86400
+                },
+                "cmd": {
+                  "type": "string",
+                  "title": "The command to execute",
+                  "deprecationMessage": "Deprecated, please use `commands.start` instead."
+                }
+              },
+              "required": [
+                "spec"
+              ],
+              "additionalProperties": false
+            },
+            "title": "Scheduled cron tasks executed by this application",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/crons/",
+            "default": {}
+          },
+          "runtime": {
+            "type": "object",
+            "title": "Runtime-specific configuration",
+            "description": "Customizations to your PHP or Lisp runtime. \nContains a runtime dictionary: \nhttps://docs.upsun.com/anchors/app/reference/runtime/",
+            "properties": {
+              "extensions": {
+                "type": "array",
+                "title": "PHP extensions to enable",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/extensions/",
+                "default": []
+              },
+              "disabled_extensions": {
+                "type": "array",
+                "title": "PHP extensions to disable",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/extensions/",
+                "default": []
+              },
+              "request_terminate_timeout": {
+                "type": "integer",
+                "title": "PHP timeout to terminate requests",
+                "description": "The timeout in seconds for serving a single request after which the PHP-FPM worker process is killed."
+              },
+              "sizing_hints": {
+                "type": "object",
+                "title": "A sizing hints definition",
+                "description": "The assumptions for setting the number of workers in your PHP-FPM runtime. \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/runtime/sizing-hints/",
+                "properties": {
+                  "request_memory": {
+                    "type": "integer",
+                    "title": "The average memory consumed per request in MB",
+                    "description": "Minimum to 10",
+                    "default": 45,
+                    "minimum": 10
+                  },
+                  "reserved_memory": {
+                    "type": "integer",
+                    "title": "The amount of memory reserved in MB",
+                    "description": "Minimum to 70",
+                    "default": 70,
+                    "minimum": 70
+                  }
+                },
+                "additionalProperties": false
+              },
+              "xdebug": {
+                "type": "object",
+                "title": "An Xdebug definition",
+                "description": "The setting to turn on Xdebug. \nMore information: \nhttps://docs.upsun.com/anchors/languages/php/xdebug/",
+                "properties": {
+                  "idekey": {
+                    "type": "string",
+                    "title": "Your Xdebug key"
+                  }
+                }
+              },
+              "quicklisp": {
+                "type": "object",
+                "title": "Distributions for QuickLisp to use",
+                "description": "More information: \nhttps://docs.upsun.com/anchors/languages/lisp/",
+                "deprecationMessage": "Lisp image no longer exists, please see \nhttps://devcenter.upsun.com/posts/deploying-with-lisp/ \n for more information"
+              }
+            }
+          },
+          "container_profile": {"$ref": "#/definitions/container_profile"},
           "additional_hosts": {
             "type": "object",
             "additionalProperties": {
@@ -687,31 +641,77 @@
             "title": "Maps of hostnames to IP addresses",
             "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/additional-hosts/"
           },
-          "stack": {
-            "oneOf": [
-              {
-                "type": "string"
+          "timezone": {
+            "type": "string",
+            "title": "The timezone of the application",
+            "description": "This primarily affects the timezone in which cron tasks will run. It will not affect the application itself. Defaults to UTC if not specified. \nSee also: \nhttps://docs.upsun.com/anchors/app/timezone/",
+            "default": null
+          },
+          "preflight": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "title": "Whether the preflight security blocks are enabled",
+                "description": "Must be a boolean"
               },
-              {
-                "type": "object"
-              },
-              {
+              "ignored_rules": {
                 "type": "array",
                 "items": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "object"
+                  "type": "string"
+                },
+                "title": "Specific rules to ignore during preflight security checks",
+                "default": []
+              }
+            },
+            "required": [
+              "enabled"
+            ],
+            "additionalProperties": false,
+            "description": "Configuration for pre-flight checks",
+            "default": {
+              "enabled": true,
+              "ignored_rules": []
+            }
+          },
+          "operations": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "commands": {
+                  "type": "object",
+                  "properties": {
+                    "start": {
+                      "type": "string",
+                      "title": "The command used to start the application",
+                      "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
                     }
+                  },
+                  "required": [
+                    "start"
+                  ]
+                },
+                "role": {
+                  "type": "string",
+                  "title": "which users can trigger it according to their user role",
+                  "description": "More information: \nhttps://docs.upsun.com/anchors/app/runtime-operations/define/",
+                  "enum": [
+                    "viewer",
+                    "contributor",
+                    "admin"
                   ]
                 }
-              }
-            ],
-            "title": "Composable Image definition",
-            "description": "A list of packages from the Upsun collection of supported runtimes and/or from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/anchors/app/composable/"
-          }
+              },
+              "required": [
+                "commands"
+              ],
+              "additionalProperties": false
+            },
+            "title": "Runtime operations that can be executed in the application container",
+            "description": "More information: \nhttps://docs.upsun.com/anchors/app/runtime-operations/",
+            "default": {}
+          },
         },
         "anyOf": [
           {
