@@ -711,7 +711,7 @@
             "title": "Runtime operations that can be executed in the application container",
             "description": "More information: \nhttps://docs.upsun.com/anchors/app/runtime-operations/",
             "default": {}
-          },
+          }
         },
         "anyOf": [
           {
