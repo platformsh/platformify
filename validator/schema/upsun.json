@@ -249,9 +249,6 @@
                     "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP or FrankenPHP. \nSee note: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/start/"
                   }
                 },
-                "required": [
-                  "start"
-                ],
                 "additionalProperties": false,
                 "title": "The command to launch your app",
                 "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/"
