@@ -247,6 +247,11 @@
                     "type": "string",
                     "title": "The command used to start the application",
                     "description": "It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP or FrankenPHP. \nSee note: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/start/"
+                  },
+                  "post_start": {
+                    "type": "string",
+                    "title": "A command executed after the application is started",
+                    "description": "More information: \nhttps://docs.upsun.com/anchors/app/reference/web/commands/"
                   }
                 },
                 "additionalProperties": false,
