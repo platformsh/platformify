@@ -239,7 +239,7 @@ services:
 {{- else }}
 # services:
 #   db:
-#     type: postgresql:14
+#     type: postgresql:17
 {{ end }}
 
 # The routes of the project.
