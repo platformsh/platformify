@@ -147,6 +147,10 @@ applications:
           - pdo_sqlite
       - "nodejs@20"
       - "python@3.12"
+    web:
+      commands:
+        pre_start: echo "pre_start"
+        post_start: echo "post_start"
 `,
 						),
 					},
