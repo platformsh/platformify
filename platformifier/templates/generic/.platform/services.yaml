@@ -16,6 +16,6 @@
 {{ else }}
 # relationships
 # db:
-#   type: postgresql:14
+#   type: postgresql:17
 #   disk: 1024
 {{ end -}}
