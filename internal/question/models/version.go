@@ -1,3 +1,5 @@
+//go:generate go run generate_versions.go
+
 package models
 
 var (
