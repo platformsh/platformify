@@ -18,7 +18,7 @@ var (
 	ServiceTypeVersions = map[ServiceName][]string{
 		ChromeHeadless:  {"120", "113", "95", "91"},
 		ClickHouse:      {"25.3", "24.3", "23.8"},
-		InfluxDB:         {"2.7", "2.3"},
+		InfluxDB:        {"2.7", "2.3"},
 		Kafka:           {"3.7", "3.6", "3.4", "3.2"},
 		MariaDB:         {"11.8", "11.4", "10.11", "10.6"},
 		Memcached:       {"1.6", "1.5", "1.4"},
