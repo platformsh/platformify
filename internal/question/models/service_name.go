@@ -8,7 +8,8 @@ import (
 
 const (
 	ChromeHeadless  ServiceName = "chrome-headless"
-	InfluxDB        ServiceName = "influxdb"
+	ClickHouse      ServiceName = "clickhouse"
+	InfluxDB         ServiceName = "influxdb"
 	Kafka           ServiceName = "kafka"
 	MariaDB         ServiceName = "mariadb"
 	Memcached       ServiceName = "memcached"
