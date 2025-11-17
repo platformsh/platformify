@@ -121,7 +121,7 @@ applications:
 						Data: []byte(`
 services:
   redis:
-    type: redis:6.2
+    type: redis:8.0
     size: AUTO
 `,
 						),
@@ -158,7 +158,7 @@ applications:
 						Data: []byte(`
 services:
   redis:
-    type: redis:6.2
+    type: redis:8.0
     size: AUTO
 `,
 						),
@@ -192,7 +192,7 @@ applications:
 						Data: []byte(`
 services:
   redis:
-    type: redis:6.2
+    type: redis:8.0
     size: AUTO
 `,
 						),
