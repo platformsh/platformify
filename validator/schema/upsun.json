@@ -723,6 +723,7 @@
           },
           {
             "required": [
+              "type",
               "stack"
             ]
           }
