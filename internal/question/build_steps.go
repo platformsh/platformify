@@ -136,6 +136,13 @@ func (q *BuildSteps) Ask(ctx context.Context) error {
 			answers.BuildSteps,
 			"bundle exec rails assets:precompile",
 		)
+	case models.Symfony:
+		// Replace all build steps with the Symfony Cloud configurator.
+		// symfony-build handles composer install and asset building internally.
+		answers.BuildSteps = []string{
+			"curl -s https://get.symfony.com/cloud/configurator | bash",
+			"symfony-build",
+		}
 	}
 
 	return nil

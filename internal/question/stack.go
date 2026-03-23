@@ -76,11 +76,11 @@ func (q *Stack) Ask(ctx context.Context) error {
 		answers.Stack = models.Strapi
 		return nil
 	case platformifier.Symfony:
-		// Pass to handle below if no interaction
 		if answers.NoInteraction {
-			answers.Stack = models.GenericStack
+			answers.Stack = models.Symfony
 			return nil
 		}
+		// Interactive: offer Symfony CLI below.
 	default:
 		answers.Stack = models.GenericStack
 		return nil
@@ -140,6 +140,6 @@ func (q *Stack) Ask(ctx context.Context) error {
 		return questionnaire.ErrSilent
 	}
 
-	answers.Stack = models.GenericStack
+	answers.Stack = models.Symfony
 	return nil
 }

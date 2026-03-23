@@ -79,6 +79,16 @@ func (q *Mounts) Ask(ctx context.Context) error {
 				"source_path": "uploads",
 			},
 		}
+	case models.Symfony:
+		answers.Disk = "2048" // in MB
+		answers.Mounts = map[string]map[string]string{
+			"/var/cache": {
+				"source": "tmp",
+			},
+			"/var/log": {
+				"source": "tmp",
+			},
+		}
 	}
 
 	return nil

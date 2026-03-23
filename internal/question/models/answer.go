@@ -154,6 +154,8 @@ func getStack(answersStack Stack) platformifier.Stack {
 		return platformifier.Flask
 	case Express:
 		return platformifier.Express
+	case Symfony:
+		return platformifier.Symfony
 	default:
 		return platformifier.Generic
 	}

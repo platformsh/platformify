@@ -26,6 +26,11 @@ func (q *Locations) Ask(ctx context.Context) error {
 			"expires": "1h",
 			"allow":   true,
 		}
+	case models.Symfony:
+		answers.Locations["/"] = map[string]interface{}{
+			"root":     "public",
+			"passthru": "/index.php",
+		}
 	default:
 		if answers.Type.Runtime.Type == "php" {
 			locations := map[string]interface{}{

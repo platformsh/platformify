@@ -45,6 +45,10 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 		answers.DeployCommand = append(answers.DeployCommand,
 			"bundle exec rake db:migrate",
 		)
+	case models.Symfony:
+		answers.DeployCommand = append(answers.DeployCommand,
+			"symfony-deploy",
+		)
 	}
 
 	return nil

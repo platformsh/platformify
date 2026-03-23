@@ -15,6 +15,7 @@ const (
 	Flask
 	Express
 	Rails
+	Symfony
 )
 
 var (
@@ -27,6 +28,7 @@ var (
 		Flask,
 		Express,
 		Rails,
+		Symfony,
 	}
 )
 
@@ -50,6 +52,8 @@ func (s Stack) Title() string {
 		return "Flask"
 	case Express:
 		return "Express"
+	case Symfony:
+		return "Symfony"
 	default:
 		return ""
 	}
@@ -99,7 +103,7 @@ func RuntimeForStack(stack Stack) *Runtime {
 			return r
 		}
 		return nil
-	case Laravel:
+	case Laravel, Symfony:
 		if r, err := Runtimes.RuntimeByType("php"); err == nil {
 			return r
 		}
