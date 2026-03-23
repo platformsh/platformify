@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"log"
+	"sort"
 )
 
 //go:embed registry.json
@@ -23,6 +24,9 @@ func init() {
 			Runtimes = append(Runtimes, r)
 		}
 	}
+	sort.Slice(Runtimes, func(i, j int) bool {
+		return Runtimes[i].Name < Runtimes[j].Name
+	})
 
 	allServices := map[string]*ServiceName{}
 	if err := json.Unmarshal(registry, &allServices); err != nil {
@@ -33,4 +37,7 @@ func init() {
 			ServiceNames = append(ServiceNames, s)
 		}
 	}
+	sort.Slice(ServiceNames, func(i, j int) bool {
+		return ServiceNames[i].Name < ServiceNames[j].Name
+	})
 }

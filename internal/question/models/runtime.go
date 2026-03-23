@@ -9,14 +9,14 @@ type Runtime struct {
 	Name        string
 	Description string
 	Disk        bool
-	Docs        struct {
+	Docs struct {
 		URL string
 		Web struct {
 			Commands struct {
 				Start string
 			}
+			Locations map[string]map[string]any
 		}
-		Locations map[string]map[string]any
 	}
 	Type     string
 	Versions struct {

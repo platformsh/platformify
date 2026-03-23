@@ -12,12 +12,12 @@ type ServiceName struct {
 	Type        string
 	Description string
 	Disk        bool
-	Docs        struct {
-		Relationship string
+	Docs struct {
+		Relationship string `json:"relationship_name"`
 		URL          string
 	}
 	Endpoint    string
-	MinDiskSize *int
+	MinDiskSize *int `json:"min_disk_size"`
 	Versions    struct {
 		Supported []string
 	}
