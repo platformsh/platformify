@@ -49,15 +49,15 @@ func (va *VendorAssets) ProprietaryFiles() []string {
 
 func (va *VendorAssets) Docs() *Docs {
 	return &Docs{
-		AppReference:   fmt.Sprintf("%s/create-apps/app-reference/single-runtime-image.html", va.DocsBaseURL),
-		GettingStarted: fmt.Sprintf("%s/guides/symfony/get-started.html", va.DocsBaseURL),
-		Hooks:          fmt.Sprintf("%s/create-apps/hooks/hooks-comparison.html", va.DocsBaseURL),
-		PHP:            fmt.Sprintf("%s/languages/php.html", va.DocsBaseURL),
-		Routes:         fmt.Sprintf("%s/define-routes.html", va.DocsBaseURL),
-		Services:       fmt.Sprintf("%s/add-services.html", va.DocsBaseURL),
-		SymfonyCLI:     fmt.Sprintf("%s/guides/symfony/get-started.html#symfony-cli-tipsl", va.DocsBaseURL),
-		TimeZone:       fmt.Sprintf("%s/create-apps/timezone.html", va.DocsBaseURL),
-		Variables:      fmt.Sprintf("%s/development/variables/use-variables.html#use-platformsh-provided-variables", va.DocsBaseURL),
+		AppReference:   fmt.Sprintf("%s/app/reference/", va.DocsBaseURL),
+		GettingStarted: fmt.Sprintf("%s/stacks/symfony/", va.DocsBaseURL),
+		Hooks:          fmt.Sprintf("%s/app/hooks/compare/", va.DocsBaseURL),
+		PHP:            fmt.Sprintf("%s/languages/php/", va.DocsBaseURL),
+		Routes:         fmt.Sprintf("%s/routes/", va.DocsBaseURL),
+		Services:       fmt.Sprintf("%s/services/", va.DocsBaseURL),
+		SymfonyCLI:     fmt.Sprintf("%s/stacks/symfony/cli/tips/", va.DocsBaseURL),
+		TimeZone:       fmt.Sprintf("%s/app/timezone/", va.DocsBaseURL),
+		Variables:      fmt.Sprintf("%s/variables/use/provided/", va.DocsBaseURL),
 	}
 }
 

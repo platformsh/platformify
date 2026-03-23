@@ -121,7 +121,7 @@ applications:
 						Data: []byte(`
 services:
   redis:
-    type: redis:6.2
+    type: redis:8.0
     size: AUTO
 `,
 						),
@@ -147,6 +147,10 @@ applications:
           - pdo_sqlite
       - "nodejs@20"
       - "python@3.12"
+    web:
+      commands:
+        pre_start: echo "pre_start"
+        post_start: echo "post_start"
 `,
 						),
 					},
@@ -154,7 +158,7 @@ applications:
 						Data: []byte(`
 services:
   redis:
-    type: redis:6.2
+    type: redis:8.0
     size: AUTO
 `,
 						),
@@ -171,7 +175,7 @@ services:
 						Data: []byte(`
 applications:
   app1:
-    type: "python:3.11"
+    type: "composable:25.05"
     stack:
       - "php@8.3":
         extensions:
@@ -188,8 +192,104 @@ applications:
 						Data: []byte(`
 services:
   redis:
-    type: redis:6.2
+    type: redis:8.0
     size: AUTO
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "true-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: true
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "worker container profile",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: true
+    workers:
+      app1-worker:
+        commands:
+          start: |
+            sleep 86400 && echo "done"
+        container_profile: HIGH_CPU
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "false-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: false
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "true-string-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: "true"
+`,
+						),
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "false-string-boolean",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app1:
+    type: "python:3.11"
+    preflight:
+      enabled: "false"
 `,
 						),
 					},

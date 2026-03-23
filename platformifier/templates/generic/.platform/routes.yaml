@@ -8,7 +8,7 @@
   upstream: "{{ .Name }}:http"
 
 # A basic redirect definition
-# More information: {{ .Assets.Docs.Routes }}#basic-redirect-definition
+# More information: {{ .Assets.Docs.Routes }}examples/redirect/
 "https://www.{{ "{default}" }}":
   type: redirect
   to: "https://{{ "{default}" }}/"

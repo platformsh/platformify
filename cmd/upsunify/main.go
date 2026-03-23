@@ -20,7 +20,7 @@ func main() {
 	assets := &vendorization.VendorAssets{
 		Binary:       "upsun",
 		ConfigFlavor: "upsun",
-		DocsBaseURL:  "https://docs.upsun.com",
+		DocsBaseURL:  "https://docs.upsun.com/anchors",
 		EnvPrefix:    "PLATFORM",
 		ServiceName:  "Upsun",
 		Use:          "upsunify",

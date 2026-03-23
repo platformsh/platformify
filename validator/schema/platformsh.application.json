@@ -78,7 +78,8 @@
             "title": "The type of mount that will provide the data.",
             "enum": [
               "local",
-              "service"
+              "service",
+              "tmp"
             ]
           },
           "source_path": {
@@ -367,7 +368,8 @@
                 "title": "The type of mount that will provide the data.",
                 "enum": [
                   "local",
-                  "service"
+                  "service",
+                  "tmp"
                 ]
               },
               "source_path": {
@@ -456,7 +458,7 @@
                 "default": null
               },
               "expires": {
-                "type": "string",
+                "type": ["integer", "string"],
                 "title": "Amount of time to cache static assets.",
                 "default": -1
               },
@@ -499,7 +501,7 @@
                   "type": "object",
                   "properties": {
                     "expires": {
-                      "type": "string",
+                      "type": ["integer", "string"],
                       "title": "Amount of time to cache static assets."
                     },
                     "passthru": {
@@ -560,6 +562,10 @@
             "start": {
               "type": "string",
               "title": "The command used to start the application.  It will be restarted if it terminates. Do not use on PHP unless using a custom persistent process like React PHP."
+            },
+            "post_start": {
+              "type": "string",
+              "title": "A command executed after the application is started."
             }
           },
           "required": [
@@ -615,7 +621,7 @@
           "title": "Blacklisted entries."
         },
         "expires": {
-          "type": "string",
+          "type": ["integer", "string"],
           "title": "Amount of time to cache static assets."
         },
         "move_to_root": {
@@ -774,7 +780,8 @@
                   "title": "The type of mount that will provide the data.",
                   "enum": [
                     "local",
-                    "service"
+                    "service",
+                    "tmp"
                   ]
                 },
                 "source_path": {
