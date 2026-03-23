@@ -113,7 +113,7 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 		locations[key] = value
 	}
 
-	dependencyManagers := make([]string, len(a.DependencyManagers))
+	dependencyManagers := make([]string, 0, len(a.DependencyManagers))
 	for _, dm := range a.DependencyManagers {
 		dependencyManagers = append(dependencyManagers, dm.String())
 	}
