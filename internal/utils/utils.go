@@ -37,7 +37,7 @@ func FindFile(fileSystem fs.FS, searchPath, name string) string {
 	}
 
 	slices.SortFunc(files, func(a, b string) int {
-		return cmp.Compare(strings.Count(a, string(os.PathSeparator)), strings.Count(b, string(os.PathSeparator)))
+		return cmp.Compare(strings.Count(a, "/"), strings.Count(b, "/"))
 	})
 	return files[0]
 }

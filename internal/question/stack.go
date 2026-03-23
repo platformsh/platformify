@@ -3,7 +3,6 @@ package question
 import (
 	"context"
 	"fmt"
-	"slices"
 	"strings"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -149,9 +148,13 @@ func (q *Stack) Ask(ctx context.Context) error {
 		}
 
 		if keywords, ok := utils.GetJSONValue(answers.WorkingDirectory, []string{"keywords"}, composerJSONPath, true); ok {
-			if keywordsVal, ok := keywords.([]string); ok && slices.Contains(keywordsVal, "shopware") {
-				hasShopwareDependencies = true
-				break
+			if keywordsVal, ok := keywords.([]any); ok {
+				for _, kw := range keywordsVal {
+					if kwStr, ok := kw.(string); ok && kwStr == "shopware" {
+						hasShopwareDependencies = true
+						break
+					}
+				}
 			}
 		}
 		if requirements, ok := utils.GetJSONValue(answers.WorkingDirectory, []string{"require"}, composerJSONPath, true); ok {

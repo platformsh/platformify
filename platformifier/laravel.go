@@ -47,5 +47,5 @@ func (p *laravelPlatformifier) Platformify(ctx context.Context, input *UserInput
 		}
 	}
 
-	return nil, nil
+	return map[string][]byte{}, nil
 }
