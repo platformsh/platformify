@@ -10,6 +10,7 @@ const (
 	composerJSONFile = "composer.json"
 	packageJSONFile  = "package.json"
 	symfonyLockFile  = "symfony.lock"
+	rackFile         = "config.ru"
 )
 
 // Discoverer detects project characteristics from the filesystem.

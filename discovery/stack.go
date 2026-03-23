@@ -30,6 +30,17 @@ func (d *Discoverer) discoverStack() (platformifier.Stack, error) {
 		return platformifier.Django, nil
 	}
 
+	rackPath := utils.FindFile(d.fileSystem, "", rackFile)
+	if rackPath != "" {
+		f, err := d.fileSystem.Open(rackPath)
+		if err == nil {
+			defer f.Close()
+			if ok, _ := utils.ContainsStringInFile(f, "Rails.application.load_server", true); ok {
+				return platformifier.Rails, nil
+			}
+		}
+	}
+
 	requirementsPath := utils.FindFile(d.fileSystem, "", "requirements.txt")
 	if requirementsPath != "" {
 		f, err := d.fileSystem.Open(requirementsPath)

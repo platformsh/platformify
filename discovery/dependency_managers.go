@@ -94,7 +94,7 @@ func (d *Discoverer) nodeExecPrefix() string {
 	}
 
 	if slices.Contains(dependencyManagers, "yarn") {
-		return "yarn exec"
+		return "yarn exec "
 	}
 
 	if slices.Contains(dependencyManagers, "npm") {

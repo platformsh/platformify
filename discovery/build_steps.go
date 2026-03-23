@@ -68,7 +68,7 @@ func (d *Discoverer) discoverBuildSteps() ([]string, error) {
 				"# Install Pipenv as a global tool",
 				"python -m venv /app/.global",
 				"pip install pipenv==$PIPENV_TOOL_VERSION",
-				"pipenv install",
+				"pipenv sync",
 			)
 		case "pip":
 			buildSteps = append(

@@ -51,6 +51,8 @@ func (d *Discoverer) discoverType() (string, error) {
 		return "php", nil
 	case platformifier.Django, platformifier.Flask:
 		return "python", nil
+	case platformifier.Rails:
+		return "ruby", nil
 	case platformifier.Express, platformifier.NextJS, platformifier.Strapi:
 		return "nodejs", nil
 	}
@@ -63,9 +65,6 @@ func (d *Discoverer) discoverType() (string, error) {
 	langCount := make(map[string]int)
 	for ext, count := range extCount {
 		if lang, ok := languageMap[ext]; ok {
-			if _, _ok := langCount[lang]; !_ok {
-				langCount[lang] = 0
-			}
 			langCount[lang] += count
 		}
 	}
