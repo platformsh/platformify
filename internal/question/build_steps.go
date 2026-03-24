@@ -11,6 +11,8 @@ import (
 	"github.com/platformsh/platformify/vendorization"
 )
 
+const managePyFile = "manage.py"
+
 type BuildSteps struct{}
 
 func (q *BuildSteps) Ask(ctx context.Context) error {
