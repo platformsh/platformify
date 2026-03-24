@@ -68,6 +68,9 @@ func (q *Stack) Ask(ctx context.Context) error {
 		answers.Stack = models.Rails
 		return nil
 	case platformifier.Symfony:
+		if answers.NoInteraction {
+			return nil
+		}
 		// Interactive: offer Symfony CLI below.
 	default:
 		answers.Stack = models.GenericStack
