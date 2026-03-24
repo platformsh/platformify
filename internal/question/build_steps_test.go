@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 	"testing"
+	"testing/fstest"
 
 	"github.com/platformsh/platformify/internal/question/models"
 )
@@ -37,6 +38,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Yarn},
 				Environment:        map[string]string{},
+				WorkingDirectory:   fstest.MapFS{},
 			}},
 			buildSteps: []string{"yarn", "yarn exec next build"},
 			wantErr:    false,
@@ -50,6 +52,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Npm},
 				Environment:        map[string]string{},
+				WorkingDirectory:   fstest.MapFS{},
 			}},
 			buildSteps: []string{"npm i", "npm exec next build"},
 			wantErr:    false,
@@ -63,6 +66,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Bundler},
 				Environment:        map[string]string{},
+				WorkingDirectory:   fstest.MapFS{},
 			}},
 			buildSteps: []string{"bundle install"},
 			wantErr:    false,
@@ -76,6 +80,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Bundler},
 				Environment:        map[string]string{},
+				WorkingDirectory:   fstest.MapFS{},
 			}},
 			buildSteps: []string{"bundle install", "bundle exec rails assets:precompile"},
 			wantErr:    false,

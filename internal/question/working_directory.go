@@ -31,7 +31,8 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	answers.WorkingDirectory = cwd
+	answers.WorkingDirectory = os.DirFS(cwd)
+	answers.Cwd = cwd
 	answers.HasGit = false
 
 	var outBuf, errBuf bytes.Buffer
@@ -84,7 +85,8 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 		}
 
 		if proceed {
-			answers.WorkingDirectory = gitRepoAbsPath
+			answers.WorkingDirectory = os.DirFS(gitRepoAbsPath)
+			answers.Cwd = gitRepoAbsPath
 			answers.HasGit = true
 		}
 	}

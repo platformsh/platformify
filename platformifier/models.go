@@ -1,6 +1,7 @@
 package platformifier
 
 import (
+	"io/fs"
 	"strings"
 )
 
@@ -62,7 +63,6 @@ type Relationship struct {
 // UserInput contains the configuration from user input.
 type UserInput struct {
 	Stack              Stack
-	Root               string
 	ApplicationRoot    string
 	Name               string
 	Type               string
@@ -73,14 +73,14 @@ type UserInput struct {
 	SocketFamily       string
 	DeployCommand      []string
 	DependencyManagers []string
-	Locations          map[string]map[string]interface{}
+	Locations          map[string]map[string]any
 	Dependencies       map[string]map[string]string
 	BuildFlavor        string
 	Disk               string
 	Mounts             map[string]map[string]string
 	Services           []Service
 	Relationships      map[string]Relationship
-	WorkingDirectory   string
+	WorkingDirectory   fs.FS
 	HasGit             bool
 }
 

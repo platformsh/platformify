@@ -1,18 +1,14 @@
 package platformifier
 
 import (
-	"bytes"
 	"context"
 	"embed"
-	"errors"
 	"io/fs"
-	"os"
 	"testing"
+	"testing/fstest"
 
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 )
 
 const (
@@ -28,146 +24,36 @@ var (
 	testGenericTemplatesFS embed.FS
 )
 
-type MockBuffer struct {
-	bytes.Buffer
-}
-
-func (b *MockBuffer) Close() error {
-	return nil
-}
-
-type PlatformifyGenericSuiteTester struct {
-	suite.Suite
-
-	cwd        string
-	templates  fs.FS
-	fileSystem *MockFS
-}
-
-func (s *PlatformifyGenericSuiteTester) SetupTest() {
-	ctrl := gomock.NewController(s.T())
-
-	cwd, err := os.Getwd()
-	require.NoError(s.T(), err)
-	s.cwd = cwd
-
+func TestGenericPlatformifier_SuccessfulConfigsCreation(t *testing.T) {
 	templates, err := fs.Sub(testGenericTemplatesFS, genericTemplatesDir)
-	require.NoError(s.T(), err)
-	s.templates = templates
+	require.NoError(t, err)
 
-	s.fileSystem = NewMockFS(ctrl)
+	input := &UserInput{WorkingDirectory: fstest.MapFS{}}
+	p := newGenericPlatformifier(templates, fstest.MapFS{})
+	files, err := p.Platformify(context.Background(), input)
+	assert.NoError(t, err)
+
+	// The returned file map should contain the expected config files.
+	assert.Contains(t, files, environmentFile)
+	assert.Contains(t, files, appConfigFile)
+	assert.Contains(t, files, routesConfigFile)
+	assert.Contains(t, files, servicesConfigFile)
+
+	// Each file should have non-empty content.
+	assert.NotEmpty(t, files[environmentFile])
+	assert.NotEmpty(t, files[appConfigFile])
+	assert.NotEmpty(t, files[routesConfigFile])
+	assert.NotEmpty(t, files[servicesConfigFile])
 }
 
-func (s *PlatformifyGenericSuiteTester) TestSuccessfulConfigsCreation() {
-	// GIVEN mock buffers to store config files
-	envBuff, appBuff, routesBuff, servicesBuff := &MockBuffer{}, &MockBuffer{}, &MockBuffer{}, &MockBuffer{}
-	// AND working directory is a current directory
-	input := &UserInput{WorkingDirectory: s.cwd}
-	// AND creation of the environment file returns no errors
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(environmentFile)).
-		Return(envBuff, nil).Times(1)
-	// AND creation of the app config file returns no errors
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(appConfigFile)).
-		Return(appBuff, nil).Times(1)
-	// AND creation of the routes config file returns no errors
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(routesConfigFile)).
-		Return(routesBuff, nil).Times(1)
-	// AND creation of the services config file returns no errors
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(servicesConfigFile)).
-		Return(servicesBuff, nil).Times(1)
+func TestGenericPlatformifier_EmptyInput(t *testing.T) {
+	templates, err := fs.Sub(testGenericTemplatesFS, genericTemplatesDir)
+	require.NoError(t, err)
 
-	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.fileSystem)
-	err := p.Platformify(context.Background(), input)
-	// THEN it doesn't return any errors
-	assert.NoError(s.T(), err)
-	// AND the buffers contain configs
-	assert.NotEmpty(s.T(), envBuff)
-	assert.NotEmpty(s.T(), appBuff)
-	assert.NotEmpty(s.T(), routesBuff)
-	assert.NotEmpty(s.T(), servicesBuff)
-}
-
-func (s *PlatformifyGenericSuiteTester) TestEnvironmentCreationError() {
-	// GIVEN working directory is a current directory
-	input := &UserInput{WorkingDirectory: s.cwd}
-	// AND creating environment file fails
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(environmentFile)).
-		Return(nil, errors.New("")).Times(1)
-	// AND creating other config files work fine
-	s.fileSystem.EXPECT().
-		Create(gomock.Any()).
-		Return(&MockBuffer{}, nil).AnyTimes()
-
-	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.fileSystem)
-	err := p.Platformify(context.Background(), input)
-	// THEN it fails
-	assert.Error(s.T(), err)
-}
-
-func (s *PlatformifyGenericSuiteTester) TestAppConfigCreationError() {
-	// GIVEN working directory is a current directory
-	input := &UserInput{WorkingDirectory: s.cwd}
-	// AND creating app config file fails
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(appConfigFile)).
-		Return(nil, errors.New("")).Times(1)
-	// AND creating other config files work fine
-	s.fileSystem.EXPECT().
-		Create(gomock.Any()).
-		Return(&MockBuffer{}, nil).AnyTimes()
-
-	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.fileSystem)
-	err := p.Platformify(context.Background(), input)
-	// THEN it fails
-	assert.Error(s.T(), err)
-}
-
-func (s *PlatformifyGenericSuiteTester) TestRoutesConfigCreationError() {
-	// GIVEN working directory is a current directory
-	input := &UserInput{WorkingDirectory: s.cwd}
-	// AND creating routes config file fails
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(routesConfigFile)).
-		Return(nil, errors.New("")).Times(1)
-	// AND creating other config files work fine
-	s.fileSystem.EXPECT().
-		Create(gomock.Any()).
-		Return(&MockBuffer{}, nil).AnyTimes()
-
-	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.fileSystem)
-	err := p.Platformify(context.Background(), input)
-	// THEN it fails
-	assert.Error(s.T(), err)
-}
-
-func (s *PlatformifyGenericSuiteTester) TestServicesConfigCreationError() {
-	// GIVEN working directory is a current directory
-	input := &UserInput{WorkingDirectory: s.cwd}
-	// AND creating services config file fails
-	s.fileSystem.EXPECT().
-		Create(gomock.Eq(servicesConfigFile)).
-		Return(nil, errors.New("")).Times(1)
-	// AND creating other config files work fine
-	s.fileSystem.EXPECT().
-		Create(gomock.Any()).
-		Return(&MockBuffer{}, nil).AnyTimes()
-
-	// WHEN run config files creation
-	p := newGenericPlatformifier(s.templates, s.fileSystem)
-	err := p.Platformify(context.Background(), input)
-	// THEN it fails
-	assert.Error(s.T(), err)
-}
-
-func TestPlatformifyGenericSuite(t *testing.T) {
-	suite.Run(t, new(PlatformifyGenericSuiteTester))
+	// With minimal input, Platformify should still succeed (templates render without error).
+	input := &UserInput{}
+	p := newGenericPlatformifier(templates, fstest.MapFS{})
+	files, err := p.Platformify(context.Background(), input)
+	assert.NoError(t, err)
+	assert.NotNil(t, files)
 }
