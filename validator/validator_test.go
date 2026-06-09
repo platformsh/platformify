@@ -298,6 +298,38 @@ applications:
 			},
 			wantErr: true,
 		},
+		{
+			name: "external-oci-image",
+			args: args{
+				path: fstest.MapFS{
+					".upsun/config.yaml": &fstest.MapFile{
+						Data: []byte(`
+applications:
+  app:
+    type: "nodejs:24"
+    web:
+      commands:
+        start: node server.js
+      locations:
+        /:
+          passthru: true
+    relationships:
+      gotenberg: {}
+  gotenberg:
+    type: "external:0.2"
+    image:
+      name: "gotenberg/gotenberg:latest"
+routes:
+  https://{default}/:
+    type: upstream
+    upstream: app:http
+`,
+						),
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

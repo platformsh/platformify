@@ -38,6 +38,19 @@
             "title": "Composable Image definition",
             "description": "A list of packages from the Upsun collection of supported runtimes and/or from NixPkgs.  \nMore information: \nhttps://docs.upsun.com/anchors/app/composable/"
           },
+          "image": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "OCI container image name",
+                "description": "The container image URI (e.g. \"gotenberg/gotenberg:latest\") for applications using type: external:0.2."
+              }
+            },
+            "additionalProperties": false,
+            "title": "OCI container image",
+            "description": "Container image configuration for external applications (type: external:0.2).  \nMore information: \nhttps://docs.upsun.com/anchors/app/reference/type/"
+          },
           "source": {
             "type": "object",
             "properties": {
@@ -732,6 +745,7 @@
         "x-order": [
           "type",
           "stack",
+          "image",
           "source",
           "resources",
           "relationships",
