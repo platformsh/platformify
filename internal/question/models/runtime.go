@@ -4,64 +4,44 @@ import (
 	"fmt"
 )
 
-const (
-	DotNet Runtime = "dotnet"
-	Elixir Runtime = "elixir"
-	Golang Runtime = "golang"
-	Java   Runtime = "java"
-	NodeJS Runtime = "nodejs"
-	PHP    Runtime = "php"
-	Python Runtime = "python"
-	Ruby   Runtime = "ruby"
-	Rust   Runtime = "rust"
-)
-
-var (
-	Runtimes = RuntimeList{
-		DotNet,
-		Elixir,
-		Golang,
-		Java,
-		NodeJS,
-		PHP,
-		Python,
-		Ruby,
-		Rust,
+// Runtime represents a platform runtime type, loaded from registry.json.
+type Runtime struct {
+	Name        string
+	Description string
+	Disk        bool
+	Docs struct {
+		URL string
+		Web struct {
+			Commands struct {
+				Start string
+			}
+			Locations map[string]map[string]any
+		}
 	}
-)
-
-type Runtime string
-
-func (r Runtime) String() string {
-	return string(r)
+	Type     string
+	Versions struct {
+		Supported []string
+	}
+	Runtime bool
 }
 
-func (r Runtime) Title() string {
-	switch r {
-	case DotNet:
-		return "C#/.Net Core"
-	case Elixir:
-		return "Elixir"
-	case Golang:
-		return "Go"
-	case Java:
-		return "Java"
-	case NodeJS:
-		return "JavaScript/Node.js"
-	case PHP:
-		return "PHP"
-	case Python:
-		return "Python"
-	case Ruby:
-		return "Ruby"
-	case Rust:
-		return "Rust"
-	default:
-		return ""
-	}
+func (r *Runtime) String() string {
+	return r.Type
 }
 
-type RuntimeList []Runtime
+func (r *Runtime) Title() string {
+	return r.Name
+}
+
+func (r *Runtime) DefaultVersion() string {
+	if len(r.Versions.Supported) > 0 {
+		return r.Versions.Supported[0]
+	}
+
+	return ""
+}
+
+type RuntimeList []*Runtime
 
 func (r RuntimeList) AllTitles() []string {
 	titles := make([]string, 0, len(r))
@@ -71,11 +51,22 @@ func (r RuntimeList) AllTitles() []string {
 	return titles
 }
 
-func (r RuntimeList) RuntimeByTitle(title string) (Runtime, error) {
+func (r RuntimeList) RuntimeByTitle(title string) (*Runtime, error) {
 	for _, runtime := range r {
 		if runtime.Title() == title {
 			return runtime, nil
 		}
 	}
-	return "", fmt.Errorf("runtime by title is not found")
+
+	return nil, fmt.Errorf("runtime by title is not found")
+}
+
+func (r RuntimeList) RuntimeByType(typ string) (*Runtime, error) {
+	for _, runtime := range r {
+		if runtime.Type == typ {
+			return runtime, nil
+		}
+	}
+
+	return nil, fmt.Errorf("runtime by type is not found")
 }

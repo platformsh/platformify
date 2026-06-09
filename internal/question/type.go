@@ -28,7 +28,7 @@ func (q *Type) Ask(ctx context.Context) error {
 			return
 		}
 
-		if answers.Stack != models.GenericStack {
+		if answers.Stack != models.GenericStack && answers.Type.Runtime != nil {
 			fmt.Fprintf(
 				stderr,
 				"%s %s\n",
@@ -42,7 +42,7 @@ func (q *Type) Ask(ctx context.Context) error {
 	}()
 
 	runtime := models.RuntimeForStack(answers.Stack)
-	if runtime == "" {
+	if runtime == nil {
 		question := &survey.Select{
 			Message: "What language is your project using? We support the following:",
 			Options: models.Runtimes.AllTitles(),
@@ -60,7 +60,7 @@ func (q *Type) Ask(ctx context.Context) error {
 		}
 	}
 	answers.Type.Runtime = runtime
-	answers.Type.Version = models.DefaultVersionForRuntime(runtime)
+	answers.Type.Version = runtime.DefaultVersion()
 
 	return nil
 }

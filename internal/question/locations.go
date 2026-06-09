@@ -24,7 +24,7 @@ func (q *Locations) Ask(ctx context.Context) error {
 			"allow":   true,
 		}
 	default:
-		if answers.Type.Runtime == models.PHP {
+		if answers.Type.Runtime.Type == "php" {
 			locations := map[string]interface{}{
 				"passthru": "/index.php",
 				"root":     "",

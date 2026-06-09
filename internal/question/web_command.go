@@ -27,7 +27,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 	}
 
 	// Do not ask the command for PHP applications
-	if answers.Type.Runtime == models.PHP {
+	if answers.Type.Runtime.Type == "php" {
 		return nil
 	}
 
