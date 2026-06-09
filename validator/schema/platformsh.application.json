@@ -917,7 +917,7 @@
       ]
     }
   },
-  "oneOf": [
+  "anyOf": [
     {
       "required": [
         "name",
@@ -927,6 +927,7 @@
     {
       "required": [
         "name",
+        "type",
         "stack"
       ]
     }
