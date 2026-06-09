@@ -14,10 +14,10 @@ func (q *SocketFamily) Ask(ctx context.Context) error {
 		return nil
 	}
 
-	switch answers.Type.Runtime {
-	case models.PHP:
+	switch answers.Type.Runtime.Type {
+	case "php":
 		return nil
-	case models.Ruby, models.Python:
+	case "ruby", "python":
 		answers.SocketFamily = models.UnixSocket
 		return nil
 	default:

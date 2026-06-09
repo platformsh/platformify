@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 	"testing"
+	"testing/fstest"
 
 	"github.com/platformsh/platformify/internal/question/models"
 )
@@ -12,6 +13,8 @@ func TestBuildSteps_Ask(t *testing.T) {
 	type args struct {
 		answers models.Answers
 	}
+	nodeJS, _ := models.Runtimes.RuntimeByType("nodejs")
+	ruby, _ := models.Runtimes.RuntimeByType("ruby")
 	tests := []struct {
 		name       string
 		q          *BuildSteps
@@ -24,10 +27,11 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.NextJS,
-				Type:               models.RuntimeType{Runtime: models.NodeJS, Version: "20.0"},
+				Type:               models.RuntimeType{Runtime: *nodeJS, Version: "20.0"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Yarn},
 				Environment:        map[string]string{},
+				WorkingDirectory:   fstest.MapFS{},
 			}},
 			buildSteps: []string{"yarn", "yarn exec next build"},
 			wantErr:    false,
@@ -37,10 +41,11 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.NextJS,
-				Type:               models.RuntimeType{Runtime: models.NodeJS, Version: "20.0"},
+				Type:               models.RuntimeType{Runtime: *nodeJS, Version: "20.0"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Npm},
 				Environment:        map[string]string{},
+				WorkingDirectory:   fstest.MapFS{},
 			}},
 			buildSteps: []string{"npm i", "npm exec next build"},
 			wantErr:    false,
@@ -50,7 +55,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.GenericStack,
-				Type:               models.RuntimeType{Runtime: models.Ruby, Version: "3.3"},
+				Type:               models.RuntimeType{Runtime: *ruby, Version: "3.3"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Bundler},
 				Environment:        map[string]string{},
@@ -63,7 +68,7 @@ func TestBuildSteps_Ask(t *testing.T) {
 			q:    &BuildSteps{},
 			args: args{models.Answers{
 				Stack:              models.Rails,
-				Type:               models.RuntimeType{Runtime: models.Ruby, Version: "3.3"},
+				Type:               models.RuntimeType{Runtime: *ruby, Version: "3.3"},
 				Dependencies:       map[string]map[string]string{},
 				DependencyManagers: []models.DepManager{models.Bundler},
 				Environment:        map[string]string{},

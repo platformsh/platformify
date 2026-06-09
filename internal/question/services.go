@@ -18,7 +18,7 @@ func (q *Services) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	if len(answers.Services) != 0 {
+	if len(answers.Services) != 0 || answers.NoInteraction {
 		// Skip the step
 		return nil
 	}
@@ -66,18 +66,13 @@ func (q *Services) Ask(ctx context.Context) error {
 	}
 
 	for _, serviceName := range services {
-		versions, ok := models.ServiceTypeVersions[serviceName]
-		if !ok || len(versions) == 0 {
-			return nil
-		}
-
 		service := models.Service{
 			Name: strings.ReplaceAll(serviceName.String(), "_", "-"),
 			Type: models.ServiceType{
 				Name:    serviceName.String(),
-				Version: versions[0],
+				Version: serviceName.DefaultVersion(),
 			},
-			TypeVersions: versions,
+			TypeVersions: serviceName.Versions.Supported,
 		}
 		if serviceName.IsPersistent() {
 			service.Disk = models.ServiceDisks[0]

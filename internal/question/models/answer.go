@@ -2,34 +2,39 @@ package models
 
 import (
 	"encoding/json"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/platformsh/platformify/discovery"
 	"github.com/platformsh/platformify/platformifier"
 )
 
 type Answers struct {
-	Stack              Stack                             `json:"stack"`
-	Flavor             string                            `json:"flavor"`
-	Type               RuntimeType                       `json:"type"`
-	Name               string                            `json:"name"`
-	ApplicationRoot    string                            `json:"application_root"`
-	Environment        map[string]string                 `json:"environment"`
-	BuildSteps         []string                          `json:"build_steps"`
-	WebCommand         string                            `json:"web_command"`
-	SocketFamily       SocketFamily                      `json:"socket_family"`
-	DeployCommand      []string                          `json:"deploy_command"`
-	DependencyManagers []DepManager                      `json:"dependency_managers"`
-	Dependencies       map[string]map[string]string      `json:"dependencies"`
-	BuildFlavor        string                            `json:"build_flavor"`
-	Disk               string                            `json:"disk"`
-	Mounts             map[string]map[string]string      `json:"mounts"`
-	Services           []Service                         `json:"services"`
-	WorkingDirectory   string                            `json:"working_directory"`
-	HasGit             bool                              `json:"has_git"`
-	FilesCreated       []string                          `json:"files_created"`
-	Locations          map[string]map[string]interface{} `json:"locations"`
+	NoInteraction      bool
+	Stack              Stack
+	Flavor             string
+	Type               RuntimeType
+	Name               string
+	ApplicationRoot    string
+	Environment        map[string]string
+	BuildSteps         []string
+	WebCommand         string
+	SocketFamily       SocketFamily
+	DeployCommand      []string
+	DependencyManagers []DepManager
+	Dependencies       map[string]map[string]string
+	BuildFlavor        string
+	Disk               string
+	Mounts             map[string]map[string]string
+	Services           []Service
+	Cwd                string
+	WorkingDirectory   fs.FS
+	HasGit             bool
+	FilesCreated       []string
+	Locations          map[string]map[string]interface{}
+	Discoverer         *discovery.Discoverer
 }
 
 type Service struct {
@@ -45,14 +50,14 @@ type RuntimeType struct {
 	Version string
 }
 
-func (t RuntimeType) String() string {
+func (t *RuntimeType) String() string {
 	if t.Version != "" {
 		return t.Runtime.String() + ":" + t.Version
 	}
 	return t.Runtime.String()
 }
 
-func (t RuntimeType) MarshalJSON() ([]byte, error) {
+func (t *RuntimeType) MarshalJSON() ([]byte, error) {
 	return json.Marshal(t.String())
 }
 
@@ -74,9 +79,10 @@ func (t ServiceType) MarshalJSON() ([]byte, error) {
 
 func NewAnswers() *Answers {
 	return &Answers{
-		Environment: make(map[string]string),
-		BuildSteps:  make([]string, 0),
-		Services:    make([]Service, 0),
+		NoInteraction: true,
+		Environment:   make(map[string]string),
+		BuildSteps:    make([]string, 0),
+		Services:      make([]Service, 0),
 	}
 }
 
@@ -112,21 +118,18 @@ func (a *Answers) ToUserInput() *platformifier.UserInput {
 
 	return &platformifier.UserInput{
 		Stack:              getStack(a.Stack),
-		Root:               "",
 		ApplicationRoot:    filepath.Join(string(os.PathSeparator), a.ApplicationRoot),
 		Name:               a.Name,
 		Type:               a.Type.String(),
-		Runtime:            a.Type.Runtime.String(),
+		Runtime:            strings.Split(a.Type.Runtime.String(), ":")[0],
+		SocketFamily:       a.SocketFamily.String(),
+		Disk:               a.Disk,
 		Environment:        a.Environment,
 		BuildSteps:         a.BuildSteps,
-		WebCommand:         a.WebCommand,
-		SocketFamily:       a.SocketFamily.String(),
 		DependencyManagers: dependencyManagers,
 		DeployCommand:      a.DeployCommand,
 		Locations:          locations,
 		Dependencies:       a.Dependencies,
-		BuildFlavor:        a.BuildFlavor,
-		Disk:               a.Disk,
 		Mounts:             a.Mounts,
 		Services:           services,
 		Relationships:      getRelationships(a.Services),
@@ -151,6 +154,8 @@ func getStack(answersStack Stack) platformifier.Stack {
 		return platformifier.Flask
 	case Express:
 		return platformifier.Express
+	case Symfony:
+		return platformifier.Symfony
 	default:
 		return platformifier.Generic
 	}

@@ -15,7 +15,10 @@ func (q *Locations) Ask(ctx context.Context) error {
 	if !ok {
 		return nil
 	}
-	answers.Locations = make(map[string]map[string]interface{})
+	answers.Locations = answers.Type.Runtime.Docs.Locations
+	if answers.Locations == nil {
+		answers.Locations = make(map[string]map[string]interface{})
+	}
 	switch answers.Stack {
 	case models.Django:
 		answers.Locations["/static"] = map[string]interface{}{
@@ -23,16 +26,20 @@ func (q *Locations) Ask(ctx context.Context) error {
 			"expires": "1h",
 			"allow":   true,
 		}
+	case models.Symfony:
+		answers.Locations["/"] = map[string]interface{}{
+			"root":     "public",
+			"passthru": "/index.php",
+		}
 	default:
-		if answers.Type.Runtime == models.PHP {
+		if answers.Type.Runtime.Type == "php" {
 			locations := map[string]interface{}{
 				"passthru": "/index.php",
 				"root":     "",
 			}
-			if indexPath := utils.FindFile(answers.WorkingDirectory, "index.php"); indexPath != "" {
-				indexRelPath, _ := filepath.Rel(answers.WorkingDirectory, indexPath)
-				if filepath.Dir(indexRelPath) != "." {
-					locations["root"] = filepath.Dir(indexRelPath)
+			if indexPath := utils.FindFile(answers.WorkingDirectory, "", "index.php"); indexPath != "" {
+				if filepath.Dir(indexPath) != "." {
+					locations["root"] = filepath.Dir(indexPath)
 				}
 			}
 			answers.Locations["/"] = locations

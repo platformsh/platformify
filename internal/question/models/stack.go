@@ -15,6 +15,7 @@ const (
 	Flask
 	Express
 	Rails
+	Symfony
 )
 
 var (
@@ -27,6 +28,7 @@ var (
 		Flask,
 		Express,
 		Rails,
+		Symfony,
 	}
 )
 
@@ -50,6 +52,8 @@ func (s Stack) Title() string {
 		return "Flask"
 	case Express:
 		return "Express"
+	case Symfony:
+		return "Symfony"
 	default:
 		return ""
 	}
@@ -88,17 +92,28 @@ func (s StackList) StackByTitle(title string) (Stack, error) {
 	return GenericStack, fmt.Errorf("stack by title is not found")
 }
 
-func RuntimeForStack(stack Stack) Runtime {
+func RuntimeForStack(stack Stack) *Runtime {
 	switch stack {
 	case Django, Flask:
-		return Python
+		if r, err := Runtimes.RuntimeByType("python"); err == nil {
+			return r
+		}
 	case Rails:
-		return Ruby
-	case Laravel:
-		return PHP
+		if r, err := Runtimes.RuntimeByType("ruby"); err == nil {
+			return r
+		}
+		return nil
+	case Laravel, Symfony:
+		if r, err := Runtimes.RuntimeByType("php"); err == nil {
+			return r
+		}
+		return nil
 	case NextJS, Strapi, Express:
-		return NodeJS
-	default:
-		return ""
+		if r, err := Runtimes.RuntimeByType("nodejs"); err == nil {
+			return r
+		}
+		return nil
 	}
+
+	return nil
 }

@@ -16,8 +16,8 @@ import (
 )
 
 // ValidateFile checks the file exists and is valid yaml, then returns the unmarshalled data.
-func ValidateFile(path string, schema *gojsonschema.Schema) (map[string]interface{}, error) {
-	rawData, err := os.ReadFile(path)
+func ValidateFile(fileSystem fs.FS, path string, schema *gojsonschema.Schema) (map[string]interface{}, error) {
+	rawData, err := fs.ReadFile(fileSystem, path)
 	if err != nil {
 		return nil, err
 	}
@@ -51,18 +51,18 @@ func ValidateFile(path string, schema *gojsonschema.Schema) (map[string]interfac
 }
 
 // ValidateConfig uses ValidateFile and to check config for a given directory is valid config.
-func ValidateConfig(path, flavor string) error {
+func ValidateConfig(fileSystem fs.FS, flavor string) error {
 	switch flavor {
 	case "platform":
-		return validatePlatformConfig(path)
+		return validatePlatformConfig(fileSystem)
 	case "upsun":
-		return validateUpsunConfig(os.DirFS(path))
+		return validateUpsunConfig(fileSystem)
 	default:
 		return fmt.Errorf("unknown flavor: %s", flavor)
 	}
 }
 
-func validatePlatformConfig(path string) error {
+func validatePlatformConfig(fileSystem fs.FS) error {
 	var errs error
 	files := map[string]*gojsonschema.Schema{
 		".platform/routes.yaml":   routesSchema,
@@ -70,8 +70,7 @@ func validatePlatformConfig(path string) error {
 	}
 
 	for file, schema := range files {
-		absPath := filepath.Join(path, file)
-		if _, err := os.Stat(absPath); err != nil {
+		if _, err := fs.Stat(fileSystem, file); err != nil {
 			if os.IsNotExist(err) {
 				continue
 			}
@@ -80,17 +79,16 @@ func validatePlatformConfig(path string) error {
 			continue
 		}
 
-		if _, err := ValidateFile(absPath, schema); err != nil {
+		if _, err := ValidateFile(fileSystem, file, schema); err != nil {
 			errs = errors.Join(errs, fmt.Errorf("validation failed for %s: %w", file, err))
 		}
 	}
 
 	foundApp := false
-	for _, file := range utils.FindAllFiles(path, ".platform.app.yaml") {
+	for _, file := range utils.FindAllFiles(fileSystem, "", ".platform.app.yaml") {
 		foundApp = true
-		if _, err := ValidateFile(file, applicationSchema); err != nil {
-			relPath, _ := filepath.Rel(path, file)
-			errs = errors.Join(errs, fmt.Errorf("validation failed for %s: %w", relPath, err))
+		if _, err := ValidateFile(fileSystem, file, applicationSchema); err != nil {
+			errs = errors.Join(errs, fmt.Errorf("validation failed for %s: %w", file, err))
 		}
 	}
 

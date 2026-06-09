@@ -3,7 +3,7 @@ package question
 import (
 	"context"
 	"fmt"
-	"os"
+	"io/fs"
 	"path"
 	"path/filepath"
 	"slices"
@@ -27,7 +27,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 	}
 
 	// Do not ask the command for PHP applications
-	if answers.Type.Runtime == models.PHP {
+	if answers.Type.Runtime.Type == "php" {
 		return nil
 	}
 
@@ -54,14 +54,14 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		pythonPath := ""
 		wsgi := "app.wsgi"
 		// try to find the wsgi.py file to change the default command
-		wsgiPath := utils.FindFile(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), "wsgi.py")
+		wsgiPath := utils.FindFile(answers.WorkingDirectory, answers.ApplicationRoot, "wsgi.py")
 		if wsgiPath != "" {
 			wsgiParentDir := path.Base(path.Dir(wsgiPath))
 			wsgi = fmt.Sprintf("%s.wsgi", wsgiParentDir)
 
 			// add the pythonpath if the wsgi.py file is not in the root of the app
 			wsgiRel, _ := filepath.Rel(
-				path.Join(answers.WorkingDirectory, answers.ApplicationRoot),
+				answers.ApplicationRoot,
 				path.Dir(path.Dir(wsgiPath)),
 			)
 			if wsgiRel != "." {
@@ -94,8 +94,9 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		return nil
 	case models.Strapi:
 		if _, ok := utils.GetJSONValue(
+			answers.WorkingDirectory,
 			[]string{"scripts", "start"},
-			path.Join(answers.WorkingDirectory, "package.json"),
+			"package.json",
 			true,
 		); ok {
 			if slices.Contains(answers.DependencyManagers, models.Yarn) {
@@ -106,8 +107,9 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		}
 	case models.Express:
 		if _, ok := utils.GetJSONValue(
+			answers.WorkingDirectory,
 			[]string{"scripts", "start"},
-			path.Join(answers.WorkingDirectory, "package.json"),
+			"package.json",
 			true,
 		); ok {
 			if slices.Contains(answers.DependencyManagers, models.Yarn) {
@@ -119,16 +121,16 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		}
 
 		if mainPath, ok := utils.GetJSONValue(
+			answers.WorkingDirectory,
 			[]string{"main"},
-			path.Join(answers.WorkingDirectory, "package.json"),
+			"package.json",
 			true,
 		); ok {
 			answers.WebCommand = fmt.Sprintf("node %s", mainPath.(string))
 			return nil
 		}
 
-		if indexFile := utils.FindFile(answers.WorkingDirectory, "index.js"); indexFile != "" {
-			indexFile, _ = filepath.Rel(answers.WorkingDirectory, indexFile)
+		if indexFile := utils.FindFile(answers.WorkingDirectory, "", "index.js"); indexFile != "" {
 			answers.WebCommand = fmt.Sprintf("node %s", indexFile)
 			return nil
 		}
@@ -136,7 +138,7 @@ func (q *WebCommand) Ask(ctx context.Context) error {
 		appPath := ""
 		// try to find the app.py, api.py or server.py files
 		for _, name := range []string{"app.py", "server.py", "api.py"} {
-			if _, err := os.Stat(path.Join(answers.WorkingDirectory, name)); err == nil {
+			if _, err := fs.Stat(answers.WorkingDirectory, name); err == nil {
 				appPath = fmt.Sprintf("'%s:app'", strings.TrimSuffix(name, ".py"))
 				break
 			}

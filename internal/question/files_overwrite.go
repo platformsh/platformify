@@ -3,8 +3,7 @@ package question
 import (
 	"context"
 	"fmt"
-	"os"
-	"path/filepath"
+	"io/fs"
 
 	"github.com/AlecAivazis/survey/v2"
 
@@ -14,11 +13,13 @@ import (
 	"github.com/platformsh/platformify/vendorization"
 )
 
-type FilesOverwrite struct{}
+type FilesOverwrite struct {
+	FilesToCreateUpdate []string
+}
 
 func (q *FilesOverwrite) Ask(ctx context.Context) error {
 	answers, ok := models.FromContext(ctx)
-	if !ok {
+	if !ok || answers.NoInteraction {
 		return nil
 	}
 
@@ -28,9 +29,9 @@ func (q *FilesOverwrite) Ask(ctx context.Context) error {
 	}
 
 	assets, _ := vendorization.FromContext(ctx)
-	existingFiles := make([]string, 0, len(assets.ProprietaryFiles()))
-	for _, p := range assets.ProprietaryFiles() {
-		if st, err := os.Stat(filepath.Join(answers.WorkingDirectory, p)); err == nil && !st.IsDir() {
+	existingFiles := make([]string, 0, len(q.FilesToCreateUpdate))
+	for _, p := range q.FilesToCreateUpdate {
+		if st, err := fs.Stat(answers.WorkingDirectory, p); err == nil && !st.IsDir() {
 			existingFiles = append(existingFiles, p)
 		}
 	}

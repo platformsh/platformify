@@ -6,102 +6,44 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 )
 
-const (
-	ChromeHeadless  ServiceName = "chrome-headless"
-	ClickHouse      ServiceName = "clickhouse"
-	InfluxDB        ServiceName = "influxdb"
-	Kafka           ServiceName = "kafka"
-	MariaDB         ServiceName = "mariadb"
-	Memcached       ServiceName = "memcached"
-	MySQL           ServiceName = "mysql"
-	NetworkStorage  ServiceName = "network-storage"
-	OpenSearch      ServiceName = "opensearch"
-	OracleMySQL     ServiceName = "oracle-mysql"
-	PostgreSQL      ServiceName = "postgresql"
-	RabbitMQ        ServiceName = "rabbitmq"
-	Redis           ServiceName = "redis"
-	RedisPersistent ServiceName = "redis-persistent"
-	Solr            ServiceName = "solr"
-	Varnish         ServiceName = "varnish"
-	VaultKMS        ServiceName = "vault-kms"
-)
-
-var (
-	ServiceNames = ServiceNameList{
-		MariaDB,
-		MySQL,
-		PostgreSQL,
-		Redis,
-		RedisPersistent,
-		Memcached,
-		OpenSearch,
-		Solr,
-		Varnish,
-		Kafka,
-		VaultKMS,
-		RabbitMQ,
-		InfluxDB,
-		ChromeHeadless,
-		NetworkStorage,
-		OracleMySQL,
+type ServiceName struct {
+	Name        string
+	Type        string
+	Description string
+	Disk        bool
+	Docs        struct {
+		Relationship string
+		URL          string
 	}
-)
-
-type ServiceName string
-
-func (s ServiceName) String() string {
-	return string(s)
+	Endpoint    string
+	MinDiskSize *int
+	Versions    struct {
+		Supported []string
+	}
+	Runtime bool
 }
 
-func (s ServiceName) Title() string {
-	switch s {
-	case ChromeHeadless:
-		return "Chrome Headless"
-	case InfluxDB:
-		return "InfluxDB"
-	case Kafka:
-		return "Kafka"
-	case MariaDB:
-		return "MariaDB"
-	case Memcached:
-		return "Memcached"
-	case MySQL:
-		return "MySQL"
-	case NetworkStorage:
-		return "Network Storage"
-	case OpenSearch:
-		return "OpenSearch"
-	case OracleMySQL:
-		return "Oracle MySQL"
-	case PostgreSQL:
-		return "PostgreSQL"
-	case RabbitMQ:
-		return "RabbitMQ"
-	case Redis:
-		return "Redis"
-	case RedisPersistent:
-		return "Redis Persistent"
-	case Solr:
-		return "Solr"
-	case Varnish:
-		return "Varnish"
-	case VaultKMS:
-		return "Vault KMS"
-	default:
-		return ""
-	}
+func (s *ServiceName) String() string {
+	return s.Type
 }
 
-func (s ServiceName) IsPersistent() bool {
-	switch s {
-	case ChromeHeadless, Memcached, Redis:
-		return false
-	default:
-		return true
-	}
+func (s *ServiceName) Title() string {
+	return s.Name
 }
 
-type ServiceNameList []ServiceName
+func (s *ServiceName) IsPersistent() bool {
+	return s.Disk
+}
+
+func (s *ServiceName) DefaultVersion() string {
+	if len(s.Versions.Supported) > 0 {
+		return s.Versions.Supported[0]
+	}
+
+	return ""
+}
+
+type ServiceNameList []*ServiceName
 
 func (s *ServiceNameList) WriteAnswer(_ string, value interface{}) error {
 	switch answer := value.(type) {
@@ -127,11 +69,11 @@ func (s *ServiceNameList) AllTitles() []string {
 	return titles
 }
 
-func (s *ServiceNameList) ServiceByTitle(title string) (ServiceName, error) {
-	for _, service := range *s {
+func (s ServiceNameList) ServiceByTitle(title string) (*ServiceName, error) {
+	for _, service := range s {
 		if service.Title() == title {
 			return service, nil
 		}
 	}
-	return "", fmt.Errorf("service name by title is not found")
+	return nil, fmt.Errorf("service name by title is not found")
 }

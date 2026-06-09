@@ -3,8 +3,6 @@ package platformifier
 import (
 	"bytes"
 	"context"
-	"fmt"
-	"io"
 	"io/fs"
 	"strings"
 	"text/template"
@@ -14,7 +12,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 )
 
-func newGenericPlatformifier(templates fs.FS, fileSystem FS) *genericPlatformifier {
+func newGenericPlatformifier(templates, fileSystem fs.FS) *genericPlatformifier {
 	return &genericPlatformifier{
 		templates:  templates,
 		fileSystem: fileSystem,
@@ -24,12 +22,13 @@ func newGenericPlatformifier(templates fs.FS, fileSystem FS) *genericPlatformifi
 // genericPlatformifier contains the configuration for the application to Platformify
 type genericPlatformifier struct {
 	templates  fs.FS
-	fileSystem FS
+	fileSystem fs.FS
 }
 
 // Platformify will generate the needed configuration files in the current directory.
-func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
+func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput) (map[string][]byte, error) {
 	assets, _ := vendorization.FromContext(ctx)
+	files := make(map[string][]byte)
 	err := fs.WalkDir(p.templates, ".", func(name string, d fs.DirEntry, _ error) error {
 		if d.IsDir() {
 			return nil
@@ -45,21 +44,12 @@ func (p *genericPlatformifier) Platformify(ctx context.Context, input *UserInput
 			return nil
 		}
 
-		f, writeErr := p.fileSystem.Create(name)
-		if writeErr != nil {
-			return fmt.Errorf("could not write template: %w", writeErr)
-		}
-		defer f.Close()
-
-		if _, err := io.Copy(f, contents); err != nil {
-			return err
-		}
-
+		files[name] = contents.Bytes()
 		return nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return files, nil
 }

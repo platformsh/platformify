@@ -58,27 +58,16 @@ func (q *DependencyManager) Ask(ctx context.Context) error {
 		}
 	}()
 
-	if exists := utils.FileExists(answers.WorkingDirectory, poetryLockFile); exists {
-		answers.DependencyManagers = append(answers.DependencyManagers, models.Poetry)
-	} else if exists := utils.FileExists(answers.WorkingDirectory, pipenvLockFile); exists {
-		answers.DependencyManagers = append(answers.DependencyManagers, models.Pipenv)
-	} else if exists := utils.FileExists(answers.WorkingDirectory, pipLockFile); exists {
-		answers.DependencyManagers = append(answers.DependencyManagers, models.Pip)
+	dependencyManagers, err := answers.Discoverer.DependencyManagers()
+	if err != nil {
+		return err
+	}
+	answers.DependencyManagers = make([]models.DepManager, 0, len(dependencyManagers))
+	for _, dm := range dependencyManagers {
+		answers.DependencyManagers = append(answers.DependencyManagers, models.DepManager(dm))
 	}
 
-	if exists := utils.FileExists(answers.WorkingDirectory, composerLockFile); exists {
-		answers.DependencyManagers = append(answers.DependencyManagers, models.Composer)
-		answers.Dependencies["php"] = map[string]string{"composer/composer": "^2"}
-	}
-
-	if exists := utils.FileExists(answers.WorkingDirectory, yarnLockFileName); exists {
-		answers.DependencyManagers = append(answers.DependencyManagers, models.Yarn)
-		answers.Dependencies["nodejs"] = map[string]string{"yarn": "^1.22.0"}
-	} else if exists := utils.FileExists(answers.WorkingDirectory, npmLockFileName); exists {
-		answers.DependencyManagers = append(answers.DependencyManagers, models.Npm)
-	}
-
-	if exists := utils.FileExists(answers.WorkingDirectory, bundlerLockFile); exists {
+	if exists := utils.FileExists(answers.WorkingDirectory, "", bundlerLockFile); exists {
 		answers.DependencyManagers = append(answers.DependencyManagers, models.Bundler)
 	}
 

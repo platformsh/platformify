@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/platformsh/platformify/internal/colors"
+	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/vendorization"
 )
 
@@ -13,6 +14,10 @@ type Welcome struct{}
 func (q *Welcome) Ask(ctx context.Context) error {
 	out, _, ok := colors.FromContext(ctx)
 	if !ok {
+		return nil
+	}
+	answers, ok := models.FromContext(ctx)
+	if !ok || answers.NoInteraction {
 		return nil
 	}
 

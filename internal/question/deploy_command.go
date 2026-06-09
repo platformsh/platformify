@@ -3,7 +3,6 @@ package question
 import (
 	"context"
 	"fmt"
-	"path"
 	"path/filepath"
 	"slices"
 
@@ -21,9 +20,9 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 
 	switch answers.Stack {
 	case models.Django:
-		managePyPath := utils.FindFile(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyFile)
+		managePyPath := utils.FindFile(answers.WorkingDirectory, answers.ApplicationRoot, managePyFile)
 		if managePyPath != "" {
-			managePyPath, _ = filepath.Rel(path.Join(answers.WorkingDirectory, answers.ApplicationRoot), managePyPath)
+			managePyPath, _ = filepath.Rel(answers.ApplicationRoot, managePyPath)
 			prefix := ""
 			if slices.Contains(answers.DependencyManagers, models.Pipenv) {
 				prefix = "pipenv run "
@@ -45,6 +44,10 @@ func (q *DeployCommand) Ask(ctx context.Context) error {
 	case models.Rails:
 		answers.DeployCommand = append(answers.DeployCommand,
 			"bundle exec rake db:migrate",
+		)
+	case models.Symfony:
+		answers.DeployCommand = append(answers.DeployCommand,
+			"symfony-deploy",
 		)
 	}
 

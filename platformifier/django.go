@@ -1,16 +1,15 @@
 package platformifier
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"text/template"
 
 	"github.com/Masterminds/sprig/v3"
 
-	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/utils"
 	"github.com/platformsh/platformify/vendorization"
 )
@@ -21,7 +20,7 @@ const (
 	importSettingsPshLine = "from .settings_psh import *"
 )
 
-func newDjangoPlatformifier(templates fs.FS, fileSystem FS) *djangoPlatformifier {
+func newDjangoPlatformifier(templates, fileSystem fs.FS) *djangoPlatformifier {
 	return &djangoPlatformifier{
 		templates:  templates,
 		fileSystem: fileSystem,
@@ -30,64 +29,38 @@ func newDjangoPlatformifier(templates fs.FS, fileSystem FS) *djangoPlatformifier
 
 type djangoPlatformifier struct {
 	templates  fs.FS
-	fileSystem FS
+	fileSystem fs.FS
 }
 
-func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput) error {
-	appRoot := filepath.Join(input.Root, input.ApplicationRoot)
-	if settingsPath := p.fileSystem.Find(appRoot, settingsPyFile, true); len(settingsPath) > 0 {
-		pshSettingsPath := filepath.Join(filepath.Dir(settingsPath[0]), settingsPshPyFile)
+func (p *djangoPlatformifier) Platformify(ctx context.Context, input *UserInput) (map[string][]byte, error) {
+	files := make(map[string][]byte)
+	if settingsPath := utils.FindFile(p.fileSystem, input.ApplicationRoot, settingsPyFile); len(settingsPath) > 0 {
+		pshSettingsPath := filepath.Join(filepath.Dir(settingsPath), settingsPshPyFile)
 		tpl, parseErr := template.New(settingsPshPyFile).Funcs(sprig.FuncMap()).
 			ParseFS(p.templates, settingsPshPyFile)
 		if parseErr != nil {
-			return fmt.Errorf("could not parse template: %w", parseErr)
+			return nil, fmt.Errorf("could not parse template: %w", parseErr)
 		}
-		pshSettingsFile, err := p.fileSystem.Create(pshSettingsPath)
-		if err != nil {
-			return err
-		}
-		defer pshSettingsFile.Close()
 
+		pshSettingsBuffer := &bytes.Buffer{}
 		assets, _ := vendorization.FromContext(ctx)
-		err = tpl.Execute(pshSettingsFile, templateData{input, assets})
+		if err := tpl.Execute(pshSettingsBuffer, templateData{input, assets}); err != nil {
+			return nil, fmt.Errorf("could not execute template: %w", parseErr)
+		}
+		files[pshSettingsPath] = pshSettingsBuffer.Bytes()
+
+		settingsFile, err := fs.ReadFile(p.fileSystem, settingsPath)
 		if err != nil {
-			return err
+			return files, nil
 		}
 
-		// append from .settings_psh import * to the bottom of settings.py
-		settingsFile, err := p.fileSystem.Open(settingsPath[0], os.O_APPEND|os.O_RDWR, 0o644)
-		if err != nil {
-			return nil
-		}
-		defer settingsFile.Close()
-
-		// Check if there is an import line in the file
-		found, err := utils.ContainsStringInFile(settingsFile, importSettingsPshLine, false)
-		if err != nil {
-			return err
-		}
-
-		if !found {
-			if _, err = settingsFile.Write([]byte("\n\n" + importSettingsPshLine + "\n")); err != nil {
-				out, _, ok := colors.FromContext(ctx)
-				if !ok {
-					return nil
-				}
-
-				fmt.Fprintf(
-					out,
-					colors.Colorize(
-						colors.WarningCode,
-						"We have created a %s file for you. Please add the following line to your %s file:\n",
-					),
-					settingsPshPyFile,
-					settingsPyFile,
-				)
-				fmt.Fprint(out, colors.Colorize(colors.WarningCode, "    "+importSettingsPshLine+"\n"))
-				return nil
+		if !bytes.Contains(settingsFile, []byte(importSettingsPshLine)) {
+			b := bytes.NewBuffer(settingsFile)
+			if _, err := b.WriteString("\n\n" + importSettingsPshLine + "\n"); err == nil {
+				files[settingsPath] = b.Bytes()
 			}
 		}
 	}
 
-	return nil
+	return files, nil
 }

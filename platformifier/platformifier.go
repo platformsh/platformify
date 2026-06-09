@@ -26,11 +26,9 @@ const (
 )
 
 // A platformifier handles the business logic of a given runtime to platformify.
-//
-//go:generate mockgen -destination=platformifier_mock_test.go -package=platformifier -source=platformifier.go
 type platformifier interface {
-	// Platformify loads and writes the templates to the user's system.
-	Platformify(ctx context.Context, input *UserInput) error
+	// Platformify loads and returns the rendered templates that should be written to the user's system.
+	Platformify(ctx context.Context, input *UserInput) (map[string][]byte, error)
 }
 
 type templateData struct {
@@ -39,14 +37,7 @@ type templateData struct {
 }
 
 // New creates Platformifier with the appropriate platformifier stack based on UserInput.
-func New(input *UserInput, flavor string, fileSystems ...FS) *Platformifier {
-	var fileSystem FS
-	if len(fileSystems) > 0 {
-		fileSystem = fileSystems[0]
-	} else {
-		fileSystem = NewOSFileSystem(input.WorkingDirectory)
-	}
-
+func New(input *UserInput, flavor string) *Platformifier {
 	// fs.Sub(...) returns an error only if the given path name is invalid.
 	// Since we determine the path name ourselves in advance,
 	// there is no need to check for errors in this path name.
@@ -57,21 +48,17 @@ func New(input *UserInput, flavor string, fileSystems ...FS) *Platformifier {
 	}
 
 	templates, _ := fs.Sub(templatesFS, templatesDir)
-	stacks = append(stacks, newGenericPlatformifier(templates, fileSystem))
+	stacks = append(stacks, newGenericPlatformifier(templates, input.WorkingDirectory))
 
 	switch input.Stack {
 	case Django:
 		// No need to check for errors (see the comment above)
 		templates, _ := fs.Sub(templatesFS, djangoDir)
-		stacks = append(stacks, newDjangoPlatformifier(templates, fileSystem))
+		stacks = append(stacks, newDjangoPlatformifier(templates, input.WorkingDirectory))
 	case Laravel:
 		// No need to check for errors (see the comment above)
 		templates, _ := fs.Sub(templatesFS, laravelDir)
-		stacks = append(stacks, newLaravelPlatformifier(templates, fileSystem))
-	case NextJS:
-		// No need to check for errors (see the comment above)
-		templates, _ := fs.Sub(templatesFS, nextjsDir)
-		stacks = append(stacks, newNextJSPlatformifier(templates))
+		stacks = append(stacks, newLaravelPlatformifier(templates, input.WorkingDirectory))
 	}
 
 	return &Platformifier{
@@ -86,12 +73,18 @@ type Platformifier struct {
 	stacks []platformifier
 }
 
-func (p *Platformifier) Platformify(ctx context.Context) error {
+func (p *Platformifier) Platformify(ctx context.Context) (map[string][]byte, error) {
+	files := make(map[string][]byte)
 	for _, stack := range p.stacks {
-		err := stack.Platformify(ctx, p.input)
+		newFiles, err := stack.Platformify(ctx, p.input)
 		if err != nil {
-			return err
+			return nil, err
+		}
+
+		for p, contents := range newFiles {
+			files[p] = contents
 		}
 	}
-	return nil
+
+	return files, nil
 }

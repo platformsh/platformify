@@ -10,6 +10,7 @@ import (
 
 	"github.com/AlecAivazis/survey/v2"
 
+	"github.com/platformsh/platformify/discovery"
 	"github.com/platformsh/platformify/internal/colors"
 	"github.com/platformsh/platformify/internal/question/models"
 	"github.com/platformsh/platformify/vendorization"
@@ -18,27 +19,30 @@ import (
 type WorkingDirectory struct{}
 
 func (q *WorkingDirectory) Ask(ctx context.Context) error {
-	_, stderr, ok := colors.FromContext(ctx)
-	if !ok {
-		return nil
-	}
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
+	_, stderr, _ := colors.FromContext(ctx)
 	answers, ok := models.FromContext(ctx)
 	if !ok {
 		return nil
 	}
-	answers.WorkingDirectory = cwd
-	answers.HasGit = false
+	if answers.WorkingDirectory == nil {
+		cwd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		answers.WorkingDirectory = os.DirFS(cwd)
+		answers.Cwd = cwd
+		answers.HasGit = false
+	}
+	answers.Discoverer = discovery.New(answers.WorkingDirectory)
+	if answers.NoInteraction {
+		return nil
+	}
 
 	var outBuf, errBuf bytes.Buffer
 	cmd := exec.CommandContext(ctx, "git", "rev-parse", "--git-dir")
 	cmd.Stdout = &outBuf
 	cmd.Stderr = &errBuf
-	err = cmd.Run()
+	err := cmd.Run()
 	if err != nil {
 		fmt.Fprintln(
 			stderr,
@@ -84,8 +88,10 @@ func (q *WorkingDirectory) Ask(ctx context.Context) error {
 		}
 
 		if proceed {
-			answers.WorkingDirectory = gitRepoAbsPath
+			answers.WorkingDirectory = os.DirFS(gitRepoAbsPath)
+			answers.Cwd = gitRepoAbsPath
 			answers.HasGit = true
+			answers.Discoverer = discovery.New(answers.WorkingDirectory)
 		}
 	}
 

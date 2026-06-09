@@ -36,7 +36,7 @@ func NewValidateCommand(assets *vendorization.VendorAssets) *cobra.Command {
 				return err
 			}
 
-			if err = validator.ValidateConfig(cwd, assets.ConfigFlavor); err != nil {
+			if err = validator.ValidateConfig(os.DirFS(cwd), assets.ConfigFlavor); err != nil {
 				fmt.Fprintf(
 					cmd.ErrOrStderr(),
 					colors.Colorize(
