@@ -359,7 +359,7 @@ stack:
 		t.Run(tt.name, func(t *testing.T) {
 			dir := t.TempDir()
 			appFile := filepath.Join(dir, ".platform.app.yaml")
-			if err := os.WriteFile(appFile, []byte(tt.appYAML), 0600); err != nil {
+			if err := os.WriteFile(appFile, []byte(tt.appYAML), 0o600); err != nil {
 				t.Fatalf("failed to write .platform.app.yaml: %v", err)
 			}
 			if err := validatePlatformConfig(dir); (err != nil) != tt.wantErr {
