@@ -2,6 +2,8 @@ package validator
 
 import (
 	"io/fs"
+	"os"
+	"path/filepath"
 	"testing"
 	"testing/fstest"
 )
@@ -303,6 +305,66 @@ applications:
 		t.Run(tt.name, func(t *testing.T) {
 			if err := validateUpsunConfig(tt.args.path); (err != nil) != tt.wantErr {
 				t.Errorf("validateUpsunConfig() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func Test_validatePlatformConfig(t *testing.T) {
+	tests := []struct {
+		name    string
+		appYAML string
+		wantErr bool
+	}{
+		{
+			name: "simple",
+			appYAML: `
+name: app1
+type: "python:3.11"
+`,
+			wantErr: false,
+		},
+		{
+			name: "missing name and type",
+			appYAML: `
+web:
+  commands:
+    start: echo "start"
+`,
+			wantErr: true,
+		},
+		{
+			name: "stack with type",
+			appYAML: `
+name: app1
+type: "composable:25.05"
+stack:
+  - "php@8.3"
+  - "nodejs@20"
+`,
+			wantErr: false,
+		},
+		{
+			name: "stack without type",
+			appYAML: `
+name: app1
+stack:
+  - "php@8.3"
+  - "nodejs@20"
+`,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dir := t.TempDir()
+			appFile := filepath.Join(dir, ".platform.app.yaml")
+			if err := os.WriteFile(appFile, []byte(tt.appYAML), 0o600); err != nil {
+				t.Fatalf("failed to write .platform.app.yaml: %v", err)
+			}
+			if err := validatePlatformConfig(dir); (err != nil) != tt.wantErr {
+				t.Errorf("validatePlatformConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
